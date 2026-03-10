@@ -4,590 +4,728 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ABVP – Member & Activity Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Rajdhani:wght@400;500;600;700&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --saffron: #FF6B00;
-    --saffron-light: #FF8C35;
-    --saffron-dark: #CC5500;
-    --navy: #0D1B3E;
-    --navy-mid: #162347;
-    --navy-light: #1E3060;
-    --gold: #FFB800;
-    --cream: #FFF8F0;
-    --white: #FFFFFF;
-    --gray-100: #F5F5F5;
-    --gray-200: #E8E8E8;
-    --gray-400: #9A9A9A;
-    --gray-600: #555;
-    --success: #2E7D32;
-    --danger: #C62828;
-    --text: #1A1A2E;
-  }
+:root {
+  --saffron: #FF6B00;
+  --saffron-light: #FF8C35;
+  --saffron-dark: #CC5500;
+  --navy: #0D1B3E;
+  --navy-mid: #162347;
+  --navy-light: #1E3060;
+  --gold: #FFB800;
+  --cream: #FFF8F0;
+  --gray-100: #F5F5F5;
+  --gray-200: #E8E8E8;
+  --gray-400: #9A9A9A;
+  --gray-600: #555;
+  --success: #2E7D32;
+  --danger: #C62828;
+  --text: #1A1A2E;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Barlow', sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── LOGIN ── */
+.login-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy);
+  overflow: hidden;
+}
+.login-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(255,107,0,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(255,184,0,0.1) 0%, transparent 50%),
+              radial-gradient(ellipse at 60% 80%, rgba(30,48,96,0.8) 0%, transparent 60%);
+}
+.login-pattern {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%);
+  background-size: 20px 20px;
+}
+.login-card {
+  position: relative; z-index: 1;
+  background: rgba(255,255,255,0.97);
+  border-radius: 24px;
+  width: 100%; max-width: 400px;
+  margin: 20px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+  overflow: hidden;
+  animation: loginSlide 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes loginSlide { from { opacity:0; transform: translateY(30px) scale(0.97); } }
+.login-top {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 36px 36px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.login-top::before {
+  content: '';
+  position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,107,0,0.15);
+}
+.login-top::after {
+  content: '';
+  position: absolute; bottom: -20px; left: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,184,0,0.1);
+}
+.login-emblem {
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, var(--saffron-dark), var(--saffron));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 26px;
+  color: white;
+  box-shadow: 0 8px 24px rgba(255,107,0,0.4);
+  position: relative; z-index: 1;
+}
+.login-top h1 {
+  font-family: 'Rajdhani'; font-size: 22px; font-weight: 700;
+  color: white; letter-spacing: 1px;
+  position: relative; z-index: 1;
+}
+.login-top p {
+  font-size: 12px; color: rgba(255,255,255,0.6);
+  margin-top: 4px; letter-spacing: 0.5px;
+  position: relative; z-index: 1;
+}
+.login-body { padding: 28px 32px 32px; }
+.lf { margin-bottom: 16px; }
+.lf label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--gray-600); text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 7px;
+}
+.lf select, .lf input {
+  width: 100%;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'Barlow'; font-size: 15px;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: white;
+}
+.lf select:focus, .lf input:focus {
+  outline: none;
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.1);
+}
+.login-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--saffron-dark), var(--saffron));
+  color: white; border: none; border-radius: 10px;
+  font-family: 'Rajdhani'; font-size: 17px; font-weight: 700;
+  cursor: pointer; margin-top: 4px;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(255,107,0,0.3);
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,0,0.4); }
+.login-btn:active { transform: translateY(0); }
+.login-error {
+  background: #FFEBEE; color: var(--danger);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 13px; margin-top: 12px;
+  display: none; border-left: 3px solid var(--danger);
+}
+.login-error.show { display: block; }
+.firebase-notice {
+  background: #FFF8E1;
+  border: 2px dashed #FFB800;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #5D4037;
+  display: none;
+}
+.firebase-notice.show { display: block; }
+.firebase-notice strong { color: var(--saffron-dark); }
+.firebase-notice code {
+  background: rgba(0,0,0,0.08); border-radius: 4px;
+  padding: 1px 6px; font-size: 12px; font-family: monospace;
+}
 
-  body {
-    font-family: 'Barlow', sans-serif;
-    background: var(--navy);
-    color: var(--text);
-    min-height: 100vh;
-  }
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, var(--saffron-dark) 0%, var(--saffron) 50%, var(--gold) 100%);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.header-inner {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 20px;
+}
+.logo-circle {
+  width: 46px; height: 46px;
+  background: var(--navy); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 16px;
+  color: var(--saffron); flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.4);
+}
+.header-text h1 { font-family: 'Rajdhani'; font-size: 19px; font-weight: 700; color: white; letter-spacing: 0.5px; }
+.header-text p { font-size: 11px; color: rgba(255,255,255,0.8); }
+.header-right { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.hbadge {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11px; color: white; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: background 0.2s; white-space: nowrap;
+}
+.hbadge:hover { background: rgba(255,255,255,0.3); }
+.dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot-green { background: #66FF66; animation: pulse 2s infinite; }
+.dot-orange { background: var(--gold); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── HEADER ── */
-  .header {
-    background: linear-gradient(135deg, var(--saffron-dark) 0%, var(--saffron) 50%, var(--gold) 100%);
-    padding: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  }
-  .header-inner {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 24px;
-  }
-  .logo-circle {
-    width: 52px; height: 52px;
-    background: var(--navy);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700; font-size: 18px;
-    color: var(--saffron);
-    flex-shrink: 0;
-    border: 3px solid var(--white);
-  }
-  .header-text h1 {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 22px; font-weight: 700;
-    color: var(--white);
-    letter-spacing: 1px;
-    line-height: 1.1;
-  }
-  .header-text p {
-    font-size: 12px; color: rgba(255,255,255,0.85);
-    letter-spacing: 0.5px;
-  }
-  .sync-badge {
-    margin-left: auto;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    color: white;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #66FF66; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+/* ── NAV ── */
+.nav-tabs {
+  display: flex; background: var(--navy-mid);
+  border-bottom: 3px solid var(--saffron); overflow-x: auto;
+}
+.nav-tab {
+  padding: 13px 22px; cursor: pointer;
+  font-family: 'Rajdhani'; font-weight: 600; font-size: 14px;
+  color: var(--gray-400); white-space: nowrap;
+  border-bottom: 3px solid transparent; margin-bottom: -3px;
+  transition: all 0.2s;
+}
+.nav-tab:hover { color: var(--saffron-light); }
+.nav-tab.active { color: var(--saffron); border-bottom-color: var(--saffron); }
 
-  /* ── NAV TABS ── */
-  .nav-tabs {
-    display: flex;
-    background: var(--navy-mid);
-    border-bottom: 3px solid var(--saffron);
-    overflow-x: auto;
-  }
-  .nav-tab {
-    padding: 14px 24px;
-    cursor: pointer;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600; font-size: 15px;
-    color: var(--gray-400);
-    white-space: nowrap;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -3px;
-    transition: all 0.2s;
-  }
-  .nav-tab:hover { color: var(--saffron-light); }
-  .nav-tab.active { color: var(--saffron); border-bottom-color: var(--saffron); }
+/* ── MAIN ── */
+.main { background: var(--cream); min-height: calc(100vh - 108px); }
+.section { display: none; padding: 20px; }
+.section.active { display: block; }
 
-  /* ── MAIN ── */
-  .main { background: var(--cream); min-height: calc(100vh - 120px); }
-  .section { display: none; padding: 24px; }
-  .section.active { display: block; }
+/* ── CARDS ── */
+.card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; margin-bottom: 18px; }
+.card-header {
+  background: var(--navy); color: white;
+  padding: 13px 18px;
+  font-family: 'Rajdhani'; font-size: 16px; font-weight: 700;
+  letter-spacing: 0.3px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-header .accent { color: var(--saffron); }
+.card-body { padding: 18px; }
 
-  /* ── CARDS & PANELS ── */
-  .card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-  .card-header {
-    background: var(--navy);
-    color: white;
-    padding: 14px 20px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 17px; font-weight: 700;
-    letter-spacing: 0.5px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .card-header .accent { color: var(--saffron); }
-  .card-body { padding: 20px; }
+/* ── FORMS ── */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 13px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 11px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
+.form-group input, .form-group select, .form-group textarea {
+  border: 2px solid var(--gray-200); border-radius: 8px;
+  padding: 9px 12px; font-family: 'Barlow'; font-size: 14px;
+  color: var(--text); transition: border-color 0.2s; background: white;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--saffron); }
+.form-group textarea { resize: vertical; min-height: 68px; }
 
-  /* ── FORM ELEMENTS ── */
-  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group label { font-size: 12px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
-  .form-group input, .form-group select, .form-group textarea {
-    border: 2px solid var(--gray-200);
-    border-radius: 8px;
-    padding: 9px 12px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    transition: border-color 0.2s;
-    background: white;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    outline: none; border-color: var(--saffron);
-  }
-  .form-group textarea { resize: vertical; min-height: 70px; }
+/* ── BUTTONS ── */
+.btn {
+  padding: 9px 16px; border: none; border-radius: 8px;
+  font-family: 'Rajdhani'; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.btn-primary { background: var(--saffron); color: white; }
+.btn-primary:hover { background: var(--saffron-dark); }
+.btn-secondary { background: var(--navy); color: white; }
+.btn-secondary:hover { background: var(--navy-light); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-outline { background: transparent; color: var(--saffron); border: 2px solid var(--saffron); }
+.btn-outline:hover { background: var(--saffron); color: white; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-print { background: var(--navy); color: white; }
+.btn-print:hover { background: var(--saffron); }
 
-  /* ── BUTTONS ── */
-  .btn {
-    padding: 9px 18px;
-    border: none; border-radius: 8px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn-primary { background: var(--saffron); color: white; }
-  .btn-primary:hover { background: var(--saffron-dark); }
-  .btn-secondary { background: var(--navy); color: white; }
-  .btn-secondary:hover { background: var(--navy-light); }
-  .btn-success { background: var(--success); color: white; }
-  .btn-danger { background: var(--danger); color: white; }
-  .btn-outline { background: transparent; color: var(--saffron); border: 2px solid var(--saffron); }
-  .btn-outline:hover { background: var(--saffron); color: white; }
-  .btn-sm { padding: 5px 11px; font-size: 12px; }
-  .btn-print { background: var(--navy); color: white; }
-  .btn-print:hover { background: var(--saffron); }
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--navy); color: white; padding: 9px 11px; text-align: left; font-family: 'Rajdhani'; font-weight: 600; font-size: 12px; letter-spacing: 0.3px; }
+td { padding: 8px 11px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+tr:hover td { background: rgba(255,107,0,0.03); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-high { background: #E8F5E9; color: #2E7D32; }
+.badge-mid  { background: #FFF8E1; color: #F57F17; }
+.badge-low  { background: #FFEBEE; color: #C62828; }
 
-  /* ── TABLE ── */
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th {
-    background: var(--navy);
-    color: white;
-    padding: 10px 12px;
-    text-align: left;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600; font-size: 13px;
-    letter-spacing: 0.3px;
-  }
-  td { padding: 9px 12px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
-  tr:hover td { background: rgba(255,107,0,0.04); }
-  .badge {
-    display: inline-block;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11px; font-weight: 600;
-  }
-  .badge-high { background: #E8F5E9; color: #2E7D32; }
-  .badge-mid  { background: #FFF8E1; color: #F57F17; }
-  .badge-low  { background: #FFEBEE; color: #C62828; }
+/* ── MEMBER SEARCH CHIPS ── */
+.member-search-box { border: 2px solid var(--gray-200); border-radius: 8px; overflow: hidden; }
+.member-search-box input { border: none; padding: 9px 13px; width: 100%; font-family: 'Barlow'; font-size: 14px; }
+.member-search-box input:focus { outline: none; }
+.member-dropdown { border-top: 1px solid var(--gray-200); max-height: 160px; overflow-y: auto; display: none; }
+.member-dropdown.open { display: block; }
+.member-dropdown-item { padding: 7px 13px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
+.member-dropdown-item:hover { background: rgba(255,107,0,0.07); }
+.selected-members { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.member-chip { background: var(--navy); color: white; padding: 3px 9px 3px 11px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+.member-chip .remove { cursor: pointer; color: var(--saffron); font-weight: bold; font-size: 13px; }
 
-  /* ── MEMBER SEARCH (for meetings/events) ── */
-  .member-search-box {
-    border: 2px solid var(--gray-200); border-radius: 8px;
-    overflow: hidden;
-  }
-  .member-search-box input {
-    border: none; padding: 10px 14px;
-    width: 100%; font-family: 'Barlow'; font-size: 14px;
-  }
-  .member-search-box input:focus { outline: none; }
-  .member-dropdown {
-    border-top: 1px solid var(--gray-200);
-    max-height: 180px; overflow-y: auto;
-    display: none;
-  }
-  .member-dropdown.open { display: block; }
-  .member-dropdown-item {
-    padding: 8px 14px; cursor: pointer; font-size: 13px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .member-dropdown-item:hover { background: rgba(255,107,0,0.08); }
-  .selected-members { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-  .member-chip {
-    background: var(--navy);
-    color: white;
-    padding: 4px 10px 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .member-chip .remove { cursor: pointer; color: var(--saffron); font-weight: bold; font-size: 14px; }
+/* ── ACTIVITY BAR ── */
+.activity-bar { display: flex; align-items: center; gap: 7px; }
+.bar-track { flex: 1; height: 6px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; background: var(--saffron); }
+.bar-label { font-size: 11px; font-weight: 600; color: var(--gray-600); width: 28px; text-align: right; }
 
-  /* ── ACTIVITY LOG LIST ── */
-  .log-list { list-style: none; }
-  .log-item {
-    padding: 12px 16px;
-    border-left: 4px solid var(--saffron);
-    background: white;
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-    display: flex; justify-content: space-between; align-items: flex-start;
-    gap: 10px;
-  }
-  .log-item.event-item { border-color: var(--navy); }
-  .log-title { font-weight: 600; font-size: 14px; color: var(--navy); }
-  .log-meta { font-size: 12px; color: var(--gray-400); margin-top: 3px; }
-  .log-actions { display: flex; gap: 6px; flex-shrink: 0; }
+/* ── STATS ── */
+.stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.stat-card { flex: 1; min-width: 110px; background: white; border-radius: 10px; padding: 13px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid var(--saffron); }
+.stat-card.navy { border-color: var(--navy); }
+.stat-card.gold { border-color: var(--gold); }
+.stat-card.green { border-color: var(--success); }
+.stat-number { font-family: 'Rajdhani'; font-size: 30px; font-weight: 700; color: var(--navy); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
 
-  /* ── STATS BAR ── */
-  .stats-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
-  .stat-card {
-    flex: 1; min-width: 120px;
-    background: white;
-    border-radius: 10px;
-    padding: 14px 18px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border-top: 4px solid var(--saffron);
-  }
-  .stat-card.navy { border-color: var(--navy); }
-  .stat-card.gold { border-color: var(--gold); }
-  .stat-number { font-family: 'Rajdhani'; font-size: 32px; font-weight: 700; color: var(--navy); line-height: 1; }
-  .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+/* ── OTHER ATTENDEES ── */
+.other-list { list-style: none; }
+.other-list li { display: flex; align-items: center; justify-content: space-between; padding: 5px 9px; border: 1px solid var(--gray-200); border-radius: 6px; margin-bottom: 5px; font-size: 13px; }
+.other-list li .rm { cursor: pointer; color: var(--danger); font-size: 15px; }
 
-  /* ── ACTIVITY BAR ── */
-  .activity-bar { display: flex; align-items: center; gap: 8px; }
-  .bar-track { flex: 1; height: 7px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; background: var(--saffron); transition: width 0.3s; }
-  .bar-label { font-size: 11px; font-weight: 600; color: var(--gray-600); width: 30px; text-align: right; }
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; display: none; align-items: flex-start; justify-content: center; padding: 28px 16px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: white; border-radius: 14px; width: 100%; max-width: 680px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+.modal-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); color: white; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; font-family: 'Rajdhani'; font-size: 18px; font-weight: 700; }
+.modal-header .close { cursor: pointer; font-size: 20px; color: var(--saffron); }
+.modal-body { padding: 22px; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--gray-200); display: flex; gap: 9px; justify-content: flex-end; }
 
-  /* ── MODAL ── */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 200;
-    display: flex; align-items: flex-start; justify-content: center;
-    padding: 30px 16px;
-    overflow-y: auto;
-    display: none;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: white;
-    border-radius: 14px;
-    width: 100%; max-width: 700px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    overflow: hidden;
-  }
-  .modal-header {
-    background: linear-gradient(135deg, var(--navy), var(--navy-light));
-    color: white;
-    padding: 18px 24px;
-    display: flex; align-items: center; justify-content: space-between;
-    font-family: 'Rajdhani'; font-size: 19px; font-weight: 700;
-  }
-  .modal-header .close { cursor: pointer; font-size: 22px; color: var(--saffron); }
-  .modal-body { padding: 24px; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; justify-content: flex-end; }
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 36px 20px; color: var(--gray-400); font-size: 14px; }
+.empty-state .icon { font-size: 36px; margin-bottom: 8px; }
 
-  /* ── PRINT ── */
-  @media print {
-    body { background: white; }
-    .header, .nav-tabs, .no-print { display: none !important; }
-    .print-section { display: block !important; }
-    .print-header {
-      text-align: center;
-      border-bottom: 3px solid #FF6B00;
-      padding-bottom: 14px;
-      margin-bottom: 20px;
-    }
-    .print-header h1 { font-family: 'Rajdhani', sans-serif; font-size: 26px; color: #0D1B3E; }
-    .print-header p { font-size: 13px; color: #555; }
-    .main { background: white; }
-    .section.active { padding: 0; }
-    table { font-size: 12px; }
-    th { background: #0D1B3E !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  }
+/* ── SEARCH ── */
+.search-input { border: 2px solid var(--gray-200); border-radius: 8px; padding: 9px 13px; width: 100%; max-width: 280px; font-family: 'Barlow'; font-size: 14px; margin-bottom: 14px; }
+.search-input:focus { outline: none; border-color: var(--saffron); }
 
-  .print-preview {
-    display: none;
-    background: white;
-    border: 2px solid var(--gray-200);
-    border-radius: 12px;
-    padding: 30px;
-    margin-top: 20px;
-  }
-  .print-preview.show { display: block; }
-  .print-preview h2 { font-family: 'Rajdhani'; color: var(--navy); font-size: 22px; }
-  .print-divider { border: none; border-top: 2px solid var(--saffron); margin: 14px 0; }
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--navy); color: white; padding: 11px 18px; border-radius: 8px; font-size: 13px; font-family: 'Rajdhani'; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 7px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast .ti { color: var(--saffron); font-size: 16px; }
 
-  /* ── TOAST ── */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    background: var(--navy);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: 'Rajdhani'; font-weight: 600;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    z-index: 999;
-    transform: translateY(80px); opacity: 0;
-    transition: all 0.3s;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast .ti { color: var(--saffron); font-size: 18px; }
+/* ── LOADING ── */
+.loading-overlay { position: fixed; inset: 0; background: rgba(13,27,62,0.7); z-index: 500; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
+.loading-overlay.show { display: flex; }
+.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--saffron); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: white; font-family: 'Rajdhani'; font-size: 16px; }
 
-  /* search input */
-  .search-input {
-    border: 2px solid var(--gray-200); border-radius: 8px;
-    padding: 9px 14px; width: 100%; max-width: 300px;
-    font-family: 'Barlow'; font-size: 14px;
-    margin-bottom: 16px;
-  }
-  .search-input:focus { outline: none; border-color: var(--saffron); }
+/* ── CHANGE PASSWORD ── */
+.pwd-section { background: var(--gray-100); border-radius: 10px; padding: 14px; margin-bottom: 14px; border-left: 4px solid var(--saffron); }
+.pwd-section.blue { border-color: #1565C0; }
+.pwd-section.green { border-color: var(--success); }
+.pwd-section-title { font-family: 'Rajdhani'; font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(--navy); }
 
-  /* other-attendees editable list */
-  .other-list { list-style: none; }
-  .other-list li {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 6px 10px;
-    border: 1px solid var(--gray-200);
-    border-radius: 6px;
-    margin-bottom: 6px;
-    font-size: 13px;
-  }
-  .other-list li .name { font-weight: 500; }
-  .other-list li .rm { cursor: pointer; color: var(--danger); font-size: 16px; line-height: 1; }
+/* ── INVITATION CARD ── */
+.inv-card {
+  background: white;
+  border: 1px solid #ddd;
+  font-family: 'Barlow', sans-serif;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.inv-header-band {
+  background: linear-gradient(135deg, #0D1B3E 0%, #1E3060 100%);
+  padding: 28px 32px 20px;
+  text-align: center;
+  position: relative;
+}
+.inv-header-band::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FF6B00, #FFB800, #FF6B00);
+}
+.inv-org-logo {
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg,#FF6B00,#FF8C35);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 20px;
+  color: white;
+  box-shadow: 0 4px 14px rgba(255,107,0,0.4);
+}
+.inv-org-name {
+  font-family: 'Rajdhani'; font-size: 20px; font-weight: 700;
+  color: white; letter-spacing: 1px;
+}
+.inv-org-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.inv-type-badge {
+  display: inline-block;
+  background: rgba(255,107,0,0.2);
+  border: 1px solid rgba(255,107,0,0.5);
+  color: #FF8C35;
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-top: 10px;
+}
+.inv-body { padding: 28px 32px; }
+.inv-salutation {
+  font-size: 15px; color: #333;
+  margin-bottom: 16px; line-height: 1.6;
+}
+.inv-title-line {
+  font-family: 'Rajdhani'; font-size: 22px; font-weight: 700;
+  color: #0D1B3E;
+  border-bottom: 2px solid #FF6B00;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+.inv-details-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
+}
+.inv-detail-box {
+  background: #F8F9FF;
+  border-radius: 8px; padding: 12px 14px;
+  border-left: 3px solid #FF6B00;
+}
+.inv-detail-box.wide { grid-column: span 2; }
+.inv-detail-label { font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.8px; }
+.inv-detail-value { font-size: 15px; font-weight: 600; color: #1A1A2E; margin-top: 3px; }
+.inv-agenda-box {
+  background: #FFF8F0;
+  border: 1px solid #FFD9B0;
+  border-radius: 8px; padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.inv-agenda-box h4 {
+  font-family: 'Rajdhani'; font-size: 14px; font-weight: 700;
+  color: #CC5500; text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.inv-agenda-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 5px 0; border-bottom: 1px dashed #FFD9B0; font-size: 13px; color: #333;
+}
+.inv-agenda-item:last-child { border-bottom: none; }
+.inv-agenda-num {
+  background: #FF6B00; color: white;
+  border-radius: 50%; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.inv-invited-box {
+  background: #F0F4FF; border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 20px;
+}
+.inv-invited-box h4 {
+  font-family: 'Rajdhani'; font-size: 13px; font-weight: 700;
+  color: #0D1B3E; text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.inv-note-box {
+  background: #FFFDE7; border: 1px solid #FFE082;
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 20px;
+  font-size: 13px; color: #5D4037;
+}
+.inv-note-box strong { color: #E65100; }
+.inv-footer-sig {
+  display: flex; justify-content: flex-end; margin-top: 28px;
+  padding-top: 16px; border-top: 1px solid #eee;
+}
+.inv-sig-block { text-align: center; min-width: 160px; }
+.inv-sig-line { border-top: 1px solid #aaa; padding-top: 6px; margin-top: 40px; font-size: 12px; color: #555; }
+.inv-sig-name { font-weight: 700; font-size: 14px; color: #1A1A2E; }
+.inv-sig-desg { font-size: 12px; color: #777; }
+.inv-bottom-band {
+  background: linear-gradient(90deg, #FF6B00, #FFB800);
+  height: 6px;
+}
 
-  .empty-state {
-    text-align: center; padding: 40px 20px;
-    color: var(--gray-400); font-size: 14px;
-  }
-  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+/* ── PRINT ── */
+@media print {
+  .header, .nav-tabs, .no-print, .toast, .modal-overlay { display: none !important; }
+  .main { background: white; }
+  .section.active { padding: 0; }
+}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-inner">
-    <div class="logo-circle">ABVP</div>
-    <div class="header-text">
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-pattern"></div>
+  <div class="login-card">
+    <div class="login-top">
+      <div class="login-emblem">ABVP</div>
       <h1>Akhil Bharatiya Vidyarthi Parishad</h1>
-      <p>Organisation Member & Activity Manager</p>
+      <p>Organisation Management System</p>
     </div>
-    <div class="sync-badge">
-      <span class="sync-dot"></span> Shared Storage Active
+    <div class="login-body">
+      <div class="firebase-notice" id="firebase-notice">
+        <strong>⚙️ Firebase Setup Required</strong><br><br>
+        Open this file in a text editor and replace the Firebase config at the top of the script section with your own Firebase project credentials.<br><br>
+        See the <code>FIREBASE_CONFIG</code> section in the code.
+      </div>
+      <div class="lf">
+        <label>Select Role</label>
+        <select id="login-role">
+          <option value="">— Select —</option>
+          <option value="admin">Admin</option>
+          <option value="member">Member</option>
+          <option value="viewer">Viewer</option>
+        </select>
+      </div>
+      <div class="lf">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()">Login →</button>
+      <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
     </div>
   </div>
 </div>
 
-<!-- NAV -->
-<div class="nav-tabs">
-  <div class="nav-tab active" onclick="showSection('members')">👥 Master List</div>
-  <div class="nav-tab" onclick="showSection('meetings')">📋 Meetings</div>
-  <div class="nav-tab" onclick="showSection('events')">🎯 Events</div>
-</div>
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="main-app" style="display:none">
 
-<!-- MAIN -->
-<div class="main">
-
-  <!-- ══════════════════════════════ MEMBERS ══════════════════════════════ -->
-  <div class="section active" id="section-members">
-
-    <!-- Stats -->
-    <div class="stats-row" id="member-stats"></div>
-
-    <!-- Add Member -->
-    <div class="card no-print">
-      <div class="card-header">
-        <span>Add <span class="accent">New Member</span></span>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo-circle">ABVP</div>
+      <div class="header-text">
+        <h1>Akhil Bharatiya Vidyarthi Parishad</h1>
+        <p>Organisation Member & Activity Manager</p>
       </div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" id="m-name" placeholder="e.g. Rahul Sharma">
-          </div>
-          <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" id="m-phone" placeholder="10-digit number">
-          </div>
-          <div class="form-group" style="grid-column: span 2">
-            <label>Address</label>
-            <input type="text" id="m-address" placeholder="Full address">
-          </div>
-          <div class="form-group">
-            <label>Duty / Role</label>
-            <input type="text" id="m-duty" placeholder="e.g. Secretary, Volunteer">
-          </div>
-          <div class="form-group">
-            <label>Year of Joining</label>
-            <input type="number" id="m-year" placeholder="e.g. 2022" min="1980" max="2100">
-          </div>
+      <div class="header-right">
+        <div class="hbadge" id="sync-badge">
+          <span class="dot dot-green"></span>
+          <span id="sync-label">Live</span>
         </div>
-        <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="addMember()">➕ Add Member</button>
-          <button class="btn btn-print" onclick="printMasterList()">🖨️ Print Master List</button>
+        <div class="hbadge admin-only" id="chpwd-btn" onclick="openModal('chpwd-modal')" style="display:none">
+          🔑 Passwords
         </div>
-      </div>
-    </div>
-
-    <!-- Search -->
-    <input class="search-input no-print" id="member-search" placeholder="🔍 Search members..." oninput="renderMembers()">
-
-    <!-- Member Table -->
-    <div class="card">
-      <div class="card-header">
-        <span>Member <span class="accent">Directory</span></span>
-        <span id="member-count" style="font-size:13px; color:var(--saffron-light)"></span>
-      </div>
-      <div class="card-body" style="padding:0">
-        <div class="table-wrap">
-          <table id="member-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Duty</th>
-                <th>Joined</th>
-                <th>Meetings</th>
-                <th>Events</th>
-                <th>Activity</th>
-                <th class="no-print">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="member-tbody"></tbody>
-          </table>
+        <div class="hbadge" onclick="logoutUser()">
+          <span class="dot dot-orange"></span>
+          <span id="role-label">—</span> · Logout
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════ MEETINGS ══════════════════════════════ -->
-  <div class="section" id="section-meetings">
+  <!-- NAV -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('members',event)">👥 Master List</div>
+    <div class="nav-tab" onclick="showSection('meetings',event)">📋 Meetings</div>
+    <div class="nav-tab" onclick="showSection('events',event)">🎯 Events</div>
+    <div class="nav-tab no-viewer" onclick="showSection('invitations',event)">✉️ Invitations</div>
+  </div>
 
-    <div class="card no-print">
-      <div class="card-header">
-        <span>Create <span class="accent">New Meeting</span></span>
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ══ MEMBERS ══ -->
+    <div class="section active" id="section-members">
+      <div class="stats-row" id="member-stats"></div>
+
+      <div class="card no-print no-viewer no-member">
+        <div class="card-header"><span>Add <span class="accent">New Member</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="m-name" placeholder="e.g. Rahul Sharma"></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="m-phone" placeholder="10-digit number"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Address</label><input type="text" id="m-address" placeholder="Full address"></div>
+            <div class="form-group"><label>Duty / Role</label><input type="text" id="m-duty" placeholder="e.g. Secretary"></div>
+            <div class="form-group"><label>Year of Joining</label><input type="number" id="m-year" placeholder="e.g. 2022" min="1980" max="2100"></div>
+          </div>
+          <div style="margin-top:13px;display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="addMember()">➕ Add Member</button>
+            <button class="btn btn-print" onclick="printMasterList()">🖨️ Print Master List</button>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Meeting Date *</label>
-            <input type="date" id="mt-date">
-          </div>
-          <div class="form-group">
-            <label>Next Meeting Date</label>
-            <input type="date" id="mt-next-date">
-          </div>
-          <div class="form-group" style="grid-column: span 2">
-            <label>Agenda</label>
-            <textarea id="mt-agenda" placeholder="List agenda items, one per line..."></textarea>
-          </div>
-          <div class="form-group">
-            <label>Presided By *</label>
-            <input type="text" id="mt-presided" placeholder="Name of chairperson">
-          </div>
-          <div class="form-group" style="grid-column: span 2">
-            <label>Motions / Resolutions Passed</label>
-            <textarea id="mt-motions" placeholder="List motions passed..."></textarea>
-          </div>
-        </div>
 
-        <!-- Invite from list -->
-        <div style="margin-top:16px">
-          <label class="form-group" style="margin-bottom:6px">
-            <span style="font-size:12px; font-weight:600; color:var(--gray-600); text-transform:uppercase; letter-spacing:.5px">Invite Members from List</span>
-          </label>
-          <div class="member-search-box">
-            <input type="text" id="mt-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('mt')" onfocus="openDropdown('mt')" onblur="setTimeout(()=>closeDropdown('mt'),200)">
-            <div class="member-dropdown" id="mt-member-dropdown"></div>
-          </div>
-          <div class="selected-members" id="mt-selected-members"></div>
-        </div>
+      <input class="search-input no-print" id="member-search" placeholder="🔍 Search members..." oninput="renderMembers()">
 
-        <!-- Other attendees -->
-        <div style="margin-top:16px">
-          <label style="font-size:12px; font-weight:600; color:var(--gray-600); text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:8px">Other Attendees (Not in List)</label>
-          <div style="display:flex; gap:8px; margin-bottom:8px">
-            <input type="text" id="mt-other-name" placeholder="Name" style="flex:1; border:2px solid var(--gray-200); border-radius:8px; padding:8px 12px; font-family:Barlow; font-size:14px">
-            <input type="text" id="mt-other-role" placeholder="Role (optional)" style="flex:1; border:2px solid var(--gray-200); border-radius:8px; padding:8px 12px; font-family:Barlow; font-size:14px">
-            <button class="btn btn-outline" onclick="addOtherMT()">+ Add</button>
-          </div>
-          <ul class="other-list" id="mt-other-list"></ul>
+      <div class="card">
+        <div class="card-header">
+          <span>Member <span class="accent">Directory</span></span>
+          <span id="member-count" style="font-size:12px;color:var(--saffron-light)"></span>
         </div>
-
-        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="saveMeeting()">💾 Save Meeting</button>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Name</th><th>Phone</th><th>Duty</th><th>Joined</th>
+                  <th>Meetings</th><th>Events</th><th>Activity</th>
+                  <th class="no-print">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="member-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- List of Meetings -->
-    <div id="meetings-list"></div>
-  </div>
-
-  <!-- ══════════════════════════════ EVENTS ══════════════════════════════ -->
-  <div class="section" id="section-events">
-
-    <div class="card no-print">
-      <div class="card-header">
-        <span>Create <span class="accent">New Event</span></span>
-      </div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Event Name *</label>
-            <input type="text" id="ev-name" placeholder="e.g. Annual Meet 2025">
+    <!-- ══ MEETINGS ══ -->
+    <div class="section" id="section-meetings">
+      <div class="card no-print no-viewer no-member">
+        <div class="card-header"><span>Create <span class="accent">New Meeting</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Meeting Date *</label><input type="date" id="mt-date"></div>
+            <div class="form-group"><label>Next Meeting Date</label><input type="date" id="mt-next-date"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Agenda</label><textarea id="mt-agenda" placeholder="List agenda items..."></textarea></div>
+            <div class="form-group"><label>Presided By *</label><input type="text" id="mt-presided" placeholder="Name of chairperson"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Motions / Resolutions Passed</label><textarea id="mt-motions" placeholder="List motions passed..."></textarea></div>
           </div>
-          <div class="form-group">
-            <label>Event Date *</label>
-            <input type="date" id="ev-date">
+          <div style="margin-top:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Invite Members from List</label>
+            <div class="member-search-box">
+              <input type="text" id="mt-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('mt')" onfocus="openDropdown('mt')" onblur="setTimeout(()=>closeDropdown('mt'),200)">
+              <div class="member-dropdown" id="mt-member-dropdown"></div>
+            </div>
+            <div class="selected-members" id="mt-selected-members"></div>
           </div>
-          <div class="form-group">
-            <label>Presided By *</label>
-            <input type="text" id="ev-presided" placeholder="Name of presiding officer">
+          <div style="margin-top:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Other Attendees (Not in List)</label>
+            <div style="display:flex;gap:7px;margin-bottom:7px">
+              <input type="text" id="mt-other-name" placeholder="Name" style="flex:1;border:2px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-family:Barlow;font-size:14px">
+              <input type="text" id="mt-other-role" placeholder="Role (optional)" style="flex:1;border:2px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-family:Barlow;font-size:14px">
+              <button class="btn btn-outline" onclick="addOtherMT()">+ Add</button>
+            </div>
+            <ul class="other-list" id="mt-other-list"></ul>
           </div>
-          <div class="form-group" style="grid-column: span 2">
-            <label>Agenda / Description</label>
-            <textarea id="ev-agenda" placeholder="Describe the event agenda..."></textarea>
+          <div style="margin-top:14px">
+            <button class="btn btn-primary" onclick="saveMeeting()">💾 Save Meeting</button>
           </div>
-        </div>
-
-        <!-- Mark attendance from master list -->
-        <div style="margin-top:16px">
-          <label style="font-size:12px; font-weight:600; color:var(--gray-600); text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:8px">Mark Attendance from Master List</label>
-          <div class="member-search-box">
-            <input type="text" id="ev-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('ev')" onfocus="openDropdown('ev')" onblur="setTimeout(()=>closeDropdown('ev'),200)">
-            <div class="member-dropdown" id="ev-member-dropdown"></div>
-          </div>
-          <div class="selected-members" id="ev-selected-members"></div>
-        </div>
-
-        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="saveEvent()">💾 Save Event</button>
         </div>
       </div>
+      <div id="meetings-list"></div>
     </div>
 
-    <!-- List of Events -->
-    <div id="events-list"></div>
-  </div>
-</div>
+    <!-- ══ EVENTS ══ -->
+    <div class="section" id="section-events">
+      <div class="card no-print no-viewer no-member">
+        <div class="card-header"><span>Create <span class="accent">New Event</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Annual Meet 2025"></div>
+            <div class="form-group"><label>Event Date *</label><input type="date" id="ev-date"></div>
+            <div class="form-group"><label>Presided By *</label><input type="text" id="ev-presided" placeholder="Presiding officer name"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Agenda / Description</label><textarea id="ev-agenda" placeholder="Describe the event agenda..."></textarea></div>
+          </div>
+          <div style="margin-top:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Mark Attendance from Master List</label>
+            <div class="member-search-box">
+              <input type="text" id="ev-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('ev')" onfocus="openDropdown('ev')" onblur="setTimeout(()=>closeDropdown('ev'),200)">
+              <div class="member-dropdown" id="ev-member-dropdown"></div>
+            </div>
+            <div class="selected-members" id="ev-selected-members"></div>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-primary" onclick="saveEvent()">💾 Save Event</button>
+          </div>
+        </div>
+      </div>
+      <div id="events-list"></div>
+    </div>
 
-<!-- ══════════ EDIT MEMBER MODAL ══════════ -->
+    <!-- ══ INVITATIONS ══ -->
+    <div class="section" id="section-invitations">
+
+      <div class="card no-print">
+        <div class="card-header"><span>Create <span class="accent">Invitation</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Invitation Type *</label>
+              <select id="inv-type">
+                <option value="">— Select —</option>
+                <option value="meeting">Meeting</option>
+                <option value="event">Event</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Title / Subject *</label>
+              <input type="text" id="inv-title" placeholder="e.g. Monthly Meeting, Annual Fest">
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="inv-date">
+            </div>
+            <div class="form-group">
+              <label>Time *</label>
+              <input type="time" id="inv-time">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Venue / Place *</label>
+              <input type="text" id="inv-venue" placeholder="e.g. ABVP Office, Room No. 101, College Name">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Agenda / Purpose</label>
+              <textarea id="inv-agenda" placeholder="List agenda points, one per line..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Invited By (Name)</label>
+              <input type="text" id="inv-by" placeholder="Name of inviting officer">
+            </div>
+            <div class="form-group">
+              <label>Designation</label>
+              <input type="text" id="inv-designation" placeholder="e.g. President, Secretary">
+            </div>
+            <div class="form-group">
+              <label>Organisation Unit</label>
+              <input type="text" id="inv-unit" placeholder="e.g. ABVP – College Unit Name">
+            </div>
+            <div class="form-group">
+              <label>Contact / Phone</label>
+              <input type="tel" id="inv-contact" placeholder="Contact number">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Special Note (optional)</label>
+              <input type="text" id="inv-note" placeholder="e.g. Attendance is compulsory. Please be on time.">
+            </div>
+          </div>
+
+          <!-- Invite from member list -->
+          <div style="margin-top:16px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Invite Members from Master List (optional)</label>
+            <div class="member-search-box">
+              <input type="text" id="inv-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('inv')" onfocus="openDropdown('inv')" onblur="setTimeout(()=>closeDropdown('inv'),200)">
+              <div class="member-dropdown" id="inv-member-dropdown"></div>
+            </div>
+            <div class="selected-members" id="inv-selected-members"></div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="previewInvitation()">👁️ Preview Invitation</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Invitations List -->
+      <div id="invitations-list"></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /main-app -->
+
+<!-- ══ EDIT MEMBER MODAL ══ -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
-    <div class="modal-header">
-      Edit Member <span class="close" onclick="closeModal('edit-modal')">✕</span>
-    </div>
+    <div class="modal-header">Edit Member <span class="close" onclick="closeModal('edit-modal')">✕</span></div>
     <div class="modal-body">
       <input type="hidden" id="edit-id">
       <div class="form-grid">
@@ -605,13 +743,11 @@
   </div>
 </div>
 
-<!-- ══════════ MEETING PRINT PREVIEW ══════════ -->
+<!-- ══ MEETING PRINT MODAL ══ -->
 <div class="modal-overlay" id="meeting-print-modal">
   <div class="modal" style="max-width:800px">
-    <div class="modal-header">
-      Meeting Print Preview <span class="close" onclick="closeModal('meeting-print-modal')">✕</span>
-    </div>
-    <div class="modal-body" id="meeting-print-content" style="font-family:'Barlow'"></div>
+    <div class="modal-header">Meeting Print Preview <span class="close" onclick="closeModal('meeting-print-modal')">✕</span></div>
+    <div class="modal-body" id="meeting-print-content"></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('meeting-print-modal')">Close</button>
       <button class="btn btn-print" onclick="printContent('meeting-print-content')">🖨️ Print</button>
@@ -619,13 +755,11 @@
   </div>
 </div>
 
-<!-- ══════════ EVENT PRINT PREVIEW ══════════ -->
+<!-- ══ EVENT PRINT MODAL ══ -->
 <div class="modal-overlay" id="event-print-modal">
   <div class="modal" style="max-width:800px">
-    <div class="modal-header">
-      Event Print Preview <span class="close" onclick="closeModal('event-print-modal')">✕</span>
-    </div>
-    <div class="modal-body" id="event-print-content" style="font-family:'Barlow'"></div>
+    <div class="modal-header">Event Print Preview <span class="close" onclick="closeModal('event-print-modal')">✕</span></div>
+    <div class="modal-body" id="event-print-content"></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('event-print-modal')">Close</button>
       <button class="btn btn-print" onclick="printContent('event-print-content')">🖨️ Print</button>
@@ -633,13 +767,11 @@
   </div>
 </div>
 
-<!-- ══════════ MASTER LIST PRINT PREVIEW ══════════ -->
+<!-- ══ MASTER LIST PRINT MODAL ══ -->
 <div class="modal-overlay" id="masterlist-print-modal">
   <div class="modal" style="max-width:900px">
-    <div class="modal-header">
-      Master List Print Preview <span class="close" onclick="closeModal('masterlist-print-modal')">✕</span>
-    </div>
-    <div class="modal-body" id="masterlist-print-content" style="font-family:'Barlow'"></div>
+    <div class="modal-header">Master List Print Preview <span class="close" onclick="closeModal('masterlist-print-modal')">✕</span></div>
+    <div class="modal-body" id="masterlist-print-content"></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('masterlist-print-modal')">Close</button>
       <button class="btn btn-print" onclick="printContent('masterlist-print-content')">🖨️ Print</button>
@@ -647,597 +779,587 @@
   </div>
 </div>
 
+<!-- ══ CHANGE PASSWORD MODAL ══ -->
+<div class="modal-overlay" id="chpwd-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">🔑 Change Passwords <span class="close" onclick="closeModal('chpwd-modal')">✕</span></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:16px">Enter your current Admin password to authorise changes. Leave new password blank to keep unchanged.</p>
+      <div class="pwd-section">
+        <div class="pwd-section-title">🔴 Verify — Current Admin Password</div>
+        <div class="form-group"><input type="password" id="cp-admin-current" placeholder="Current admin password"></div>
+      </div>
+      <div class="pwd-section">
+        <div class="pwd-section-title">🔴 New Admin Password</div>
+        <div class="form-group" style="margin-bottom:8px"><input type="password" id="cp-admin-new" placeholder="New password (leave blank to keep)"></div>
+        <div class="form-group"><input type="password" id="cp-admin-confirm" placeholder="Confirm new password"></div>
+      </div>
+      <div class="pwd-section blue">
+        <div class="pwd-section-title">🔵 New Member Password</div>
+        <div class="form-group" style="margin-bottom:8px"><input type="password" id="cp-member-new" placeholder="New password (leave blank to keep)"></div>
+        <div class="form-group"><input type="password" id="cp-member-confirm" placeholder="Confirm new password"></div>
+      </div>
+      <div class="pwd-section green">
+        <div class="pwd-section-title">🟢 New Viewer Password</div>
+        <div class="form-group" style="margin-bottom:8px"><input type="password" id="cp-viewer-new" placeholder="New password (leave blank to keep)"></div>
+        <div class="form-group"><input type="password" id="cp-viewer-confirm" placeholder="Confirm new password"></div>
+      </div>
+      <div id="cp-error" style="display:none;background:#FFEBEE;color:var(--danger);border-radius:8px;padding:10px 13px;font-size:13px;margin-top:10px;border-left:3px solid var(--danger)"></div>
+      <div id="cp-success" style="display:none;background:#E8F5E9;color:var(--success);border-radius:8px;padding:10px 13px;font-size:13px;margin-top:10px;border-left:3px solid var(--success)"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('chpwd-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="changePasswords()">💾 Save Passwords</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INVITATION PREVIEW MODAL ══ -->
+<div class="modal-overlay" id="inv-preview-modal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-header">✉️ Invitation Preview <span class="close" onclick="closeModal('inv-preview-modal')">✕</span></div>
+    <div class="modal-body" id="inv-preview-content" style="padding:0"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('inv-preview-modal')">Close</button>
+      <button class="btn btn-primary" onclick="saveInvitation()">💾 Save Invitation</button>
+      <button class="btn btn-print" onclick="printContent('inv-preview-content')">🖨️ Print / PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Syncing data...</div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"><span class="ti">✓</span><span id="toast-msg"></span></div>
 
-<script>
-// ═══════════════════════════════════════════════════════
-//  DATA LAYER  — uses localStorage for shared-per-browser
-//  For true multi-user sharing, we use a public key on
-//  window.storage (Claude artifact storage API) with
-//  graceful fallback to localStorage.
-// ═══════════════════════════════════════════════════════
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const STORE_KEY = 'abvp_data_v1';
-let data = { members: [], meetings: [], events: [] };
-let mtSelectedIds = [];
-let mtOtherAttendees = [];
-let evSelectedIds = [];
+// ── FIREBASE CONFIG ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w",
+  authDomain: "abvp-gkp.firebaseapp.com",
+  projectId: "abvp-gkp",
+  storageBucket: "abvp-gkp.firebasestorage.app",
+  messagingSenderId: "925614384142",
+  appId: "1:925614384142:web:3ee919103ac065bbefc85f"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
-async function loadData() {
+// ── PASSWORDS ──
+const DEFAULT_PASSWORDS = { admin:'abvp@admin2024', member:'abvp@member2024', viewer:'abvp@viewer2024' };
+let PASSWORDS = { ...DEFAULT_PASSWORDS };
+
+// ── DATA ──
+let data = { members:[], meetings:[], events:[], invitations:[] };
+let currentRole=null, mtSelectedIds=[], mtOtherAttendees=[], evSelectedIds=[], invSelectedIds=[];
+let currentInvPreview=null;
+let unsubscribers=[];
+
+// Firebase helpers
+async function fbSet(col, id, obj) {
+  const clean = JSON.parse(JSON.stringify(obj));
+  await setDoc(doc(db, col, id), clean);
+}
+async function fbDel(col, id) { await deleteDoc(doc(db, col, id)); }
+function saveAll() {} // no-op — Firebase is live
+
+// ── INIT ──
+async function init() {
+  // Load passwords from Firestore
   try {
-    if (window.storage) {
-      const res = await window.storage.get(STORE_KEY, true);
-      if (res && res.value) data = JSON.parse(res.value);
-    }
+    const pwdSnap = await getDoc(doc(db, 'config', 'passwords'));
+    if (pwdSnap.exists()) PASSWORDS = { ...DEFAULT_PASSWORDS, ...pwdSnap.data() };
   } catch(e) {}
-  // fallback / merge from localStorage
-  try {
-    const local = localStorage.getItem(STORE_KEY);
-    if (local) {
-      const parsed = JSON.parse(local);
-      if (!window.storage) data = parsed;
-    }
-  } catch(e) {}
-  render();
+
+  // Check session
+  const saved = sessionStorage.getItem('abvp_role');
+  if (saved && PASSWORDS[saved]) { currentRole = saved; showApp(); }
+
+  // Modal close on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+  });
 }
 
-async function saveData() {
-  const json = JSON.stringify(data);
-  try { if (window.storage) await window.storage.set(STORE_KEY, json, true); } catch(e) {}
-  try { localStorage.setItem(STORE_KEY, json); } catch(e) {}
+// ── REALTIME LISTENERS ──
+function subscribeToData() {
+  showLoading(true);
+  let loaded = { members:false, meetings:false, events:false, invitations:false };
+  function checkLoaded() {
+    if (Object.values(loaded).every(Boolean)) { showLoading(false); render(); }
+  }
+  const u1 = onSnapshot(collection(db,'members'), snap => {
+    data.members = snap.docs.map(d=>({id:d.id,...d.data()}));
+    loaded.members=true; checkLoaded(); renderMembers();
+  });
+  const u2 = onSnapshot(collection(db,'meetings'), snap => {
+    data.meetings = snap.docs.map(d=>({id:d.id,...d.data()}));
+    loaded.meetings=true; checkLoaded(); renderMeetings();
+  });
+  const u3 = onSnapshot(collection(db,'events'), snap => {
+    data.events = snap.docs.map(d=>({id:d.id,...d.data()}));
+    loaded.events=true; checkLoaded(); renderEvents();
+  });
+  const u4 = onSnapshot(collection(db,'invitations'), snap => {
+    data.invitations = snap.docs.map(d=>({id:d.id,...d.data()}));
+    loaded.invitations=true; checkLoaded(); renderInvitations();
+  });
+  unsubscribers = [u1,u2,u3,u4];
 }
 
-// ═══════════════════════════════════════════════════════
-//  NAVIGATION
-// ═══════════════════════════════════════════════════════
-function showSection(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('section-' + name).classList.add('active');
-  event.currentTarget.classList.add('active');
+// ── LOGIN / LOGOUT ──
+function doLogin() {
+  const role=v('login-role'), pass=v('login-password');
+  const err=document.getElementById('login-error');
+  if(!role){err.textContent='Please select a role.';err.classList.add('show');return;}
+  if(!pass){err.textContent='Please enter a password.';err.classList.add('show');return;}
+  if(PASSWORDS[role]!==pass){err.classList.add('show');err.textContent='Incorrect password. Please try again.';return;}
+  err.classList.remove('show');
+  currentRole=role; sessionStorage.setItem('abvp_role',role); showApp();
 }
 
-// ═══════════════════════════════════════════════════════
-//  MEMBERS
-// ═══════════════════════════════════════════════════════
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-
-function addMember() {
-  const name = v('m-name').trim();
-  if (!name) return toast('Name is required', '⚠️');
-  const m = {
-    id: uid(),
-    name,
-    phone: v('m-phone').trim(),
-    address: v('m-address').trim(),
-    duty: v('m-duty').trim(),
-    year: v('m-year').trim(),
-    meetings: 0,
-    events: 0
-  };
-  data.members.push(m);
-  saveData();
-  ['m-name','m-phone','m-address','m-duty','m-year'].forEach(id => document.getElementById(id).value = '');
-  renderMembers();
-  toast('Member added!');
+function showApp() {
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='';
+  document.getElementById('role-label').textContent = currentRole==='admin'?'🔴 Admin':currentRole==='member'?'🔵 Member':'🟢 Viewer';
+  document.getElementById('sync-badge').innerHTML = '<span class="dot dot-green" style="animation:pulse 2s infinite"></span> Live Sync';
+  applyRoleRestrictions();
+  subscribeToData();
 }
 
-function deleteMember(id) {
-  if (!confirm('Delete this member?')) return;
-  data.members = data.members.filter(m => m.id !== id);
-  saveData(); renderMembers();
-  toast('Member deleted', '🗑️');
+function logoutUser() {
+  if(!confirm('Logout?')) return;
+  unsubscribers.forEach(u=>u()); unsubscribers=[];
+  sessionStorage.removeItem('abvp_role'); currentRole=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('login-password').value='';
+  document.getElementById('login-role').value='';
 }
 
+function applyRoleRestrictions() {
+  if(currentRole==='admin'){ document.getElementById('chpwd-btn').style.display='flex'; return; }
+  document.getElementById('chpwd-btn').style.display='none';
+  document.querySelectorAll('.no-viewer,.no-member').forEach(el=>el.style.display='none');
+}
+
+// ── NAV ──
+function showSection(name,e) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  if(e && e.currentTarget) e.currentTarget.classList.add('active');
+}
+
+// ── UTILITIES ──
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function v(id){ return document.getElementById(id)?.value||''; }
+function escQ(s){ return (s||'').replace(/'/g,"\\'"); }
+function formatDate(d){ if(!d) return '—'; try{ return new Date(d).toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}); }catch(e){return d;} }
+function formatTime(t){ if(!t) return '—'; try{ const [h,m]=t.split(':'); const ampm=+h>=12?'PM':'AM'; return `${+h%12||12}:${m} ${ampm}`; }catch(e){return t;} }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function toast(msg,icon='✓'){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=msg; t.querySelector('.ti').textContent=icon; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+function showLoading(show){ document.getElementById('loading').classList.toggle('show',show); }
+
+// ── MEMBERS ──
+async function addMember() {
+  const name=v('m-name').trim(); if(!name) return toast('Name is required','⚠️');
+  const id=uid();
+  const m={ name, phone:v('m-phone').trim(), address:v('m-address').trim(), duty:v('m-duty').trim(), year:v('m-year').trim(), meetings:0, events:0, createdAt:Date.now() };
+  showLoading(true);
+  try { await fbSet('members',id,m); ['m-name','m-phone','m-address','m-duty','m-year'].forEach(i=>document.getElementById(i).value=''); toast('Member added!'); }
+  catch(e){ toast('Error saving','❌'); console.error(e); }
+  showLoading(false);
+}
+async function deleteMember(id) {
+  if(!confirm('Delete this member?')) return;
+  showLoading(true);
+  try { await fbDel('members',id); toast('Member deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
+}
 function openEdit(id) {
-  const m = data.members.find(x => x.id === id);
-  if (!m) return;
-  document.getElementById('edit-id').value = m.id;
-  document.getElementById('edit-name').value = m.name;
-  document.getElementById('edit-phone').value = m.phone || '';
-  document.getElementById('edit-address').value = m.address || '';
-  document.getElementById('edit-duty').value = m.duty || '';
-  document.getElementById('edit-year').value = m.year || '';
+  const m=data.members.find(x=>x.id===id); if(!m) return;
+  ['id','name','phone','address','duty','year'].forEach(f=>{ const el=document.getElementById('edit-'+f); if(el) el.value=m[f]||''; });
   openModal('edit-modal');
 }
-
-function saveEdit() {
-  const id = document.getElementById('edit-id').value;
-  const m = data.members.find(x => x.id === id);
-  if (!m) return;
-  const name = document.getElementById('edit-name').value.trim();
-  if (!name) return toast('Name required', '⚠️');
-  m.name = name;
-  m.phone = document.getElementById('edit-phone').value.trim();
-  m.address = document.getElementById('edit-address').value.trim();
-  m.duty = document.getElementById('edit-duty').value.trim();
-  m.year = document.getElementById('edit-year').value.trim();
-  saveData(); renderMembers();
-  closeModal('edit-modal'); toast('Member updated!');
+async function saveEdit() {
+  const id=document.getElementById('edit-id').value;
+  const m=data.members.find(x=>x.id===id); if(!m) return;
+  const name=document.getElementById('edit-name').value.trim(); if(!name) return toast('Name required','⚠️');
+  const updated={ ...m, name, phone:document.getElementById('edit-phone').value.trim(), address:document.getElementById('edit-address').value.trim(), duty:document.getElementById('edit-duty').value.trim(), year:document.getElementById('edit-year').value.trim() };
+  delete updated.id;
+  showLoading(true);
+  try { await fbSet('members',id,updated); closeModal('edit-modal'); toast('Member updated!'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
 }
-
 function renderMembers() {
-  const q = (document.getElementById('member-search')?.value || '').toLowerCase();
-  const filtered = data.members.filter(m =>
-    m.name.toLowerCase().includes(q) ||
-    (m.duty||'').toLowerCase().includes(q) ||
-    (m.phone||'').includes(q)
-  );
-  const tbody = document.getElementById('member-tbody');
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="icon">👥</div>No members found</div></td></tr>`;
-    document.getElementById('member-count').textContent = '0 members';
-    return;
-  }
-  const total = data.members.reduce((s,m) => s + (m.meetings||0) + (m.events||0), 1);
-  tbody.innerHTML = filtered.map((m, i) => {
-    const score = ((m.meetings||0) + (m.events||0));
-    const pct = Math.min(100, Math.round(score / Math.max(1, Math.max(...data.members.map(x=>(x.meetings||0)+(x.events||0)))) * 100));
-    const badge = pct >= 70 ? 'badge-high' : pct >= 30 ? 'badge-mid' : 'badge-low';
-    const level = pct >= 70 ? 'High' : pct >= 30 ? 'Medium' : 'Low';
+  const q=(v('member-search')||'').toLowerCase();
+  const filtered=data.members.filter(m=>m.name.toLowerCase().includes(q)||(m.duty||'').toLowerCase().includes(q)||(m.phone||'').includes(q));
+  const tbody=document.getElementById('member-tbody');
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="icon">👥</div>No members found</div></td></tr>`; document.getElementById('member-count').textContent=''; renderStats(); return; }
+  const maxScore=Math.max(1,...data.members.map(x=>(x.meetings||0)+(x.events||0)));
+  tbody.innerHTML=filtered.map((m,i)=>{
+    const score=(m.meetings||0)+(m.events||0), pct=Math.min(100,Math.round(score/maxScore*100));
+    const badge=pct>=70?'badge-high':pct>=30?'badge-mid':'badge-low', level=pct>=70?'High':pct>=30?'Medium':'Low';
     return `<tr>
-      <td style="color:var(--gray-400);font-size:12px">${i+1}</td>
+      <td style="color:var(--gray-400);font-size:11px">${i+1}</td>
       <td><strong>${m.name}</strong><br><span style="font-size:11px;color:var(--gray-400)">${m.address||''}</span></td>
-      <td>${m.phone||'—'}</td>
-      <td>${m.duty||'—'}</td>
-      <td>${m.year||'—'}</td>
-      <td style="text-align:center">${m.meetings||0}</td>
-      <td style="text-align:center">${m.events||0}</td>
-      <td style="min-width:120px">
-        <div class="activity-bar">
-          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <span class="bar-label">${pct}%</span>
-        </div>
-        <span class="badge ${badge}" style="margin-top:3px">${level}</span>
-      </td>
-      <td class="no-print">
-        <div style="display:flex;gap:5px">
-          <button class="btn btn-sm btn-outline" onclick="openEdit('${m.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteMember('${m.id}')">🗑️</button>
-        </div>
-      </td>
+      <td>${m.phone||'—'}</td><td>${m.duty||'—'}</td><td>${m.year||'—'}</td>
+      <td style="text-align:center">${m.meetings||0}</td><td style="text-align:center">${m.events||0}</td>
+      <td style="min-width:110px"><div class="activity-bar"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span class="bar-label">${pct}%</span></div><span class="badge ${badge}" style="margin-top:2px">${level}</span></td>
+      <td class="no-print">${currentRole==='admin'?`<div style="display:flex;gap:4px"><button class="btn btn-sm btn-outline" onclick="openEdit('${m.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteMember('${m.id}')">🗑️</button></div>`:'<span style="font-size:11px;color:var(--gray-400)">—</span>'}</td>
     </tr>`;
   }).join('');
-  document.getElementById('member-count').textContent = filtered.length + ' member' + (filtered.length!==1?'s':'');
+  document.getElementById('member-count').textContent=filtered.length+' member'+(filtered.length!==1?'s':'');
   renderStats();
 }
-
 function renderStats() {
-  const total = data.members.length;
-  const active = data.members.filter(m => ((m.meetings||0)+(m.events||0)) > 0).length;
-  const totalMeetings = data.meetings.length;
-  const totalEvents = data.events.length;
-  document.getElementById('member-stats').innerHTML = `
+  const total=data.members.length, active=data.members.filter(m=>((m.meetings||0)+(m.events||0))>0).length;
+  document.getElementById('member-stats').innerHTML=`
     <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Total Members</div></div>
     <div class="stat-card navy"><div class="stat-number">${active}</div><div class="stat-label">Active Members</div></div>
-    <div class="stat-card gold"><div class="stat-number">${totalMeetings}</div><div class="stat-label">Meetings Held</div></div>
-    <div class="stat-card"><div class="stat-number">${totalEvents}</div><div class="stat-label">Events Conducted</div></div>
-  `;
+    <div class="stat-card gold"><div class="stat-number">${data.meetings.length}</div><div class="stat-label">Meetings Held</div></div>
+    <div class="stat-card green"><div class="stat-number">${data.events.length}</div><div class="stat-label">Events Conducted</div></div>`;
 }
 
-// ═══════════════════════════════════════════════════════
-//  MEMBER SEARCH DROPDOWN (for meetings & events)
-// ═══════════════════════════════════════════════════════
+// ── MEMBER DROPDOWN ──
+function getSelectedIds(p){ return p==='mt'?mtSelectedIds:p==='ev'?evSelectedIds:invSelectedIds; }
 function filterMemberDropdown(prefix) {
-  const q = document.getElementById(prefix + '-member-search').value.toLowerCase();
-  const selectedIds = prefix === 'mt' ? mtSelectedIds : evSelectedIds;
-  const matches = data.members.filter(m =>
-    m.name.toLowerCase().includes(q) && !selectedIds.includes(m.id)
-  );
-  const dd = document.getElementById(prefix + '-member-dropdown');
-  dd.innerHTML = matches.map(m =>
-    `<div class="member-dropdown-item" onmousedown="selectMember('${prefix}','${m.id}','${escHTML(m.name)}')">
-      <span>${m.name}</span>
-      <span style="font-size:11px;color:var(--gray-400)">${m.duty||''}</span>
-    </div>`
-  ).join('') || '<div class="member-dropdown-item" style="color:var(--gray-400)">No results</div>';
+  const q=v(prefix+'-member-search').toLowerCase(), sel=getSelectedIds(prefix);
+  const matches=data.members.filter(m=>m.name.toLowerCase().includes(q)&&!sel.includes(m.id));
+  const dd=document.getElementById(prefix+'-member-dropdown');
+  dd.innerHTML=matches.map(m=>`<div class="member-dropdown-item" onmousedown="selectMember('${prefix}','${m.id}','${escQ(m.name)}')"><span>${m.name}</span><span style="font-size:11px;color:var(--gray-400)">${m.duty||''}</span></div>`).join('')||'<div class="member-dropdown-item" style="color:var(--gray-400)">No results</div>';
   dd.classList.add('open');
 }
-
-function openDropdown(prefix) { filterMemberDropdown(prefix); }
-function closeDropdown(prefix) { document.getElementById(prefix + '-member-dropdown').classList.remove('open'); }
-
-function selectMember(prefix, id, name) {
-  const arr = prefix === 'mt' ? mtSelectedIds : evSelectedIds;
-  if (!arr.includes(id)) arr.push(id);
-  document.getElementById(prefix + '-member-search').value = '';
+function openDropdown(p){ filterMemberDropdown(p); }
+function closeDropdown(p){ document.getElementById(p+'-member-dropdown').classList.remove('open'); }
+function selectMember(prefix,id,name) {
+  const arr=getSelectedIds(prefix); if(!arr.includes(id)) arr.push(id);
+  document.getElementById(prefix+'-member-search').value=''; renderSelectedMembers(prefix);
+}
+function removeMemberChip(prefix,id) {
+  if(prefix==='mt') mtSelectedIds=mtSelectedIds.filter(x=>x!==id);
+  else if(prefix==='ev') evSelectedIds=evSelectedIds.filter(x=>x!==id);
+  else invSelectedIds=invSelectedIds.filter(x=>x!==id);
   renderSelectedMembers(prefix);
 }
-
-function removeMemberChip(prefix, id) {
-  if (prefix === 'mt') mtSelectedIds = mtSelectedIds.filter(x => x !== id);
-  else evSelectedIds = evSelectedIds.filter(x => x !== id);
-  renderSelectedMembers(prefix);
-}
-
 function renderSelectedMembers(prefix) {
-  const arr = prefix === 'mt' ? mtSelectedIds : evSelectedIds;
-  const container = document.getElementById(prefix + '-selected-members');
-  container.innerHTML = arr.map(id => {
-    const m = data.members.find(x => x.id === id);
-    return m ? `<div class="member-chip">${m.name}<span class="remove" onclick="removeMemberChip('${prefix}','${id}')">✕</span></div>` : '';
+  const arr=getSelectedIds(prefix);
+  document.getElementById(prefix+'-selected-members').innerHTML=arr.map(id=>{
+    const m=data.members.find(x=>x.id===id);
+    return m?`<div class="member-chip">${m.name}<span class="remove" onclick="removeMemberChip('${prefix}','${id}')">✕</span></div>`:'';
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-//  MEETINGS
-// ═══════════════════════════════════════════════════════
+// ── MEETINGS ──
 function addOtherMT() {
-  const name = document.getElementById('mt-other-name').value.trim();
-  if (!name) return toast('Enter a name', '⚠️');
-  const role = document.getElementById('mt-other-role').value.trim();
-  mtOtherAttendees.push({ name, role });
-  document.getElementById('mt-other-name').value = '';
-  document.getElementById('mt-other-role').value = '';
+  const name=document.getElementById('mt-other-name').value.trim(); if(!name) return toast('Enter a name','⚠️');
+  mtOtherAttendees.push({name,role:document.getElementById('mt-other-role').value.trim()});
+  document.getElementById('mt-other-name').value=''; document.getElementById('mt-other-role').value='';
   renderOtherMT();
 }
-
 function renderOtherMT() {
-  const ul = document.getElementById('mt-other-list');
-  ul.innerHTML = mtOtherAttendees.map((o, i) =>
-    `<li><span class="name">${o.name}${o.role ? ' <em style="color:var(--gray-400);font-size:12px">('+o.role+')</em>' : ''}</span>
-    <span class="rm" onclick="removeOtherMT(${i})">✕</span></li>`
-  ).join('');
+  document.getElementById('mt-other-list').innerHTML=mtOtherAttendees.map((o,i)=>
+    `<li><span>${o.name}${o.role?` <em style="color:var(--gray-400);font-size:11px">(${o.role})</em>`:''}</span><span class="rm" onclick="removeOtherMT(${i})">✕</span></li>`).join('');
 }
-
-function removeOtherMT(i) {
-  mtOtherAttendees.splice(i, 1);
-  renderOtherMT();
+function removeOtherMT(i){ mtOtherAttendees.splice(i,1); renderOtherMT(); }
+async function saveMeeting() {
+  const date=v('mt-date'), presided=v('mt-presided').trim();
+  if(!date) return toast('Meeting date required','⚠️');
+  if(!presided) return toast('Presiding officer required','⚠️');
+  const id=uid();
+  const meeting={ date, nextDate:v('mt-next-date'), agenda:v('mt-agenda').trim(), presided, motions:v('mt-motions').trim(), invitedIds:[...mtSelectedIds], otherAttendees:[...mtOtherAttendees], createdAt:Date.now() };
+  showLoading(true);
+  try {
+    // Update member meeting counts
+    const updates=mtSelectedIds.map(mid=>{ const m=data.members.find(x=>x.id===mid); if(m){ const u={...m}; delete u.id; u.meetings=(u.meetings||0)+1; return fbSet('members',mid,u); } }).filter(Boolean);
+    await Promise.all([fbSet('meetings',id,meeting), ...updates]);
+    ['mt-date','mt-next-date','mt-agenda','mt-presided','mt-motions'].forEach(i=>document.getElementById(i).value='');
+    mtSelectedIds=[]; mtOtherAttendees=[]; renderSelectedMembers('mt'); renderOtherMT();
+    toast('Meeting saved!');
+  } catch(e){ toast('Error saving','❌'); console.error(e); }
+  showLoading(false);
 }
-
-function saveMeeting() {
-  const date = v('mt-date');
-  const presided = v('mt-presided').trim();
-  if (!date) return toast('Meeting date required', '⚠️');
-  if (!presided) return toast('Presiding officer required', '⚠️');
-  const meeting = {
-    id: uid(),
-    date,
-    nextDate: v('mt-next-date'),
-    agenda: v('mt-agenda').trim(),
-    presided,
-    motions: v('mt-motions').trim(),
-    invitedIds: [...mtSelectedIds],
-    otherAttendees: [...mtOtherAttendees]
-  };
-  data.meetings.push(meeting);
-  // Update member meeting count
-  mtSelectedIds.forEach(id => {
-    const m = data.members.find(x => x.id === id);
-    if (m) m.meetings = (m.meetings||0) + 1;
-  });
-  saveData();
-  // Reset
-  ['mt-date','mt-next-date','mt-agenda','mt-presided','mt-motions'].forEach(id => document.getElementById(id).value = '');
-  mtSelectedIds = []; mtOtherAttendees = [];
-  renderSelectedMembers('mt'); renderOtherMT();
-  renderMeetings(); renderMembers();
-  toast('Meeting saved!');
+async function deleteMeeting(id) {
+  if(!confirm('Delete this meeting?')) return;
+  showLoading(true);
+  try { await fbDel('meetings',id); toast('Meeting deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
 }
-
 function renderMeetings() {
-  const container = document.getElementById('meetings-list');
-  if (!data.meetings.length) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">📋</div>No meetings recorded yet</div>`;
-    return;
-  }
-  const sorted = [...data.meetings].sort((a,b) => b.date.localeCompare(a.date));
-  container.innerHTML = sorted.map(mt => {
-    const invited = mt.invitedIds.map(id => data.members.find(m => m.id === id)?.name).filter(Boolean);
-    const total = invited.length + (mt.otherAttendees?.length||0);
-    return `<div class="card">
-      <div class="card-header">
-        📋 Meeting — ${formatDate(mt.date)}
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-sm btn-print" onclick="showMeetingPrint('${mt.id}')">🖨️ Print</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteMeeting('${mt.id}')">🗑️</button>
-        </div>
-      </div>
+  const container=document.getElementById('meetings-list');
+  if(!data.meetings.length){ container.innerHTML=`<div class="empty-state"><div class="icon">📋</div>No meetings recorded yet</div>`; return; }
+  const sorted=[...data.meetings].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  container.innerHTML=sorted.map(mt=>{
+    const invited=mt.invitedIds.map(id=>data.members.find(m=>m.id===id)?.name).filter(Boolean);
+    const total=invited.length+(mt.otherAttendees?.length||0);
+    return `<div class="card"><div class="card-header">📋 Meeting — ${formatDate(mt.date)}<div style="display:flex;gap:7px"><button class="btn btn-sm btn-print" onclick="showMeetingPrint('${mt.id}')">🖨️ Print</button>${currentRole==='admin'?`<button class="btn btn-sm btn-danger" onclick="deleteMeeting('${mt.id}')">🗑️</button>`:''}</div></div>
       <div class="card-body">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">
           <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Presided By</span><br><strong>${mt.presided}</strong></div>
-          <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Attendees</span><br><strong>${total} person${total!==1?'s':''}</strong></div>
-          ${mt.nextDate ? `<div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Next Meeting</span><br><strong>${formatDate(mt.nextDate)}</strong></div>` : ''}
+          <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Attendees</span><br><strong>${total}</strong></div>
+          ${mt.nextDate?`<div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Next Meeting</span><br><strong>${formatDate(mt.nextDate)}</strong></div>`:''}
         </div>
-        ${mt.agenda ? `<div style="margin-bottom:10px"><strong style="font-size:12px;text-transform:uppercase;color:var(--gray-600)">Agenda:</strong><br><span style="font-size:13px;white-space:pre-line">${mt.agenda}</span></div>` : ''}
-        ${mt.motions ? `<div><strong style="font-size:12px;text-transform:uppercase;color:var(--gray-600)">Motions Passed:</strong><br><span style="font-size:13px;white-space:pre-line">${mt.motions}</span></div>` : ''}
-        ${invited.length ? `<div style="margin-top:10px"><strong style="font-size:12px;text-transform:uppercase;color:var(--gray-600)">Members Present:</strong><br>${invited.map(n=>`<span style="display:inline-block;background:var(--navy);color:white;border-radius:20px;padding:2px 10px;font-size:11px;margin:2px 3px">${n}</span>`).join('')}</div>` : ''}
-        ${mt.otherAttendees?.length ? `<div style="margin-top:8px"><strong style="font-size:12px;text-transform:uppercase;color:var(--gray-600)">Other Attendees:</strong><br>${mt.otherAttendees.map(o=>`<span style="display:inline-block;background:var(--gray-100);border-radius:20px;padding:2px 10px;font-size:11px;margin:2px 3px">${o.name}${o.role?' ('+o.role+')':''}</span>`).join('')}</div>` : ''}
-      </div>
-    </div>`;
+        ${mt.agenda?`<div style="margin-bottom:9px"><strong style="font-size:11px;text-transform:uppercase;color:var(--gray-600)">Agenda:</strong><br><span style="font-size:13px;white-space:pre-line">${mt.agenda}</span></div>`:''}
+        ${mt.motions?`<div style="margin-bottom:9px"><strong style="font-size:11px;text-transform:uppercase;color:var(--gray-600)">Motions Passed:</strong><br><span style="font-size:13px;white-space:pre-line">${mt.motions}</span></div>`:''}
+        ${invited.length?`<div style="margin-top:8px"><strong style="font-size:11px;text-transform:uppercase;color:var(--gray-600)">Members Present:</strong><br><div style="margin-top:4px">${invited.map(n=>`<span style="display:inline-block;background:var(--navy);color:white;border-radius:20px;padding:2px 9px;font-size:11px;margin:2px">${n}</span>`).join('')}</div></div>`:''}
+        ${mt.otherAttendees?.length?`<div style="margin-top:7px"><strong style="font-size:11px;text-transform:uppercase;color:var(--gray-600)">Other Attendees:</strong><br><div style="margin-top:4px">${mt.otherAttendees.map(o=>`<span style="display:inline-block;background:var(--gray-100);border-radius:20px;padding:2px 9px;font-size:11px;margin:2px">${o.name}${o.role?' ('+o.role+')':''}</span>`).join('')}</div></div>`:''}
+      </div></div>`;
   }).join('');
 }
-
-function deleteMeeting(id) {
-  if (!confirm('Delete this meeting?')) return;
-  data.meetings = data.meetings.filter(m => m.id !== id);
-  saveData(); renderMeetings(); renderMembers();
-  toast('Meeting deleted', '🗑️');
-}
-
 function showMeetingPrint(id) {
-  const mt = data.meetings.find(x => x.id === id);
-  if (!mt) return;
-  const invited = mt.invitedIds.map(mid => {
-    const m = data.members.find(x => x.id === mid);
-    return m ? `<tr><td>${m.name}</td><td>${m.duty||'—'}</td><td>${m.phone||'—'}</td><td>✓ Present</td></tr>` : '';
-  }).join('');
-  const others = (mt.otherAttendees||[]).map(o =>
-    `<tr><td>${o.name}</td><td>${o.role||'—'}</td><td>—</td><td>Present (Guest)</td></tr>`
-  ).join('');
-
-  document.getElementById('meeting-print-content').innerHTML = `
-    <div style="text-align:center;border-bottom:3px solid #FF6B00;padding-bottom:16px;margin-bottom:20px">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:26px;color:#0D1B3E;margin:0">Akhil Bharatiya Vidyarthi Parishad</h1>
-      <p style="font-size:14px;color:#555;margin-top:4px">Meeting Minutes</p>
-    </div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px">
-      <tr>
-        <td style="padding:6px 0;font-weight:600;width:160px;color:#555">Date of Meeting</td>
-        <td style="padding:6px 0"><strong>${formatDate(mt.date)}</strong></td>
-        <td style="padding:6px 0;font-weight:600;width:160px;color:#555">Presided By</td>
-        <td style="padding:6px 0"><strong>${mt.presided}</strong></td>
-      </tr>
-      ${mt.nextDate ? `<tr>
-        <td style="padding:6px 0;font-weight:600;color:#555">Next Meeting</td>
-        <td style="padding:6px 0" colspan="3"><strong>${formatDate(mt.nextDate)}</strong></td>
-      </tr>` : ''}
+  const mt=data.meetings.find(x=>x.id===id); if(!mt) return;
+  const rows=mt.invitedIds.map((mid,i)=>{ const m=data.members.find(x=>x.id===mid); return m?`<tr><td>${i+1}</td><td>${m.name}</td><td>${m.duty||'—'}</td><td>${m.phone||'—'}</td><td style="text-align:center;color:#2E7D32;font-weight:700">✓</td></tr>`:''; }).join('');
+  const otherRows=(mt.otherAttendees||[]).map(o=>`<tr><td>—</td><td>${o.name}</td><td>${o.role||'—'}</td><td>—</td><td style="text-align:center;color:#1565C0;font-weight:700">✓</td></tr>`).join('');
+  document.getElementById('meeting-print-content').innerHTML=printHeader('Meeting Minutes')+`
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px">
+      <tr><td style="padding:5px 0;font-weight:600;width:150px;color:#555">Date</td><td><strong>${formatDate(mt.date)}</strong></td><td style="padding:5px 0;font-weight:600;width:150px;color:#555">Presided By</td><td><strong>${mt.presided}</strong></td></tr>
+      ${mt.nextDate?`<tr><td style="padding:5px 0;font-weight:600;color:#555">Next Meeting</td><td colspan="3"><strong>${formatDate(mt.nextDate)}</strong></td></tr>`:''}
     </table>
-    ${mt.agenda ? `<div style="margin-bottom:16px;background:#FFF8F0;border-left:4px solid #FF6B00;padding:12px 16px;border-radius:0 8px 8px 0">
-      <strong style="font-size:12px;text-transform:uppercase;color:#555;letter-spacing:.5px">Agenda</strong>
-      <p style="margin-top:6px;font-size:13px;white-space:pre-line">${mt.agenda}</p>
-    </div>` : ''}
-    <div style="margin-bottom:16px">
-      <strong style="font-size:13px;text-transform:uppercase;color:#0D1B3E;letter-spacing:.5px">Attendance Register</strong>
-      <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:12px">
-        <thead>
-          <tr style="background:#0D1B3E">
-            <th style="color:white;padding:8px 10px;text-align:left">Name</th>
-            <th style="color:white;padding:8px 10px;text-align:left">Role/Duty</th>
-            <th style="color:white;padding:8px 10px;text-align:left">Phone</th>
-            <th style="color:white;padding:8px 10px;text-align:left">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${invited}
-          ${others}
-          ${!invited && !others ? '<tr><td colspan="4" style="padding:10px;color:#999;text-align:center">No attendees recorded</td></tr>' : ''}
-        </tbody>
-      </table>
-    </div>
-    ${mt.motions ? `<div style="margin-bottom:16px;background:#E8F5E9;border-left:4px solid #2E7D32;padding:12px 16px;border-radius:0 8px 8px 0">
-      <strong style="font-size:12px;text-transform:uppercase;color:#555;letter-spacing:.5px">Motions / Resolutions Passed</strong>
-      <p style="margin-top:6px;font-size:13px;white-space:pre-line">${mt.motions}</p>
-    </div>` : ''}
-    <div style="margin-top:50px;display:flex;justify-content:space-between;font-size:12px;color:#555">
-      <div style="text-align:center;border-top:1px solid #ccc;padding-top:8px;min-width:180px">Signature of Presiding Officer<br><strong>${mt.presided}</strong></div>
-      <div style="text-align:center;border-top:1px solid #ccc;padding-top:8px;min-width:180px">Secretary's Signature</div>
-    </div>
-  `;
+    ${mt.agenda?`<div style="margin-bottom:14px;background:#FFF8F0;border-left:4px solid #FF6B00;padding:11px 14px"><strong style="font-size:11px;text-transform:uppercase;color:#555">Agenda</strong><p style="margin-top:5px;font-size:13px;white-space:pre-line">${mt.agenda}</p></div>`:''}
+    <strong style="font-size:12px;text-transform:uppercase;color:#0D1B3E">Attendance Register</strong>
+    <table style="width:100%;border-collapse:collapse;margin-top:7px;font-size:12px">
+      <thead><tr style="background:#0D1B3E"><th style="color:white;padding:7px 9px;text-align:left">#</th><th style="color:white;padding:7px 9px;text-align:left">Name</th><th style="color:white;padding:7px 9px;text-align:left">Role</th><th style="color:white;padding:7px 9px;text-align:left">Phone</th><th style="color:white;padding:7px 9px;text-align:center">Present</th></tr></thead>
+      <tbody>${rows}${otherRows}${!rows&&!otherRows?'<tr><td colspan="5" style="padding:10px;color:#999;text-align:center">No attendees recorded</td></tr>':''}</tbody>
+    </table>
+    ${mt.motions?`<div style="margin-top:14px;background:#E8F5E9;border-left:4px solid #2E7D32;padding:11px 14px"><strong style="font-size:11px;text-transform:uppercase;color:#555">Motions / Resolutions Passed</strong><p style="margin-top:5px;font-size:13px;white-space:pre-line">${mt.motions}</p></div>`:''}
+    ${printSignatures(mt.presided)}`;
   openModal('meeting-print-modal');
 }
 
-// ═══════════════════════════════════════════════════════
-//  EVENTS
-// ═══════════════════════════════════════════════════════
-function saveEvent() {
-  const name = v('ev-name').trim();
-  const date = v('ev-date');
-  const presided = v('ev-presided').trim();
-  if (!name) return toast('Event name required', '⚠️');
-  if (!date) return toast('Event date required', '⚠️');
-  if (!presided) return toast('Presiding officer required', '⚠️');
-  const ev = {
-    id: uid(),
-    name,
-    date,
-    presided,
-    agenda: v('ev-agenda').trim(),
-    presentIds: [...evSelectedIds]
-  };
-  data.events.push(ev);
-  evSelectedIds.forEach(id => {
-    const m = data.members.find(x => x.id === id);
-    if (m) m.events = (m.events||0) + 1;
-  });
-  saveData();
-  ['ev-name','ev-date','ev-presided','ev-agenda'].forEach(id => document.getElementById(id).value = '');
-  evSelectedIds = [];
-  renderSelectedMembers('ev'); renderEvents(); renderMembers();
-  toast('Event saved!');
+// ── EVENTS ──
+async function saveEvent() {
+  const name=v('ev-name').trim(), date=v('ev-date'), presided=v('ev-presided').trim();
+  if(!name) return toast('Event name required','⚠️');
+  if(!date) return toast('Event date required','⚠️');
+  if(!presided) return toast('Presiding officer required','⚠️');
+  const id=uid();
+  const ev={ name, date, presided, agenda:v('ev-agenda').trim(), presentIds:[...evSelectedIds], createdAt:Date.now() };
+  showLoading(true);
+  try {
+    const updates=evSelectedIds.map(mid=>{ const m=data.members.find(x=>x.id===mid); if(m){ const u={...m}; delete u.id; u.events=(u.events||0)+1; return fbSet('members',mid,u); } }).filter(Boolean);
+    await Promise.all([fbSet('events',id,ev), ...updates]);
+    ['ev-name','ev-date','ev-presided','ev-agenda'].forEach(i=>document.getElementById(i).value='');
+    evSelectedIds=[]; renderSelectedMembers('ev'); toast('Event saved!');
+  } catch(e){ toast('Error saving','❌'); console.error(e); }
+  showLoading(false);
 }
-
+async function deleteEvent(id) {
+  if(!confirm('Delete this event?')) return;
+  showLoading(true);
+  try { await fbDel('events',id); toast('Event deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
+}
 function renderEvents() {
-  const container = document.getElementById('events-list');
-  if (!data.events.length) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">🎯</div>No events recorded yet</div>`;
-    return;
-  }
-  const sorted = [...data.events].sort((a,b) => b.date.localeCompare(a.date));
-  container.innerHTML = sorted.map(ev => {
-    const present = ev.presentIds.map(id => data.members.find(m => m.id === id)?.name).filter(Boolean);
-    return `<div class="card">
-      <div class="card-header">
-        🎯 ${ev.name} — ${formatDate(ev.date)}
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-sm btn-print" onclick="showEventPrint('${ev.id}')">🖨️ Print</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteEvent('${ev.id}')">🗑️</button>
-        </div>
-      </div>
+  const container=document.getElementById('events-list');
+  if(!data.events.length){ container.innerHTML=`<div class="empty-state"><div class="icon">🎯</div>No events recorded yet</div>`; return; }
+  const sorted=[...data.events].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  container.innerHTML=sorted.map(ev=>{
+    const present=ev.presentIds.map(id=>data.members.find(m=>m.id===id)?.name).filter(Boolean);
+    return `<div class="card"><div class="card-header">🎯 ${ev.name} — ${formatDate(ev.date)}<div style="display:flex;gap:7px"><button class="btn btn-sm btn-print" onclick="showEventPrint('${ev.id}')">🖨️ Print</button>${currentRole==='admin'?`<button class="btn btn-sm btn-danger" onclick="deleteEvent('${ev.id}')">🗑️</button>`:''}</div></div>
       <div class="card-body">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">
           <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Presided By</span><br><strong>${ev.presided}</strong></div>
           <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Members Present</span><br><strong>${present.length}</strong></div>
         </div>
-        ${ev.agenda ? `<div style="margin-bottom:10px"><strong style="font-size:12px;text-transform:uppercase;color:var(--gray-600)">Agenda:</strong><br><span style="font-size:13px;white-space:pre-line">${ev.agenda}</span></div>` : ''}
-        ${present.length ? `<div><strong style="font-size:12px;text-transform:uppercase;color:var(--gray-600)">Attendees:</strong><br>${present.map(n=>`<span style="display:inline-block;background:var(--navy);color:white;border-radius:20px;padding:2px 10px;font-size:11px;margin:2px 3px">${n}</span>`).join('')}</div>` : ''}
-      </div>
-    </div>`;
+        ${ev.agenda?`<div style="margin-bottom:9px"><strong style="font-size:11px;text-transform:uppercase;color:var(--gray-600)">Agenda:</strong><br><span style="font-size:13px;white-space:pre-line">${ev.agenda}</span></div>`:''}
+        ${present.length?`<div><strong style="font-size:11px;text-transform:uppercase;color:var(--gray-600)">Attendees:</strong><br><div style="margin-top:4px">${present.map(n=>`<span style="display:inline-block;background:var(--navy);color:white;border-radius:20px;padding:2px 9px;font-size:11px;margin:2px">${n}</span>`).join('')}</div></div>`:''}
+      </div></div>`;
   }).join('');
 }
-
-function deleteEvent(id) {
-  if (!confirm('Delete this event?')) return;
-  data.events = data.events.filter(e => e.id !== id);
-  saveData(); renderEvents(); renderMembers();
-  toast('Event deleted', '🗑️');
-}
-
 function showEventPrint(id) {
-  const ev = data.events.find(x => x.id === id);
-  if (!ev) return;
-  const rows = ev.presentIds.map((mid, i) => {
-    const m = data.members.find(x => x.id === mid);
-    return m ? `<tr><td>${i+1}</td><td>${m.name}</td><td>${m.duty||'—'}</td><td>${m.phone||'—'}</td><td style="text-align:center;color:#2E7D32;font-weight:700">✓</td></tr>` : '';
-  }).join('');
-
-  document.getElementById('event-print-content').innerHTML = `
-    <div style="text-align:center;border-bottom:3px solid #FF6B00;padding-bottom:16px;margin-bottom:20px">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:26px;color:#0D1B3E;margin:0">Akhil Bharatiya Vidyarthi Parishad</h1>
-      <p style="font-size:14px;color:#555;margin-top:4px">Event Report</p>
-    </div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px">
-      <tr>
-        <td style="padding:6px 0;font-weight:600;width:130px;color:#555">Event Name</td>
-        <td style="padding:6px 0"><strong>${ev.name}</strong></td>
-        <td style="padding:6px 0;font-weight:600;width:130px;color:#555">Date</td>
-        <td style="padding:6px 0"><strong>${formatDate(ev.date)}</strong></td>
-      </tr>
-      <tr>
-        <td style="padding:6px 0;font-weight:600;color:#555">Presided By</td>
-        <td style="padding:6px 0" colspan="3"><strong>${ev.presided}</strong></td>
-      </tr>
+  const ev=data.events.find(x=>x.id===id); if(!ev) return;
+  const rows=ev.presentIds.map((mid,i)=>{ const m=data.members.find(x=>x.id===mid); return m?`<tr><td>${i+1}</td><td>${m.name}</td><td>${m.duty||'—'}</td><td>${m.phone||'—'}</td><td style="text-align:center;color:#2E7D32;font-weight:700">✓</td></tr>`:''; }).join('');
+  document.getElementById('event-print-content').innerHTML=printHeader('Event Report')+`
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px">
+      <tr><td style="padding:5px 0;font-weight:600;width:130px;color:#555">Event</td><td><strong>${ev.name}</strong></td><td style="padding:5px 0;font-weight:600;width:100px;color:#555">Date</td><td><strong>${formatDate(ev.date)}</strong></td></tr>
+      <tr><td style="padding:5px 0;font-weight:600;color:#555">Presided By</td><td colspan="3"><strong>${ev.presided}</strong></td></tr>
     </table>
-    ${ev.agenda ? `<div style="margin-bottom:16px;background:#FFF8F0;border-left:4px solid #FF6B00;padding:12px 16px;border-radius:0 8px 8px 0">
-      <strong style="font-size:12px;text-transform:uppercase;color:#555;letter-spacing:.5px">Agenda / Description</strong>
-      <p style="margin-top:6px;font-size:13px;white-space:pre-line">${ev.agenda}</p>
-    </div>` : ''}
-    <strong style="font-size:13px;text-transform:uppercase;color:#0D1B3E;letter-spacing:.5px">Attendance — ${ev.presentIds.length} Member${ev.presentIds.length!==1?'s':''} Present</strong>
-    <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:12px">
-      <thead>
-        <tr style="background:#0D1B3E">
-          <th style="color:white;padding:8px 10px;text-align:left;width:40px">#</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Name</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Role / Duty</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Phone</th>
-          <th style="color:white;padding:8px 10px;text-align:center">Present</th>
-        </tr>
-      </thead>
-      <tbody>${rows || '<tr><td colspan="5" style="padding:10px;color:#999;text-align:center">No members recorded</td></tr>'}</tbody>
+    ${ev.agenda?`<div style="margin-bottom:14px;background:#FFF8F0;border-left:4px solid #FF6B00;padding:11px 14px"><strong style="font-size:11px;text-transform:uppercase;color:#555">Agenda</strong><p style="margin-top:5px;font-size:13px;white-space:pre-line">${ev.agenda}</p></div>`:''}
+    <strong style="font-size:12px;text-transform:uppercase;color:#0D1B3E">Attendance — ${ev.presentIds.length} Member${ev.presentIds.length!==1?'s':''} Present</strong>
+    <table style="width:100%;border-collapse:collapse;margin-top:7px;font-size:12px">
+      <thead><tr style="background:#0D1B3E"><th style="color:white;padding:7px 9px;text-align:left">#</th><th style="color:white;padding:7px 9px;text-align:left">Name</th><th style="color:white;padding:7px 9px;text-align:left">Role</th><th style="color:white;padding:7px 9px;text-align:left">Phone</th><th style="color:white;padding:7px 9px;text-align:center">Present</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="5" style="padding:10px;color:#999;text-align:center">No members recorded</td></tr>'}</tbody>
     </table>
-    <div style="margin-top:50px;display:flex;justify-content:space-between;font-size:12px;color:#555">
-      <div style="text-align:center;border-top:1px solid #ccc;padding-top:8px;min-width:180px">Signature of Presiding Officer<br><strong>${ev.presided}</strong></div>
-      <div style="text-align:center;border-top:1px solid #ccc;padding-top:8px;min-width:180px">Secretary's Signature</div>
-    </div>
-  `;
+    ${printSignatures(ev.presided)}`;
   openModal('event-print-modal');
 }
 
-// ═══════════════════════════════════════════════════════
-//  MASTER LIST PRINT
-// ═══════════════════════════════════════════════════════
-function printMasterList() {
-  const rows = data.members.map((m, i) => {
-    const score = (m.meetings||0) + (m.events||0);
-    const max = Math.max(1, ...data.members.map(x=>(x.meetings||0)+(x.events||0)));
-    const pct = Math.min(100, Math.round(score/max*100));
-    const level = pct >= 70 ? 'High' : pct >= 30 ? 'Medium' : 'Low';
-    return `<tr>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee">${i+1}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee"><strong>${m.name}</strong></td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee">${m.phone||'—'}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee">${m.address||'—'}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee">${m.duty||'—'}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee">${m.year||'—'}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:center">${m.meetings||0}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:center">${m.events||0}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #eee">${level} (${pct}%)</td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('masterlist-print-content').innerHTML = `
-    <div style="text-align:center;border-bottom:3px solid #FF6B00;padding-bottom:16px;margin-bottom:20px">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:28px;color:#0D1B3E;margin:0">Akhil Bharatiya Vidyarthi Parishad</h1>
-      <p style="font-size:14px;color:#555;margin-top:4px">Member Master List — Generated ${new Date().toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'})}</p>
+// ── INVITATIONS ──
+function buildInvitationHTML(inv) {
+  const agendaItems=(inv.agenda||'').split('\n').filter(a=>a.trim());
+  const invitedNames=(inv.invitedIds||[]).map(id=>data.members.find(m=>m.id===id)?.name).filter(Boolean);
+  const typeLabel=inv.type==='meeting'?'Meeting Invitation':'Event Invitation';
+  return `<div class="inv-card" id="inv-printable">
+    <div class="inv-header-band">
+      <div class="inv-org-logo">ABVP</div>
+      <div class="inv-org-name">Akhil Bharatiya Vidyarthi Parishad</div>
+      <div class="inv-org-sub">${inv.unit||'Organisation Unit'}</div>
+      <div class="inv-type-badge">${typeLabel}</div>
     </div>
-    <p style="font-size:13px;color:#555;margin-bottom:12px">Total Members: <strong>${data.members.length}</strong> &nbsp;|&nbsp; Total Meetings: <strong>${data.meetings.length}</strong> &nbsp;|&nbsp; Total Events: <strong>${data.events.length}</strong></p>
+    <div class="inv-body">
+      <div class="inv-salutation">Dear Member,<br>You are cordially invited to the following ${inv.type==='meeting'?'meeting':'event'}:</div>
+      <div class="inv-title-line">${inv.title}</div>
+      <div class="inv-details-grid">
+        <div class="inv-detail-box"><div class="inv-detail-label">📅 Date</div><div class="inv-detail-value">${formatDate(inv.date)}</div></div>
+        <div class="inv-detail-box"><div class="inv-detail-label">🕐 Time</div><div class="inv-detail-value">${formatTime(inv.time)}</div></div>
+        <div class="inv-detail-box wide"><div class="inv-detail-label">📍 Venue / Place</div><div class="inv-detail-value">${inv.venue}</div></div>
+      </div>
+      ${agendaItems.length?`<div class="inv-agenda-box"><h4>Agenda</h4>${agendaItems.map((item,i)=>`<div class="inv-agenda-item"><span class="inv-agenda-num">${i+1}</span><span>${item.trim()}</span></div>`).join('')}</div>`:''}
+      ${invitedNames.length?`<div class="inv-invited-box"><h4>🎟️ Invited Members (${invitedNames.length})</h4><div>${invitedNames.map(n=>`<span style="display:inline-block;background:white;border:1px solid #c5d0e6;border-radius:20px;padding:3px 11px;font-size:12px;margin:3px;color:#0D1B3E">${n}</span>`).join('')}</div></div>`:''}
+      ${inv.note?`<div class="inv-note-box"><strong>📢 Note:</strong> ${inv.note}</div>`:''}
+      ${inv.contact?`<div style="font-size:13px;color:#555;margin-bottom:16px">📞 For enquiries contact: <strong>${inv.contact}</strong></div>`:''}
+      <div class="inv-footer-sig"><div class="inv-sig-block"><div class="inv-sig-line"><div class="inv-sig-name">${inv.invitedBy||'—'}</div><div class="inv-sig-desg">${inv.designation||''}</div><div class="inv-sig-desg">${inv.unit||''}</div></div></div></div>
+    </div>
+    <div class="inv-bottom-band"></div>
+  </div>`;
+}
+function previewInvitation() {
+  const type=v('inv-type'), title=v('inv-title').trim(), date=v('inv-date'), time=v('inv-time'), venue=v('inv-venue').trim();
+  if(!type) return toast('Select invitation type','⚠️');
+  if(!title) return toast('Title is required','⚠️');
+  if(!date) return toast('Date is required','⚠️');
+  if(!time) return toast('Time is required','⚠️');
+  if(!venue) return toast('Venue is required','⚠️');
+  currentInvPreview={ id:uid(), type, title, date, time, venue, agenda:v('inv-agenda').trim(), invitedBy:v('inv-by').trim(), designation:v('inv-designation').trim(), unit:v('inv-unit').trim(), contact:v('inv-contact').trim(), note:v('inv-note').trim(), invitedIds:[...invSelectedIds] };
+  document.getElementById('inv-preview-content').innerHTML=buildInvitationHTML(currentInvPreview);
+  openModal('inv-preview-modal');
+}
+async function saveInvitation() {
+  if(!currentInvPreview) return;
+  showLoading(true);
+  try {
+    await fbSet('invitations', currentInvPreview.id, currentInvPreview);
+    ['inv-type','inv-title','inv-date','inv-time','inv-venue','inv-agenda','inv-by','inv-designation','inv-unit','inv-contact','inv-note'].forEach(i=>document.getElementById(i).value='');
+    invSelectedIds=[]; renderSelectedMembers('inv');
+    closeModal('inv-preview-modal'); toast('Invitation saved!','✉️');
+  } catch(e){ toast('Error saving','❌'); console.error(e); }
+  showLoading(false);
+}
+async function deleteInvitation(id) {
+  if(!confirm('Delete this invitation?')) return;
+  showLoading(true);
+  try { await fbDel('invitations',id); toast('Invitation deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
+}
+function printInvitation(id) {
+  const inv=data.invitations.find(x=>x.id===id); if(!inv) return;
+  triggerPrint(buildInvitationHTML(inv),'invitation');
+}
+function renderInvitations() {
+  const container=document.getElementById('invitations-list');
+  if(!data.invitations.length){ container.innerHTML=`<div class="empty-state"><div class="icon">✉️</div>No invitations created yet</div>`; return; }
+  const sorted=[...data.invitations].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  container.innerHTML=sorted.map(inv=>{
+    const invitedCount=(inv.invitedIds||[]).length;
+    return `<div class="card"><div class="card-header">✉️ ${inv.title} <span style="font-size:12px;font-weight:400;color:rgba(255,255,255,.7)">${inv.type==='meeting'?'Meeting':'Event'} · ${formatDate(inv.date)}</span>
+      <div style="display:flex;gap:7px"><button class="btn btn-sm btn-print" onclick="printInvitation('${inv.id}')">🖨️ Print</button>${currentRole==='admin'?`<button class="btn btn-sm btn-danger" onclick="deleteInvitation('${inv.id}')">🗑️</button>`:''}</div></div>
+      <div class="card-body"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+        <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Time</span><br><strong>${formatTime(inv.time)}</strong></div>
+        <div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Venue</span><br><strong>${inv.venue}</strong></div>
+        ${invitedCount?`<div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Invited</span><br><strong>${invitedCount} member${invitedCount!==1?'s':''}</strong></div>`:''}
+        ${inv.invitedBy?`<div><span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;font-weight:600">Invited By</span><br><strong>${inv.invitedBy}</strong></div>`:''}
+      </div></div></div>`;
+  }).join('');
+}
+
+// ── MASTER LIST PRINT ──
+function printMasterList() {
+  const rows=data.members.map((m,i)=>{
+    const score=(m.meetings||0)+(m.events||0), max=Math.max(1,...data.members.map(x=>(x.meetings||0)+(x.events||0)));
+    const pct=Math.min(100,Math.round(score/max*100)), level=pct>=70?'High':pct>=30?'Medium':'Low';
+    return `<tr><td style="padding:7px 9px;border-bottom:1px solid #eee">${i+1}</td><td style="padding:7px 9px;border-bottom:1px solid #eee"><strong>${m.name}</strong></td><td style="padding:7px 9px;border-bottom:1px solid #eee">${m.phone||'—'}</td><td style="padding:7px 9px;border-bottom:1px solid #eee">${m.address||'—'}</td><td style="padding:7px 9px;border-bottom:1px solid #eee">${m.duty||'—'}</td><td style="padding:7px 9px;border-bottom:1px solid #eee">${m.year||'—'}</td><td style="padding:7px 9px;border-bottom:1px solid #eee;text-align:center">${m.meetings||0}</td><td style="padding:7px 9px;border-bottom:1px solid #eee;text-align:center">${m.events||0}</td><td style="padding:7px 9px;border-bottom:1px solid #eee">${level} (${pct}%)</td></tr>`;
+  }).join('');
+  document.getElementById('masterlist-print-content').innerHTML=printHeader('Member Master List')+`
+    <p style="font-size:13px;color:#555;margin-bottom:10px">Total Members: <strong>${data.members.length}</strong> &nbsp;|&nbsp; Meetings: <strong>${data.meetings.length}</strong> &nbsp;|&nbsp; Events: <strong>${data.events.length}</strong></p>
     <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:#0D1B3E">
-          <th style="color:white;padding:8px 10px;text-align:left">#</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Name</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Phone</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Address</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Duty</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Joined</th>
-          <th style="color:white;padding:8px 10px;text-align:center">Meetings</th>
-          <th style="color:white;padding:8px 10px;text-align:center">Events</th>
-          <th style="color:white;padding:8px 10px;text-align:left">Activity</th>
-        </tr>
-      </thead>
-      <tbody>${rows || '<tr><td colspan="9" style="padding:14px;text-align:center;color:#999">No members recorded</td></tr>'}</tbody>
-    </table>
-  `;
+      <thead><tr style="background:#0D1B3E"><th style="color:white;padding:7px 9px;text-align:left">#</th><th style="color:white;padding:7px 9px;text-align:left">Name</th><th style="color:white;padding:7px 9px;text-align:left">Phone</th><th style="color:white;padding:7px 9px;text-align:left">Address</th><th style="color:white;padding:7px 9px;text-align:left">Duty</th><th style="color:white;padding:7px 9px;text-align:left">Joined</th><th style="color:white;padding:7px 9px;text-align:center">Meetings</th><th style="color:white;padding:7px 9px;text-align:center">Events</th><th style="color:white;padding:7px 9px;text-align:left">Activity</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="9" style="padding:14px;text-align:center;color:#999">No members recorded</td></tr>'}</tbody>
+    </table>`;
   openModal('masterlist-print-modal');
 }
 
-// ═══════════════════════════════════════════════════════
-//  UTILITIES
-// ═══════════════════════════════════════════════════════
-function v(id) { return document.getElementById(id)?.value || ''; }
-function escHTML(s) { return s.replace(/'/g, "\\'"); }
-function formatDate(d) {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
+// ── PRINT HELPERS ──
+function printHeader(title) {
+  return `<div style="text-align:center;border-bottom:3px solid #FF6B00;padding-bottom:14px;margin-bottom:18px"><h1 style="font-family:'Rajdhani',sans-serif;font-size:26px;color:#0D1B3E;margin:0">Akhil Bharatiya Vidyarthi Parishad</h1><p style="font-size:13px;color:#555;margin-top:3px">${title} · ${new Date().toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'})}</p></div>`;
+}
+function printSignatures(presiding) {
+  return `<div style="margin-top:48px;display:flex;justify-content:space-between;font-size:12px;color:#555"><div style="text-align:center;border-top:1px solid #ccc;padding-top:7px;min-width:170px">Signature of Presiding Officer<br><strong>${presiding}</strong></div><div style="text-align:center;border-top:1px solid #ccc;padding-top:7px;min-width:170px">Secretary's Signature</div></div>`;
+}
+function printContent(contentId) { triggerPrint(document.getElementById(contentId).innerHTML,'document'); }
+function triggerPrint(content,type) {
+  const existing=document.getElementById('abvp-print-frame'); if(existing) existing.remove();
+  const invStyles=type==='invitation'?`body{background:#fff;padding:0;margin:0}.inv-card{background:white;border:none;max-width:100%;width:100%}.inv-header-band{background:#0D1B3E!important;padding:28px 32px 20px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-org-logo{width:60px;height:60px;background:#FF6B00;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-family:'Rajdhani';font-weight:700;font-size:20px;color:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-org-name{font-family:'Rajdhani';font-size:20px;font-weight:700;color:white;letter-spacing:1px}.inv-org-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}.inv-type-badge{display:inline-block;border:1px solid #FF6B00;color:#FF6B00;border-radius:20px;padding:3px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:10px}.inv-body{padding:28px 32px}.inv-salutation{font-size:15px;color:#333;margin-bottom:16px;line-height:1.6}.inv-title-line{font-family:'Rajdhani';font-size:22px;font-weight:700;color:#0D1B3E;border-bottom:2px solid #FF6B00;padding-bottom:8px;margin-bottom:20px}.inv-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}.inv-detail-box{background:#F8F9FF;border-radius:8px;padding:12px 14px;border-left:3px solid #FF6B00;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-detail-box.wide{grid-column:span 2}.inv-detail-label{font-size:10px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.8px}.inv-detail-value{font-size:15px;font-weight:600;color:#1A1A2E;margin-top:3px}.inv-agenda-box{background:#FFF8F0;border:1px solid #FFD9B0;border-radius:8px;padding:16px 18px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-agenda-box h4{font-family:'Rajdhani';font-size:14px;font-weight:700;color:#CC5500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}.inv-agenda-item{display:flex;gap:10px;align-items:flex-start;padding:5px 0;border-bottom:1px dashed #FFD9B0;font-size:13px;color:#333}.inv-agenda-item:last-child{border-bottom:none}.inv-agenda-num{background:#FF6B00;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-invited-box{background:#F0F4FF;border-radius:8px;padding:14px 16px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-invited-box h4{font-family:'Rajdhani';font-size:13px;font-weight:700;color:#0D1B3E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}.inv-note-box{background:#FFFDE7;border:1px solid #FFE082;border-radius:8px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#5D4037;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-note-box strong{color:#E65100}.inv-footer-sig{display:flex;justify-content:flex-end;margin-top:28px;padding-top:16px;border-top:1px solid #eee}.inv-sig-block{text-align:center;min-width:160px}.inv-sig-line{border-top:1px solid #aaa;padding-top:6px;margin-top:40px;font-size:12px;color:#555}.inv-sig-name{font-weight:700;font-size:14px;color:#1A1A2E}.inv-sig-desg{font-size:12px;color:#777}.inv-bottom-band{height:6px;background:#FF6B00;-webkit-print-color-adjust:exact;print-color-adjust:exact}`:`body{padding:20px;color:#1A1A2E;background:white}table{width:100%;border-collapse:collapse}th{background:#0D1B3E!important;color:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}`;
+  const fullHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABVP Print</title><link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Barlow',sans-serif}${invStyles}@media print{body{padding:0!important}button{display:none!important}}</style></head><body>${content}</body></html>`;
+  try {
+    const iframe=document.createElement('iframe');
+    iframe.id='abvp-print-frame';
+    iframe.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:99999;background:white';
+    document.body.appendChild(iframe);
+    iframe.onload=function(){
+      setTimeout(()=>{
+        try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); setTimeout(()=>{ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); },1000); }
+        catch(e){ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); alert('To print: use Share → Print from your browser menu.'); }
+      },800);
+    };
+    const d=iframe.contentDocument||iframe.contentWindow.document; d.open(); d.write(fullHTML); d.close();
+  } catch(e){ alert('To print: use Share → Print from your browser menu.'); }
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function toast(msg, icon='✓') {
-  const t = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  t.querySelector('.ti').textContent = icon;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+// ── CHANGE PASSWORDS ──
+async function changePasswords() {
+  const err=document.getElementById('cp-error'), suc=document.getElementById('cp-success');
+  err.style.display='none'; suc.style.display='none';
+  const adminCurrent=document.getElementById('cp-admin-current').value;
+  const adminNew=document.getElementById('cp-admin-new').value, adminConfirm=document.getElementById('cp-admin-confirm').value;
+  const memberNew=document.getElementById('cp-member-new').value, memberConfirm=document.getElementById('cp-member-confirm').value;
+  const viewerNew=document.getElementById('cp-viewer-new').value, viewerConfirm=document.getElementById('cp-viewer-confirm').value;
+  if(!adminCurrent){err.textContent='⚠️ Enter current Admin password to authorise.';err.style.display='block';return;}
+  if(adminCurrent!==PASSWORDS.admin){err.textContent='❌ Current Admin password is incorrect.';err.style.display='block';return;}
+  if(adminNew&&adminNew!==adminConfirm){err.textContent='❌ New Admin passwords do not match.';err.style.display='block';return;}
+  if(memberNew&&memberNew!==memberConfirm){err.textContent='❌ New Member passwords do not match.';err.style.display='block';return;}
+  if(viewerNew&&viewerNew!==viewerConfirm){err.textContent='❌ New Viewer passwords do not match.';err.style.display='block';return;}
+  if(adminNew&&adminNew.length<6){err.textContent='⚠️ Admin password must be at least 6 characters.';err.style.display='block';return;}
+  let changed=[];
+  if(adminNew){PASSWORDS.admin=adminNew;changed.push('Admin');}
+  if(memberNew){PASSWORDS.member=memberNew;changed.push('Member');}
+  if(viewerNew){PASSWORDS.viewer=viewerNew;changed.push('Viewer');}
+  if(!changed.length){err.textContent='⚠️ No new passwords entered.';err.style.display='block';return;}
+  showLoading(true);
+  try {
+    await fbSet('config','passwords',PASSWORDS);
+    ['cp-admin-current','cp-admin-new','cp-admin-confirm','cp-member-new','cp-member-confirm','cp-viewer-new','cp-viewer-confirm'].forEach(i=>document.getElementById(i).value='');
+    suc.textContent='✅ Password(s) updated for: '+changed.join(', ');
+    suc.style.display='block'; toast('Passwords updated!','🔑');
+  } catch(e){ err.textContent='❌ Error saving passwords.'; err.style.display='block'; }
+  showLoading(false);
 }
 
-function printContent(contentId) {
-  const content = document.getElementById(contentId).innerHTML;
-  const win = window.open('', '_blank');
-  win.document.write(`
-    <!DOCTYPE html><html><head>
-    <title>ABVP — Print</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-      body { font-family: 'Barlow', sans-serif; padding: 30px; color: #1A1A2E; }
-      table { width: 100%; border-collapse: collapse; }
-      th { background: #0D1B3E !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      @media print { body { padding: 0; } }
-    </style>
-    </head><body>${content}</body></html>
-  `);
-  win.document.close();
-  win.focus();
-  setTimeout(() => { win.print(); }, 500);
-}
+// ── RENDER ALL ──
+function render(){ renderMembers(); renderMeetings(); renderEvents(); renderInvitations(); }
 
-function render() {
-  renderMembers();
-  renderMeetings();
-  renderEvents();
-}
+// ── EXPOSE GLOBALS ──
+window.doLogin=doLogin; window.logoutUser=logoutUser; window.showSection=showSection;
+window.addMember=addMember; window.deleteMember=deleteMember; window.openEdit=openEdit; window.saveEdit=saveEdit;
+window.filterMemberDropdown=filterMemberDropdown; window.openDropdown=openDropdown; window.closeDropdown=closeDropdown;
+window.selectMember=selectMember; window.removeMemberChip=removeMemberChip;
+window.addOtherMT=addOtherMT; window.removeOtherMT=removeOtherMT; window.saveMeeting=saveMeeting; window.deleteMeeting=deleteMeeting; window.showMeetingPrint=showMeetingPrint;
+window.saveEvent=saveEvent; window.deleteEvent=deleteEvent; window.showEventPrint=showEventPrint;
+window.previewInvitation=previewInvitation; window.saveInvitation=saveInvitation; window.deleteInvitation=deleteInvitation; window.printInvitation=printInvitation;
+window.printMasterList=printMasterList; window.printContent=printContent;
+window.openModal=openModal; window.closeModal=closeModal;
+window.changePasswords=changePasswords;
 
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
-});
-
-// Init
-loadData();
+// ── START ──
+init();
 </script>
 </body>
 </html>
