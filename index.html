@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -30,235 +29,239 @@ body { font-family: 'Barlow', sans-serif; background: var(--navy); color: var(--
 
 /* ── LOGIN ── */
 .login-screen {
-position: fixed; inset: 0; z-index: 9999;
-display: flex; align-items: center; justify-content: center;
-background: var(–navy);
-overflow: hidden;
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy);
+  overflow: hidden;
 }
 .login-bg {
-position: absolute; inset: 0;
-background: radial-gradient(ellipse at 20% 50%, rgba(255,107,0,0.15) 0%, transparent 60%),
-radial-gradient(ellipse at 80% 20%, rgba(255,184,0,0.1) 0%, transparent 50%),
-radial-gradient(ellipse at 60% 80%, rgba(30,48,96,0.8) 0%, transparent 60%);
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(255,107,0,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(255,184,0,0.1) 0%, transparent 50%),
+              radial-gradient(ellipse at 60% 80%, rgba(30,48,96,0.8) 0%, transparent 60%);
 }
 .login-pattern {
-position: absolute; inset: 0; opacity: 0.04;
-background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%);
-background-size: 20px 20px;
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%);
+  background-size: 20px 20px;
 }
 .login-card {
-position: relative; z-index: 1;
-background: rgba(255,255,255,0.97);
-border-radius: 24px;
-width: 100%; max-width: 400px;
-margin: 20px;
-box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
-overflow: hidden;
-animation: loginSlide 0.5s cubic-bezier(0.16,1,0.3,1);
+  position: relative; z-index: 1;
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%; max-width: 400px;
+  margin: 20px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+  overflow: hidden;
+  animation: loginSlide 0.5s cubic-bezier(0.16,1,0.3,1);
 }
 @keyframes loginSlide { from { opacity:0; transform: translateY(30px) scale(0.97); } }
 .login-top {
-background: linear-gradient(135deg, var(–navy) 0%, var(–navy-light) 100%);
-padding: 36px 36px 28px;
-text-align: center;
-position: relative;
-overflow: hidden;
+  background: #0D1B3E;
+  background: -webkit-linear-gradient(135deg, #0D1B3E 0%, #1E3060 100%);
+  background: linear-gradient(135deg, #0D1B3E 0%, #1E3060 100%);
+  padding: 36px 36px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 .login-top::before {
-content: ‘’;
-position: absolute; top: -30px; right: -30px;
-width: 120px; height: 120px;
-border-radius: 50%;
-background: rgba(255,107,0,0.15);
+  content: '';
+  position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,107,0,0.2);
 }
 .login-top::after {
-content: ‘’;
-position: absolute; bottom: -20px; left: -20px;
-width: 80px; height: 80px;
-border-radius: 50%;
-background: rgba(255,184,0,0.1);
+  content: '';
+  position: absolute; bottom: -20px; left: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,184,0,0.15);
 }
 .login-emblem {
-width: 80px; height: 80px;
-background: linear-gradient(135deg, var(–saffron-dark), var(–saffron));
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-margin: 0 auto 16px;
-font-family: ‘Rajdhani’; font-weight: 700; font-size: 26px;
-color: white;
-box-shadow: 0 8px 24px rgba(255,107,0,0.4);
-position: relative; z-index: 1;
+  width: 80px; height: 80px;
+  background: #CC5500;
+  background: -webkit-linear-gradient(135deg, #CC5500, #FF6B00);
+  background: linear-gradient(135deg, #CC5500, #FF6B00);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 26px;
+  color: white;
+  box-shadow: 0 8px 24px rgba(255,107,0,0.4);
+  position: relative; z-index: 1;
 }
 .login-top h1 {
-font-family: ‘Rajdhani’; font-size: 22px; font-weight: 700;
-color: white; letter-spacing: 1px;
-position: relative; z-index: 1;
+  font-family: 'Rajdhani'; font-size: 22px; font-weight: 700;
+  color: #ffffff; letter-spacing: 1px;
+  position: relative; z-index: 1;
 }
 .login-top p {
-font-size: 12px; color: rgba(255,255,255,0.6);
-margin-top: 4px; letter-spacing: 0.5px;
-position: relative; z-index: 1;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  margin-top: 4px; letter-spacing: 0.5px;
+  position: relative; z-index: 1;
 }
 .login-body { padding: 28px 32px 32px; }
 .lf { margin-bottom: 16px; }
 .lf label {
-display: block; font-size: 11px; font-weight: 600;
-color: var(–gray-600); text-transform: uppercase;
-letter-spacing: 0.8px; margin-bottom: 7px;
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--gray-600); text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 7px;
 }
 .lf select, .lf input {
-width: 100%;
-border: 2px solid var(–gray-200);
-border-radius: 10px;
-padding: 12px 14px;
-font-family: ‘Barlow’; font-size: 15px;
-color: var(–text);
-transition: border-color 0.2s, box-shadow 0.2s;
-background: white;
+  width: 100%;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'Barlow'; font-size: 15px;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: white;
 }
 .lf select:focus, .lf input:focus {
-outline: none;
-border-color: var(–saffron);
-box-shadow: 0 0 0 3px rgba(255,107,0,0.1);
+  outline: none;
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.1);
 }
 .login-btn {
-width: 100%; padding: 14px;
-background: linear-gradient(135deg, var(–saffron-dark), var(–saffron));
-color: white; border: none; border-radius: 10px;
-font-family: ‘Rajdhani’; font-size: 17px; font-weight: 700;
-cursor: pointer; margin-top: 4px;
-letter-spacing: 0.5px;
-transition: all 0.2s;
-box-shadow: 0 4px 16px rgba(255,107,0,0.3);
+  width: 100%; padding: 14px;
+  background: #CC5500;
+  background: -webkit-linear-gradient(135deg, #CC5500, #FF6B00);
+  background: linear-gradient(135deg, #CC5500, #FF6B00);
+  color: white; border: none; border-radius: 10px;
+  font-family: 'Rajdhani'; font-size: 17px; font-weight: 700;
+  cursor: pointer; margin-top: 4px;
+  letter-spacing: 0.5px;
+  -webkit-appearance: none;
+  box-shadow: 0 4px 16px rgba(255,107,0,0.3);
 }
-.login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,0,0.4); }
-.login-btn:active { transform: translateY(0); }
 .login-error {
-background: #FFEBEE; color: var(–danger);
-border-radius: 8px; padding: 10px 14px;
-font-size: 13px; margin-top: 12px;
-display: none; border-left: 3px solid var(–danger);
+  background: #FFEBEE; color: var(--danger);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 13px; margin-top: 12px;
+  display: none; border-left: 3px solid var(--danger);
 }
 .login-error.show { display: block; }
 .firebase-notice {
-background: #FFF8E1;
-border: 2px dashed #FFB800;
-border-radius: 12px;
-padding: 16px;
-margin-bottom: 20px;
-font-size: 13px;
-color: #5D4037;
-display: none;
+  background: #FFF8E1;
+  border: 2px dashed #FFB800;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #5D4037;
+  display: none;
 }
 .firebase-notice.show { display: block; }
-.firebase-notice strong { color: var(–saffron-dark); }
+.firebase-notice strong { color: var(--saffron-dark); }
 .firebase-notice code {
-background: rgba(0,0,0,0.08); border-radius: 4px;
-padding: 1px 6px; font-size: 12px; font-family: monospace;
+  background: rgba(0,0,0,0.08); border-radius: 4px;
+  padding: 1px 6px; font-size: 12px; font-family: monospace;
 }
 
 /* ── HEADER ── */
 .header {
-background: linear-gradient(135deg, var(–saffron-dark) 0%, var(–saffron) 50%, var(–gold) 100%);
-position: sticky; top: 0; z-index: 100;
-box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  background: linear-gradient(135deg, var(--saffron-dark) 0%, var(--saffron) 50%, var(--gold) 100%);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 .header-inner {
-display: flex; align-items: center; gap: 14px;
-padding: 11px 20px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 20px;
 }
 .logo-circle {
-width: 46px; height: 46px;
-background: var(–navy); border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-font-family: ‘Rajdhani’; font-weight: 700; font-size: 16px;
-color: var(–saffron); flex-shrink: 0;
-border: 2px solid rgba(255,255,255,0.4);
+  width: 46px; height: 46px;
+  background: var(--navy); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 16px;
+  color: var(--saffron); flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.4);
 }
-.header-text h1 { font-family: ‘Rajdhani’; font-size: 19px; font-weight: 700; color: white; letter-spacing: 0.5px; }
+.header-text h1 { font-family: 'Rajdhani'; font-size: 19px; font-weight: 700; color: white; letter-spacing: 0.5px; }
 .header-text p { font-size: 11px; color: rgba(255,255,255,0.8); }
 .header-right { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .hbadge {
-background: rgba(255,255,255,0.2);
-border: 1px solid rgba(255,255,255,0.35);
-border-radius: 20px; padding: 5px 12px;
-font-size: 11px; color: white; cursor: pointer;
-display: flex; align-items: center; gap: 5px;
-transition: background 0.2s; white-space: nowrap;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11px; color: white; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: background 0.2s; white-space: nowrap;
 }
 .hbadge:hover { background: rgba(255,255,255,0.3); }
 .dot { width: 7px; height: 7px; border-radius: 50%; }
 .dot-green { background: #66FF66; animation: pulse 2s infinite; }
-.dot-orange { background: var(–gold); }
+.dot-orange { background: var(--gold); }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* ── NAV ── */
 .nav-tabs {
-display: flex; background: var(–navy-mid);
-border-bottom: 3px solid var(–saffron); overflow-x: auto;
+  display: flex; background: var(--navy-mid);
+  border-bottom: 3px solid var(--saffron); overflow-x: auto;
 }
 .nav-tab {
-padding: 13px 22px; cursor: pointer;
-font-family: ‘Rajdhani’; font-weight: 600; font-size: 14px;
-color: var(–gray-400); white-space: nowrap;
-border-bottom: 3px solid transparent; margin-bottom: -3px;
-transition: all 0.2s;
+  padding: 13px 22px; cursor: pointer;
+  font-family: 'Rajdhani'; font-weight: 600; font-size: 14px;
+  color: var(--gray-400); white-space: nowrap;
+  border-bottom: 3px solid transparent; margin-bottom: -3px;
+  transition: all 0.2s;
 }
-.nav-tab:hover { color: var(–saffron-light); }
-.nav-tab.active { color: var(–saffron); border-bottom-color: var(–saffron); }
+.nav-tab:hover { color: var(--saffron-light); }
+.nav-tab.active { color: var(--saffron); border-bottom-color: var(--saffron); }
 
 /* ── MAIN ── */
-.main { background: var(–cream); min-height: calc(100vh - 108px); }
+.main { background: var(--cream); min-height: calc(100vh - 108px); }
 .section { display: none; padding: 20px; }
 .section.active { display: block; }
 
 /* ── CARDS ── */
 .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; margin-bottom: 18px; }
 .card-header {
-background: var(–navy); color: white;
-padding: 13px 18px;
-font-family: ‘Rajdhani’; font-size: 16px; font-weight: 700;
-letter-spacing: 0.3px;
-display: flex; align-items: center; justify-content: space-between;
+  background: var(--navy); color: white;
+  padding: 13px 18px;
+  font-family: 'Rajdhani'; font-size: 16px; font-weight: 700;
+  letter-spacing: 0.3px;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.card-header .accent { color: var(–saffron); }
+.card-header .accent { color: var(--saffron); }
 .card-body { padding: 18px; }
 
 /* ── FORMS ── */
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 13px; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
-.form-group label { font-size: 11px; font-weight: 600; color: var(–gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
+.form-group label { font-size: 11px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
 .form-group input, .form-group select, .form-group textarea {
-border: 2px solid var(–gray-200); border-radius: 8px;
-padding: 9px 12px; font-family: ‘Barlow’; font-size: 14px;
-color: var(–text); transition: border-color 0.2s; background: white;
+  border: 2px solid var(--gray-200); border-radius: 8px;
+  padding: 9px 12px; font-family: 'Barlow'; font-size: 14px;
+  color: var(--text); transition: border-color 0.2s; background: white;
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(–saffron); }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--saffron); }
 .form-group textarea { resize: vertical; min-height: 68px; }
 
 /* ── BUTTONS ── */
 .btn {
-padding: 9px 16px; border: none; border-radius: 8px;
-font-family: ‘Rajdhani’; font-size: 14px; font-weight: 600;
-cursor: pointer; transition: all 0.2s;
-display: inline-flex; align-items: center; gap: 5px;
+  padding: 9px 16px; border: none; border-radius: 8px;
+  font-family: 'Rajdhani'; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 5px;
 }
-.btn-primary { background: var(–saffron); color: white; }
-.btn-primary:hover { background: var(–saffron-dark); }
-.btn-secondary { background: var(–navy); color: white; }
-.btn-secondary:hover { background: var(–navy-light); }
-.btn-danger { background: var(–danger); color: white; }
-.btn-outline { background: transparent; color: var(–saffron); border: 2px solid var(–saffron); }
-.btn-outline:hover { background: var(–saffron); color: white; }
+.btn-primary { background: var(--saffron); color: white; }
+.btn-primary:hover { background: var(--saffron-dark); }
+.btn-secondary { background: var(--navy); color: white; }
+.btn-secondary:hover { background: var(--navy-light); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-outline { background: transparent; color: var(--saffron); border: 2px solid var(--saffron); }
+.btn-outline:hover { background: var(--saffron); color: white; }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
-.btn-print { background: var(–navy); color: white; }
-.btn-print:hover { background: var(–saffron); }
+.btn-print { background: var(--navy); color: white; }
+.btn-print:hover { background: var(--saffron); }
 
 /* ── TABLE ── */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th { background: var(–navy); color: white; padding: 9px 11px; text-align: left; font-family: ‘Rajdhani’; font-weight: 600; font-size: 12px; letter-spacing: 0.3px; }
-td { padding: 8px 11px; border-bottom: 1px solid var(–gray-200); vertical-align: middle; }
+th { background: var(--navy); color: white; padding: 9px 11px; text-align: left; font-family: 'Rajdhani'; font-weight: 600; font-size: 12px; letter-spacing: 0.3px; }
+td { padding: 8px 11px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
 tr:hover td { background: rgba(255,107,0,0.03); }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
 .badge-high { background: #E8F5E9; color: #2E7D32; }
@@ -266,205 +269,203 @@ tr:hover td { background: rgba(255,107,0,0.03); }
 .badge-low  { background: #FFEBEE; color: #C62828; }
 
 /* ── MEMBER SEARCH CHIPS ── */
-.member-search-box { border: 2px solid var(–gray-200); border-radius: 8px; overflow: hidden; }
-.member-search-box input { border: none; padding: 9px 13px; width: 100%; font-family: ‘Barlow’; font-size: 14px; }
+.member-search-box { border: 2px solid var(--gray-200); border-radius: 8px; overflow: hidden; }
+.member-search-box input { border: none; padding: 9px 13px; width: 100%; font-family: 'Barlow'; font-size: 14px; }
 .member-search-box input:focus { outline: none; }
-.member-dropdown { border-top: 1px solid var(–gray-200); max-height: 160px; overflow-y: auto; display: none; }
+.member-dropdown { border-top: 1px solid var(--gray-200); max-height: 160px; overflow-y: auto; display: none; }
 .member-dropdown.open { display: block; }
 .member-dropdown-item { padding: 7px 13px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
 .member-dropdown-item:hover { background: rgba(255,107,0,0.07); }
 .selected-members { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
-.member-chip { background: var(–navy); color: white; padding: 3px 9px 3px 11px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; }
-.member-chip .remove { cursor: pointer; color: var(–saffron); font-weight: bold; font-size: 13px; }
+.member-chip { background: var(--navy); color: white; padding: 3px 9px 3px 11px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+.member-chip .remove { cursor: pointer; color: var(--saffron); font-weight: bold; font-size: 13px; }
 
 /* ── ACTIVITY BAR ── */
 .activity-bar { display: flex; align-items: center; gap: 7px; }
-.bar-track { flex: 1; height: 6px; background: var(–gray-200); border-radius: 4px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 4px; background: var(–saffron); }
-.bar-label { font-size: 11px; font-weight: 600; color: var(–gray-600); width: 28px; text-align: right; }
+.bar-track { flex: 1; height: 6px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; background: var(--saffron); }
+.bar-label { font-size: 11px; font-weight: 600; color: var(--gray-600); width: 28px; text-align: right; }
 
 /* ── STATS ── */
 .stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
-.stat-card { flex: 1; min-width: 110px; background: white; border-radius: 10px; padding: 13px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid var(–saffron); }
-.stat-card.navy { border-color: var(–navy); }
-.stat-card.gold { border-color: var(–gold); }
-.stat-card.green { border-color: var(–success); }
-.stat-number { font-family: ‘Rajdhani’; font-size: 30px; font-weight: 700; color: var(–navy); line-height: 1; }
-.stat-label { font-size: 11px; color: var(–gray-400); margin-top: 3px; }
+.stat-card { flex: 1; min-width: 110px; background: white; border-radius: 10px; padding: 13px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid var(--saffron); }
+.stat-card.navy { border-color: var(--navy); }
+.stat-card.gold { border-color: var(--gold); }
+.stat-card.green { border-color: var(--success); }
+.stat-number { font-family: 'Rajdhani'; font-size: 30px; font-weight: 700; color: var(--navy); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
 
 /* ── OTHER ATTENDEES ── */
 .other-list { list-style: none; }
-.other-list li { display: flex; align-items: center; justify-content: space-between; padding: 5px 9px; border: 1px solid var(–gray-200); border-radius: 6px; margin-bottom: 5px; font-size: 13px; }
-.other-list li .rm { cursor: pointer; color: var(–danger); font-size: 15px; }
+.other-list li { display: flex; align-items: center; justify-content: space-between; padding: 5px 9px; border: 1px solid var(--gray-200); border-radius: 6px; margin-bottom: 5px; font-size: 13px; }
+.other-list li .rm { cursor: pointer; color: var(--danger); font-size: 15px; }
 
 /* ── MODAL ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; display: none; align-items: flex-start; justify-content: center; padding: 28px 16px; overflow-y: auto; }
 .modal-overlay.open { display: flex; }
 .modal { background: white; border-radius: 14px; width: 100%; max-width: 680px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-.modal-header { background: linear-gradient(135deg, var(–navy), var(–navy-light)); color: white; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; font-family: ‘Rajdhani’; font-size: 18px; font-weight: 700; }
-.modal-header .close { cursor: pointer; font-size: 20px; color: var(–saffron); }
+.modal-header { background: linear-gradient(135deg, var(--navy), var(--navy-light)); color: white; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; font-family: 'Rajdhani'; font-size: 18px; font-weight: 700; }
+.modal-header .close { cursor: pointer; font-size: 20px; color: var(--saffron); }
 .modal-body { padding: 22px; }
-.modal-footer { padding: 14px 22px; border-top: 1px solid var(–gray-200); display: flex; gap: 9px; justify-content: flex-end; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--gray-200); display: flex; gap: 9px; justify-content: flex-end; }
 
 /* ── EMPTY STATE ── */
-.empty-state { text-align: center; padding: 36px 20px; color: var(–gray-400); font-size: 14px; }
+.empty-state { text-align: center; padding: 36px 20px; color: var(--gray-400); font-size: 14px; }
 .empty-state .icon { font-size: 36px; margin-bottom: 8px; }
 
 /* ── SEARCH ── */
-.search-input { border: 2px solid var(–gray-200); border-radius: 8px; padding: 9px 13px; width: 100%; max-width: 280px; font-family: ‘Barlow’; font-size: 14px; margin-bottom: 14px; }
-.search-input:focus { outline: none; border-color: var(–saffron); }
+.search-input { border: 2px solid var(--gray-200); border-radius: 8px; padding: 9px 13px; width: 100%; max-width: 280px; font-family: 'Barlow'; font-size: 14px; margin-bottom: 14px; }
+.search-input:focus { outline: none; border-color: var(--saffron); }
 
 /* ── TOAST ── */
-.toast { position: fixed; bottom: 20px; right: 20px; background: var(–navy); color: white; padding: 11px 18px; border-radius: 8px; font-size: 13px; font-family: ‘Rajdhani’; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 7px; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--navy); color: white; padding: 11px 18px; border-radius: 8px; font-size: 13px; font-family: 'Rajdhani'; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 7px; }
 .toast.show { transform: translateY(0); opacity: 1; }
-.toast .ti { color: var(–saffron); font-size: 16px; }
+.toast .ti { color: var(--saffron); font-size: 16px; }
 
 /* ── LOADING ── */
 .loading-overlay { position: fixed; inset: 0; background: rgba(13,27,62,0.7); z-index: 500; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
 .loading-overlay.show { display: flex; }
-.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(–saffron); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--saffron); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: white; font-family: ‘Rajdhani’; font-size: 16px; }
+.loading-text { color: white; font-family: 'Rajdhani'; font-size: 16px; }
 
 /* ── CHANGE PASSWORD ── */
-.pwd-section { background: var(–gray-100); border-radius: 10px; padding: 14px; margin-bottom: 14px; border-left: 4px solid var(–saffron); }
+.pwd-section { background: var(--gray-100); border-radius: 10px; padding: 14px; margin-bottom: 14px; border-left: 4px solid var(--saffron); }
 .pwd-section.blue { border-color: #1565C0; }
-.pwd-section.green { border-color: var(–success); }
-.pwd-section-title { font-family: ‘Rajdhani’; font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(–navy); }
+.pwd-section.green { border-color: var(--success); }
+.pwd-section-title { font-family: 'Rajdhani'; font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(--navy); }
 
 /* ── INVITATION CARD ── */
 .inv-card {
-background: white;
-border: 1px solid #ddd;
-font-family: ‘Barlow’, sans-serif;
-max-width: 680px;
-margin: 0 auto;
+  background: white;
+  border: 1px solid #ddd;
+  font-family: 'Barlow', sans-serif;
+  max-width: 680px;
+  margin: 0 auto;
 }
 .inv-header-band {
-background: linear-gradient(135deg, #0D1B3E 0%, #1E3060 100%);
-padding: 28px 32px 20px;
-text-align: center;
-position: relative;
+  background: linear-gradient(135deg, #0D1B3E 0%, #1E3060 100%);
+  padding: 28px 32px 20px;
+  text-align: center;
+  position: relative;
 }
 .inv-header-band::after {
-content: ‘’;
-position: absolute; bottom: 0; left: 0; right: 0;
-height: 4px;
-background: linear-gradient(90deg, #FF6B00, #FFB800, #FF6B00);
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FF6B00, #FFB800, #FF6B00);
 }
 .inv-org-logo {
-width: 60px; height: 60px;
-background: linear-gradient(135deg,#FF6B00,#FF8C35);
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-margin: 0 auto 10px;
-font-family: ‘Rajdhani’; font-weight: 700; font-size: 20px;
-color: white;
-box-shadow: 0 4px 14px rgba(255,107,0,0.4);
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg,#FF6B00,#FF8C35);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 20px;
+  color: white;
+  box-shadow: 0 4px 14px rgba(255,107,0,0.4);
 }
 .inv-org-name {
-font-family: ‘Rajdhani’; font-size: 20px; font-weight: 700;
-color: white; letter-spacing: 1px;
+  font-family: 'Rajdhani'; font-size: 20px; font-weight: 700;
+  color: white; letter-spacing: 1px;
 }
 .inv-org-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
 .inv-type-badge {
-display: inline-block;
-background: rgba(255,107,0,0.2);
-border: 1px solid rgba(255,107,0,0.5);
-color: #FF8C35;
-border-radius: 20px;
-padding: 3px 14px;
-font-size: 11px; font-weight: 600;
-letter-spacing: 1px; text-transform: uppercase;
-margin-top: 10px;
+  display: inline-block;
+  background: rgba(255,107,0,0.2);
+  border: 1px solid rgba(255,107,0,0.5);
+  color: #FF8C35;
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-top: 10px;
 }
 .inv-body { padding: 28px 32px; }
 .inv-salutation {
-font-size: 15px; color: #333;
-margin-bottom: 16px; line-height: 1.6;
+  font-size: 15px; color: #333;
+  margin-bottom: 16px; line-height: 1.6;
 }
 .inv-title-line {
-font-family: ‘Rajdhani’; font-size: 22px; font-weight: 700;
-color: #0D1B3E;
-border-bottom: 2px solid #FF6B00;
-padding-bottom: 8px;
-margin-bottom: 20px;
+  font-family: 'Rajdhani'; font-size: 22px; font-weight: 700;
+  color: #0D1B3E;
+  border-bottom: 2px solid #FF6B00;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
 }
 .inv-details-grid {
-display: grid; grid-template-columns: 1fr 1fr;
-gap: 12px; margin-bottom: 20px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
 }
 .inv-detail-box {
-background: #F8F9FF;
-border-radius: 8px; padding: 12px 14px;
-border-left: 3px solid #FF6B00;
+  background: #F8F9FF;
+  border-radius: 8px; padding: 12px 14px;
+  border-left: 3px solid #FF6B00;
 }
 .inv-detail-box.wide { grid-column: span 2; }
 .inv-detail-label { font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.8px; }
 .inv-detail-value { font-size: 15px; font-weight: 600; color: #1A1A2E; margin-top: 3px; }
 .inv-agenda-box {
-background: #FFF8F0;
-border: 1px solid #FFD9B0;
-border-radius: 8px; padding: 16px 18px;
-margin-bottom: 20px;
+  background: #FFF8F0;
+  border: 1px solid #FFD9B0;
+  border-radius: 8px; padding: 16px 18px;
+  margin-bottom: 20px;
 }
 .inv-agenda-box h4 {
-font-family: ‘Rajdhani’; font-size: 14px; font-weight: 700;
-color: #CC5500; text-transform: uppercase; letter-spacing: 0.5px;
-margin-bottom: 10px;
+  font-family: 'Rajdhani'; font-size: 14px; font-weight: 700;
+  color: #CC5500; text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 10px;
 }
 .inv-agenda-item {
-display: flex; gap: 10px; align-items: flex-start;
-padding: 5px 0; border-bottom: 1px dashed #FFD9B0; font-size: 13px; color: #333;
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 5px 0; border-bottom: 1px dashed #FFD9B0; font-size: 13px; color: #333;
 }
 .inv-agenda-item:last-child { border-bottom: none; }
 .inv-agenda-num {
-background: #FF6B00; color: white;
-border-radius: 50%; width: 20px; height: 20px;
-display: flex; align-items: center; justify-content: center;
-font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  background: #FF6B00; color: white;
+  border-radius: 50%; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
 }
 .inv-invited-box {
-background: #F0F4FF; border-radius: 8px;
-padding: 14px 16px; margin-bottom: 20px;
+  background: #F0F4FF; border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 20px;
 }
 .inv-invited-box h4 {
-font-family: ‘Rajdhani’; font-size: 13px; font-weight: 700;
-color: #0D1B3E; text-transform: uppercase; letter-spacing: 0.5px;
-margin-bottom: 8px;
+  font-family: 'Rajdhani'; font-size: 13px; font-weight: 700;
+  color: #0D1B3E; text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 .inv-note-box {
-background: #FFFDE7; border: 1px solid #FFE082;
-border-radius: 8px; padding: 12px 14px; margin-bottom: 20px;
-font-size: 13px; color: #5D4037;
+  background: #FFFDE7; border: 1px solid #FFE082;
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 20px;
+  font-size: 13px; color: #5D4037;
 }
 .inv-note-box strong { color: #E65100; }
 .inv-footer-sig {
-display: flex; justify-content: flex-end; margin-top: 28px;
-padding-top: 16px; border-top: 1px solid #eee;
+  display: flex; justify-content: flex-end; margin-top: 28px;
+  padding-top: 16px; border-top: 1px solid #eee;
 }
 .inv-sig-block { text-align: center; min-width: 160px; }
 .inv-sig-line { border-top: 1px solid #aaa; padding-top: 6px; margin-top: 40px; font-size: 12px; color: #555; }
 .inv-sig-name { font-weight: 700; font-size: 14px; color: #1A1A2E; }
 .inv-sig-desg { font-size: 12px; color: #777; }
 .inv-bottom-band {
-background: linear-gradient(90deg, #FF6B00, #FFB800);
-height: 6px;
+  background: linear-gradient(90deg, #FF6B00, #FFB800);
+  height: 6px;
 }
 
 /* ── PRINT ── */
 @media print {
-.header, .nav-tabs, .no-print, .toast, .modal-overlay { display: none !important; }
-.main { background: white; }
-.section.active { padding: 0; }
+  .header, .nav-tabs, .no-print, .toast, .modal-overlay { display: none !important; }
+  .main { background: white; }
+  .section.active { padding: 0; }
 }
 </style>
-
 </head>
 <body>
 
 <!-- ══════════ LOGIN SCREEN ══════════ -->
-
 <div class="login-screen" id="login-screen">
   <div class="login-bg"></div>
   <div class="login-pattern"></div>
@@ -491,20 +492,18 @@ height: 6px;
       </div>
       <div class="lf">
         <label>Password</label>
-        <input type="password" id="login-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+        <input type="password" id="login-password" placeholder="Enter your password">
       </div>
-      <button class="login-btn" onclick="doLogin()">Login →</button>
+      <button class="login-btn">Login →</button>
       <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
     </div>
   </div>
 </div>
 
 <!-- ══════════ MAIN APP ══════════ -->
-
 <div id="main-app" style="display:none">
 
   <!-- HEADER -->
-
   <div class="header">
     <div class="header-inner">
       <div class="logo-circle">ABVP</div>
@@ -529,7 +528,6 @@ height: 6px;
   </div>
 
   <!-- NAV -->
-
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showSection('members',event)">👥 Master List</div>
     <div class="nav-tab" onclick="showSection('meetings',event)">📋 Meetings</div>
@@ -539,234 +537,230 @@ height: 6px;
   </div>
 
   <!-- MAIN -->
-
   <div class="main">
 
-```
-<!-- ══ MEMBERS ══ -->
-<div class="section active" id="section-members">
-  <div class="stats-row" id="member-stats"></div>
+    <!-- ══ MEMBERS ══ -->
+    <div class="section active" id="section-members">
+      <div class="stats-row" id="member-stats"></div>
 
-  <div class="card no-print no-viewer no-member">
-    <div class="card-header"><span>Add <span class="accent">New Member</span></span></div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-group"><label>Full Name *</label><input type="text" id="m-name" placeholder="e.g. Rahul Sharma"></div>
-        <div class="form-group"><label>Phone Number</label><input type="tel" id="m-phone" placeholder="10-digit number"></div>
-        <div class="form-group" style="grid-column:span 2"><label>Address</label><input type="text" id="m-address" placeholder="Full address"></div>
-        <div class="form-group"><label>Duty / Role</label><input type="text" id="m-duty" placeholder="e.g. Secretary"></div>
-        <div class="form-group"><label>Year of Joining</label><input type="number" id="m-year" placeholder="e.g. 2022" min="1980" max="2100"></div>
-      </div>
-      <div style="margin-top:13px;display:flex;gap:9px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="addMember()">➕ Add Member</button>
-        <button class="btn btn-print" onclick="printMasterList()">🖨️ Print Master List</button>
-      </div>
-    </div>
-  </div>
-
-  <input class="search-input no-print" id="member-search" placeholder="🔍 Search members..." oninput="renderMembers()">
-
-  <div class="card">
-    <div class="card-header">
-      <span>Member <span class="accent">Directory</span></span>
-      <span id="member-count" style="font-size:12px;color:var(--saffron-light)"></span>
-    </div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th><th>Name</th><th>Phone</th><th>Duty</th><th>Joined</th>
-              <th>Meetings</th><th>Events</th><th>Activity</th>
-              <th class="no-print">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="member-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ MEETINGS ══ -->
-<div class="section" id="section-meetings">
-  <div class="card no-print no-viewer no-member">
-    <div class="card-header"><span>Create <span class="accent">New Meeting</span></span></div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-group"><label>Meeting Date *</label><input type="date" id="mt-date"></div>
-        <div class="form-group"><label>Next Meeting Date</label><input type="date" id="mt-next-date"></div>
-        <div class="form-group" style="grid-column:span 2"><label>Agenda</label><textarea id="mt-agenda" placeholder="List agenda items..."></textarea></div>
-        <div class="form-group"><label>Presided By *</label><input type="text" id="mt-presided" placeholder="Name of chairperson"></div>
-        <div class="form-group" style="grid-column:span 2"><label>Motions / Resolutions Passed</label><textarea id="mt-motions" placeholder="List motions passed..."></textarea></div>
-      </div>
-      <div style="margin-top:14px">
-        <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Invite Members from List</label>
-        <div class="member-search-box">
-          <input type="text" id="mt-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('mt')" onfocus="openDropdown('mt')" onblur="setTimeout(()=>closeDropdown('mt'),200)">
-          <div class="member-dropdown" id="mt-member-dropdown"></div>
+      <div class="card no-print no-viewer no-member">
+        <div class="card-header"><span>Add <span class="accent">New Member</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="m-name" placeholder="e.g. Rahul Sharma"></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="m-phone" placeholder="10-digit number"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Address</label><input type="text" id="m-address" placeholder="Full address"></div>
+            <div class="form-group"><label>Duty / Role</label><input type="text" id="m-duty" placeholder="e.g. Secretary"></div>
+            <div class="form-group"><label>Year of Joining</label><input type="number" id="m-year" placeholder="e.g. 2022" min="1980" max="2100"></div>
+          </div>
+          <div style="margin-top:13px;display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="addMember()">➕ Add Member</button>
+            <button class="btn btn-print" onclick="printMasterList()">🖨️ Print Master List</button>
+          </div>
         </div>
-        <div class="selected-members" id="mt-selected-members"></div>
       </div>
-      <div style="margin-top:14px">
-        <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Other Attendees (Not in List)</label>
-        <div style="display:flex;gap:7px;margin-bottom:7px">
-          <input type="text" id="mt-other-name" placeholder="Name" style="flex:1;border:2px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-family:Barlow;font-size:14px">
-          <input type="text" id="mt-other-role" placeholder="Role (optional)" style="flex:1;border:2px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-family:Barlow;font-size:14px">
-          <button class="btn btn-outline" onclick="addOtherMT()">+ Add</button>
+
+      <input class="search-input no-print" id="member-search" placeholder="🔍 Search members..." oninput="renderMembers()">
+
+      <div class="card">
+        <div class="card-header">
+          <span>Member <span class="accent">Directory</span></span>
+          <span id="member-count" style="font-size:12px;color:var(--saffron-light)"></span>
         </div>
-        <ul class="other-list" id="mt-other-list"></ul>
-      </div>
-      <div style="margin-top:14px">
-        <button class="btn btn-primary" onclick="saveMeeting()">💾 Save Meeting</button>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Name</th><th>Phone</th><th>Duty</th><th>Joined</th>
+                  <th>Meetings</th><th>Events</th><th>Activity</th>
+                  <th class="no-print">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="member-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div id="meetings-list"></div>
-</div>
 
-<!-- ══ EVENTS ══ -->
-<div class="section" id="section-events">
-  <div class="card no-print no-viewer no-member">
-    <div class="card-header"><span>Create <span class="accent">New Event</span></span></div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-group"><label>Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Annual Meet 2025"></div>
-        <div class="form-group"><label>Event Date *</label><input type="date" id="ev-date"></div>
-        <div class="form-group"><label>Presided By *</label><input type="text" id="ev-presided" placeholder="Presiding officer name"></div>
-        <div class="form-group" style="grid-column:span 2"><label>Agenda / Description</label><textarea id="ev-agenda" placeholder="Describe the event agenda..."></textarea></div>
-      </div>
-      <div style="margin-top:14px">
-        <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Mark Attendance from Master List</label>
-        <div class="member-search-box">
-          <input type="text" id="ev-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('ev')" onfocus="openDropdown('ev')" onblur="setTimeout(()=>closeDropdown('ev'),200)">
-          <div class="member-dropdown" id="ev-member-dropdown"></div>
+    <!-- ══ MEETINGS ══ -->
+    <div class="section" id="section-meetings">
+      <div class="card no-print no-viewer no-member">
+        <div class="card-header"><span>Create <span class="accent">New Meeting</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Meeting Date *</label><input type="date" id="mt-date"></div>
+            <div class="form-group"><label>Next Meeting Date</label><input type="date" id="mt-next-date"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Agenda</label><textarea id="mt-agenda" placeholder="List agenda items..."></textarea></div>
+            <div class="form-group"><label>Presided By *</label><input type="text" id="mt-presided" placeholder="Name of chairperson"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Motions / Resolutions Passed</label><textarea id="mt-motions" placeholder="List motions passed..."></textarea></div>
+          </div>
+          <div style="margin-top:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Invite Members from List</label>
+            <div class="member-search-box">
+              <input type="text" id="mt-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('mt')" onfocus="openDropdown('mt')" onblur="setTimeout(()=>closeDropdown('mt'),200)">
+              <div class="member-dropdown" id="mt-member-dropdown"></div>
+            </div>
+            <div class="selected-members" id="mt-selected-members"></div>
+          </div>
+          <div style="margin-top:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Other Attendees (Not in List)</label>
+            <div style="display:flex;gap:7px;margin-bottom:7px">
+              <input type="text" id="mt-other-name" placeholder="Name" style="flex:1;border:2px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-family:Barlow;font-size:14px">
+              <input type="text" id="mt-other-role" placeholder="Role (optional)" style="flex:1;border:2px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-family:Barlow;font-size:14px">
+              <button class="btn btn-outline" onclick="addOtherMT()">+ Add</button>
+            </div>
+            <ul class="other-list" id="mt-other-list"></ul>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-primary" onclick="saveMeeting()">💾 Save Meeting</button>
+          </div>
         </div>
-        <div class="selected-members" id="ev-selected-members"></div>
       </div>
-      <div style="margin-top:14px">
-        <button class="btn btn-primary" onclick="saveEvent()">💾 Save Event</button>
-      </div>
+      <div id="meetings-list"></div>
     </div>
-  </div>
-  <div id="events-list"></div>
-</div>
 
-<!-- ══ INVITATIONS ══ -->
-<div class="section" id="section-invitations">
+    <!-- ══ EVENTS ══ -->
+    <div class="section" id="section-events">
+      <div class="card no-print no-viewer no-member">
+        <div class="card-header"><span>Create <span class="accent">New Event</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Annual Meet 2025"></div>
+            <div class="form-group"><label>Event Date *</label><input type="date" id="ev-date"></div>
+            <div class="form-group"><label>Presided By *</label><input type="text" id="ev-presided" placeholder="Presiding officer name"></div>
+            <div class="form-group" style="grid-column:span 2"><label>Agenda / Description</label><textarea id="ev-agenda" placeholder="Describe the event agenda..."></textarea></div>
+          </div>
+          <div style="margin-top:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Mark Attendance from Master List</label>
+            <div class="member-search-box">
+              <input type="text" id="ev-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('ev')" onfocus="openDropdown('ev')" onblur="setTimeout(()=>closeDropdown('ev'),200)">
+              <div class="member-dropdown" id="ev-member-dropdown"></div>
+            </div>
+            <div class="selected-members" id="ev-selected-members"></div>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-primary" onclick="saveEvent()">💾 Save Event</button>
+          </div>
+        </div>
+      </div>
+      <div id="events-list"></div>
+    </div>
 
-  <div class="card no-print">
-    <div class="card-header"><span>Create <span class="accent">Invitation</span></span></div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Invitation Type *</label>
-          <select id="inv-type">
-            <option value="">— Select —</option>
-            <option value="meeting">Meeting</option>
-            <option value="event">Event</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Title / Subject *</label>
-          <input type="text" id="inv-title" placeholder="e.g. Monthly Meeting, Annual Fest">
-        </div>
-        <div class="form-group">
-          <label>Date *</label>
-          <input type="date" id="inv-date">
-        </div>
-        <div class="form-group">
-          <label>Time *</label>
-          <input type="time" id="inv-time">
-        </div>
-        <div class="form-group" style="grid-column:span 2">
-          <label>Venue / Place *</label>
-          <input type="text" id="inv-venue" placeholder="e.g. ABVP Office, Room No. 101, College Name">
-        </div>
-        <div class="form-group" style="grid-column:span 2">
-          <label>Agenda / Purpose</label>
-          <textarea id="inv-agenda" placeholder="List agenda points, one per line..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Invited By (Name)</label>
-          <input type="text" id="inv-by" placeholder="Name of inviting officer">
-        </div>
-        <div class="form-group">
-          <label>Designation</label>
-          <input type="text" id="inv-designation" placeholder="e.g. President, Secretary">
-        </div>
-        <div class="form-group">
-          <label>Organisation Unit</label>
-          <input type="text" id="inv-unit" placeholder="e.g. ABVP – College Unit Name">
-        </div>
-        <div class="form-group">
-          <label>Contact / Phone</label>
-          <input type="tel" id="inv-contact" placeholder="Contact number">
-        </div>
-        <div class="form-group" style="grid-column:span 2">
-          <label>Special Note (optional)</label>
-          <input type="text" id="inv-note" placeholder="e.g. Attendance is compulsory. Please be on time.">
+    <!-- ══ INVITATIONS ══ -->
+    <div class="section" id="section-invitations">
+
+      <div class="card no-print">
+        <div class="card-header"><span>Create <span class="accent">Invitation</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Invitation Type *</label>
+              <select id="inv-type">
+                <option value="">— Select —</option>
+                <option value="meeting">Meeting</option>
+                <option value="event">Event</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Title / Subject *</label>
+              <input type="text" id="inv-title" placeholder="e.g. Monthly Meeting, Annual Fest">
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="inv-date">
+            </div>
+            <div class="form-group">
+              <label>Time *</label>
+              <input type="time" id="inv-time">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Venue / Place *</label>
+              <input type="text" id="inv-venue" placeholder="e.g. ABVP Office, Room No. 101, College Name">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Agenda / Purpose</label>
+              <textarea id="inv-agenda" placeholder="List agenda points, one per line..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Invited By (Name)</label>
+              <input type="text" id="inv-by" placeholder="Name of inviting officer">
+            </div>
+            <div class="form-group">
+              <label>Designation</label>
+              <input type="text" id="inv-designation" placeholder="e.g. President, Secretary">
+            </div>
+            <div class="form-group">
+              <label>Organisation Unit</label>
+              <input type="text" id="inv-unit" placeholder="e.g. ABVP – College Unit Name">
+            </div>
+            <div class="form-group">
+              <label>Contact / Phone</label>
+              <input type="tel" id="inv-contact" placeholder="Contact number">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Special Note (optional)</label>
+              <input type="text" id="inv-note" placeholder="e.g. Attendance is compulsory. Please be on time.">
+            </div>
+          </div>
+
+          <!-- Invite from member list -->
+          <div style="margin-top:16px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Invite Members from Master List (optional)</label>
+            <div class="member-search-box">
+              <input type="text" id="inv-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('inv')" onfocus="openDropdown('inv')" onblur="setTimeout(()=>closeDropdown('inv'),200)">
+              <div class="member-dropdown" id="inv-member-dropdown"></div>
+            </div>
+            <div class="selected-members" id="inv-selected-members"></div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="previewInvitation()">👁️ Preview Invitation</button>
+          </div>
         </div>
       </div>
 
-      <!-- Invite from member list -->
-      <div style="margin-top:16px">
-        <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px">Invite Members from Master List (optional)</label>
-        <div class="member-search-box">
-          <input type="text" id="inv-member-search" placeholder="Search member name..." oninput="filterMemberDropdown('inv')" onfocus="openDropdown('inv')" onblur="setTimeout(()=>closeDropdown('inv'),200)">
-          <div class="member-dropdown" id="inv-member-dropdown"></div>
+      <!-- Saved Invitations List -->
+      <div id="invitations-list"></div>
+    </div>
+
+    <!-- ══ QR JOIN ══ -->
+    <div class="section" id="section-qrjoin">
+
+      <!-- QR Card -->
+      <div class="card">
+        <div class="card-header"><span>📲 Member <span class="accent">Self-Registration QR</span></span></div>
+        <div class="card-body" style="text-align:center">
+          <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px">Share this QR code with anyone who wants to join. They scan it, fill their details, and you approve them here.</p>
+          <div id="qr-container" style="display:inline-block;padding:18px;background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.12);margin-bottom:16px">
+            <div id="qr-code"></div>
+          </div>
+          <br>
+          <div style="background:var(--gray-100);border-radius:8px;padding:10px 16px;display:inline-block;margin-bottom:16px;font-size:13px;color:var(--gray-600);word-break:break-all" id="join-url-display"></div>
+          <br>
+          <button class="btn btn-primary" onclick="copyJoinLink()">📋 Copy Join Link</button>
+          <button class="btn btn-secondary" onclick="printQR()">🖨️ Print QR</button>
         </div>
-        <div class="selected-members" id="inv-selected-members"></div>
       </div>
 
-      <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="previewInvitation()">👁️ Preview Invitation</button>
+      <!-- Pending Approvals -->
+      <div class="card">
+        <div class="card-header">
+          <span>⏳ Pending <span class="accent">Approvals</span></span>
+          <span id="pending-count-label" style="font-size:12px;color:var(--saffron-light)"></span>
+        </div>
+        <div id="pending-list" class="card-body">
+          <div class="empty-state"><div class="icon">✅</div>No pending requests</div>
+        </div>
       </div>
+
     </div>
-  </div>
-
-  <!-- Saved Invitations List -->
-  <div id="invitations-list"></div>
-</div>
-
-<!-- ══ QR JOIN ══ -->
-<div class="section" id="section-qrjoin">
-
-  <!-- QR Card -->
-  <div class="card">
-    <div class="card-header"><span>📲 Member <span class="accent">Self-Registration QR</span></span></div>
-    <div class="card-body" style="text-align:center">
-      <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px">Share this QR code with anyone who wants to join. They scan it, fill their details, and you approve them here.</p>
-      <div id="qr-container" style="display:inline-block;padding:18px;background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.12);margin-bottom:16px">
-        <div id="qr-code"></div>
-      </div>
-      <br>
-      <div style="background:var(--gray-100);border-radius:8px;padding:10px 16px;display:inline-block;margin-bottom:16px;font-size:13px;color:var(--gray-600);word-break:break-all" id="join-url-display"></div>
-      <br>
-      <button class="btn btn-primary" onclick="copyJoinLink()">📋 Copy Join Link</button>
-      <button class="btn btn-secondary" onclick="printQR()">🖨️ Print QR</button>
-    </div>
-  </div>
-
-  <!-- Pending Approvals -->
-  <div class="card">
-    <div class="card-header">
-      <span>⏳ Pending <span class="accent">Approvals</span></span>
-      <span id="pending-count-label" style="font-size:12px;color:var(--saffron-light)"></span>
-    </div>
-    <div id="pending-list" class="card-body">
-      <div class="empty-state"><div class="icon">✅</div>No pending requests</div>
-    </div>
-  </div>
-
-</div>
-```
 
   </div><!-- /main -->
 </div><!-- /main-app -->
 
 <!-- ══ EDIT MEMBER MODAL ══ -->
-
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-header">Edit Member <span class="close" onclick="closeModal('edit-modal')">✕</span></div>
@@ -788,7 +782,6 @@ height: 6px;
 </div>
 
 <!-- ══ MEETING PRINT MODAL ══ -->
-
 <div class="modal-overlay" id="meeting-print-modal">
   <div class="modal" style="max-width:800px">
     <div class="modal-header">Meeting Print Preview <span class="close" onclick="closeModal('meeting-print-modal')">✕</span></div>
@@ -801,7 +794,6 @@ height: 6px;
 </div>
 
 <!-- ══ EVENT PRINT MODAL ══ -->
-
 <div class="modal-overlay" id="event-print-modal">
   <div class="modal" style="max-width:800px">
     <div class="modal-header">Event Print Preview <span class="close" onclick="closeModal('event-print-modal')">✕</span></div>
@@ -814,7 +806,6 @@ height: 6px;
 </div>
 
 <!-- ══ MASTER LIST PRINT MODAL ══ -->
-
 <div class="modal-overlay" id="masterlist-print-modal">
   <div class="modal" style="max-width:900px">
     <div class="modal-header">Master List Print Preview <span class="close" onclick="closeModal('masterlist-print-modal')">✕</span></div>
@@ -827,7 +818,6 @@ height: 6px;
 </div>
 
 <!-- ══ CHANGE PASSWORD MODAL ══ -->
-
 <div class="modal-overlay" id="chpwd-modal">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">🔑 Change Passwords <span class="close" onclick="closeModal('chpwd-modal')">✕</span></div>
@@ -863,7 +853,6 @@ height: 6px;
 </div>
 
 <!-- ══ INVITATION PREVIEW MODAL ══ -->
-
 <div class="modal-overlay" id="inv-preview-modal">
   <div class="modal" style="max-width:720px">
     <div class="modal-header">✉️ Invitation Preview <span class="close" onclick="closeModal('inv-preview-modal')">✕</span></div>
@@ -877,7 +866,6 @@ height: 6px;
 </div>
 
 <!-- ══ PUBLIC JOIN FORM PAGE ══ -->
-
 <div id="join-page" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--navy);overflow-y:auto">
   <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
     <div style="background:white;border-radius:24px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.5)">
@@ -922,14 +910,12 @@ height: 6px;
 </div>
 
 <!-- LOADING -->
-
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
   <div class="loading-text">Syncing data...</div>
 </div>
 
 <!-- TOAST -->
-
 <div class="toast" id="toast"><span class="ti">✓</span><span id="toast-msg"></span></div>
 
 <script type="module">
@@ -968,21 +954,34 @@ function saveAll() {} // no-op — Firebase is live
 
 // ── INIT ──
 async function init() {
+  // Wire up login button explicitly (fixes iPhone Safari module scope issue)
+  const loginBtn = document.querySelector('.login-btn');
+  if (loginBtn) loginBtn.onclick = doLogin;
+  const pwdInput = document.getElementById('login-password');
+  if (pwdInput) pwdInput.onkeydown = (e) => { if(e.key==='Enter') doLogin(); };
+
   // Check if this is the public join page (?join=1)
   if (window.location.search.includes('join=1')) {
     showJoinPage();
     return;
   }
 
-  // Load passwords from Firestore
+  // Load passwords from Firestore (with timeout fallback)
   try {
-    const pwdSnap = await getDoc(doc(db, 'config', 'passwords'));
-    if (pwdSnap.exists()) PASSWORDS = { ...DEFAULT_PASSWORDS, ...pwdSnap.data() };
-  } catch(e) {}
+    const timeout = new Promise((_,rej) => setTimeout(()=>rej('timeout'),5000));
+    const pwdFetch = getDoc(doc(db, 'config', 'passwords'));
+    const pwdSnap = await Promise.race([pwdFetch, timeout]);
+    if (pwdSnap && pwdSnap.exists && pwdSnap.exists()) {
+      PASSWORDS = { ...DEFAULT_PASSWORDS, ...pwdSnap.data() };
+    }
+  } catch(e) {
+    // Use default passwords if Firestore unreachable
+    PASSWORDS = { ...DEFAULT_PASSWORDS };
+  }
 
   // Check session
   const saved = sessionStorage.getItem('abvp_role');
-  if (saved && PASSWORDS[saved]) { currentRole = saved; showApp(); }
+  if (saved && PASSWORDS[saved]) { currentRole = saved; showApp(); return; }
 
   // Modal close on overlay click
   document.querySelectorAll('.modal-overlay').forEach(o => {
@@ -1406,118 +1405,119 @@ function triggerPrint(content,type) {
   const existing=document.getElementById('abvp-print-frame'); if(existing) existing.remove();
   const invStyles=type==='invitation'?`body{background:#fff;padding:0;margin:0}.inv-card{background:white;border:none;max-width:100%;width:100%}.inv-header-band{background:#0D1B3E!important;padding:28px 32px 20px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-org-logo{width:60px;height:60px;background:#FF6B00;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-family:'Rajdhani';font-weight:700;font-size:20px;color:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-org-name{font-family:'Rajdhani';font-size:20px;font-weight:700;color:white;letter-spacing:1px}.inv-org-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px}.inv-type-badge{display:inline-block;border:1px solid #FF6B00;color:#FF6B00;border-radius:20px;padding:3px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:10px}.inv-body{padding:28px 32px}.inv-salutation{font-size:15px;color:#333;margin-bottom:16px;line-height:1.6}.inv-title-line{font-family:'Rajdhani';font-size:22px;font-weight:700;color:#0D1B3E;border-bottom:2px solid #FF6B00;padding-bottom:8px;margin-bottom:20px}.inv-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}.inv-detail-box{background:#F8F9FF;border-radius:8px;padding:12px 14px;border-left:3px solid #FF6B00;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-detail-box.wide{grid-column:span 2}.inv-detail-label{font-size:10px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.8px}.inv-detail-value{font-size:15px;font-weight:600;color:#1A1A2E;margin-top:3px}.inv-agenda-box{background:#FFF8F0;border:1px solid #FFD9B0;border-radius:8px;padding:16px 18px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-agenda-box h4{font-family:'Rajdhani';font-size:14px;font-weight:700;color:#CC5500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}.inv-agenda-item{display:flex;gap:10px;align-items:flex-start;padding:5px 0;border-bottom:1px dashed #FFD9B0;font-size:13px;color:#333}.inv-agenda-item:last-child{border-bottom:none}.inv-agenda-num{background:#FF6B00;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-invited-box{background:#F0F4FF;border-radius:8px;padding:14px 16px;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-invited-box h4{font-family:'Rajdhani';font-size:13px;font-weight:700;color:#0D1B3E;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}.inv-note-box{background:#FFFDE7;border:1px solid #FFE082;border-radius:8px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#5D4037;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv-note-box strong{color:#E65100}.inv-footer-sig{display:flex;justify-content:flex-end;margin-top:28px;padding-top:16px;border-top:1px solid #eee}.inv-sig-block{text-align:center;min-width:160px}.inv-sig-line{border-top:1px solid #aaa;padding-top:6px;margin-top:40px;font-size:12px;color:#555}.inv-sig-name{font-weight:700;font-size:14px;color:#1A1A2E}.inv-sig-desg{font-size:12px;color:#777}.inv-bottom-band{height:6px;background:#FF6B00;-webkit-print-color-adjust:exact;print-color-adjust:exact}`:`body{padding:20px;color:#1A1A2E;background:white}table{width:100%;border-collapse:collapse}th{background:#0D1B3E!important;color:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}`;
   const fullHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABVP Print</title><link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Barlow',sans-serif}${invStyles}@media print{body{padding:0!important}button{display:none!important}}</style></head><body>${content}</body></html>`;
-
-try {
-const iframe=document.createElement(‘iframe’);
-iframe.id=‘abvp-print-frame’;
-iframe.style.cssText=‘position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:99999;background:white’;
-document.body.appendChild(iframe);
-iframe.onload=function(){
-setTimeout(()=>{
-try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); setTimeout(()=>{ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); },1000); }
-catch(e){ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); alert(‘To print: use Share → Print from your browser menu.’); }
-},800);
-};
-const d=iframe.contentDocument||iframe.contentWindow.document; d.open(); d.write(fullHTML); d.close();
-} catch(e){ alert(‘To print: use Share → Print from your browser menu.’); }
+  try {
+    const iframe=document.createElement('iframe');
+    iframe.id='abvp-print-frame';
+    iframe.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:99999;background:white';
+    document.body.appendChild(iframe);
+    iframe.onload=function(){
+      setTimeout(()=>{
+        try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); setTimeout(()=>{ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); },1000); }
+        catch(e){ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); alert('To print: use Share → Print from your browser menu.'); }
+      },800);
+    };
+    const d=iframe.contentDocument||iframe.contentWindow.document; d.open(); d.write(fullHTML); d.close();
+  } catch(e){ alert('To print: use Share → Print from your browser menu.'); }
 }
 
 // ── CHANGE PASSWORDS ──
 async function changePasswords() {
-const err=document.getElementById(‘cp-error’), suc=document.getElementById(‘cp-success’);
-err.style.display=‘none’; suc.style.display=‘none’;
-const adminCurrent=document.getElementById(‘cp-admin-current’).value;
-const adminNew=document.getElementById(‘cp-admin-new’).value, adminConfirm=document.getElementById(‘cp-admin-confirm’).value;
-const memberNew=document.getElementById(‘cp-member-new’).value, memberConfirm=document.getElementById(‘cp-member-confirm’).value;
-const viewerNew=document.getElementById(‘cp-viewer-new’).value, viewerConfirm=document.getElementById(‘cp-viewer-confirm’).value;
-if(!adminCurrent){err.textContent=‘⚠️ Enter current Admin password to authorise.’;err.style.display=‘block’;return;}
-if(adminCurrent!==PASSWORDS.admin){err.textContent=‘❌ Current Admin password is incorrect.’;err.style.display=‘block’;return;}
-if(adminNew&&adminNew!==adminConfirm){err.textContent=‘❌ New Admin passwords do not match.’;err.style.display=‘block’;return;}
-if(memberNew&&memberNew!==memberConfirm){err.textContent=‘❌ New Member passwords do not match.’;err.style.display=‘block’;return;}
-if(viewerNew&&viewerNew!==viewerConfirm){err.textContent=‘❌ New Viewer passwords do not match.’;err.style.display=‘block’;return;}
-if(adminNew&&adminNew.length<6){err.textContent=‘⚠️ Admin password must be at least 6 characters.’;err.style.display=‘block’;return;}
-let changed=[];
-if(adminNew){PASSWORDS.admin=adminNew;changed.push(‘Admin’);}
-if(memberNew){PASSWORDS.member=memberNew;changed.push(‘Member’);}
-if(viewerNew){PASSWORDS.viewer=viewerNew;changed.push(‘Viewer’);}
-if(!changed.length){err.textContent=‘⚠️ No new passwords entered.’;err.style.display=‘block’;return;}
-showLoading(true);
-try {
-await fbSet(‘config’,‘passwords’,PASSWORDS);
-[‘cp-admin-current’,‘cp-admin-new’,‘cp-admin-confirm’,‘cp-member-new’,‘cp-member-confirm’,‘cp-viewer-new’,‘cp-viewer-confirm’].forEach(i=>document.getElementById(i).value=’’);
-suc.textContent=’✅ Password(s) updated for: ‘+changed.join(’, ’);
-suc.style.display=‘block’; toast(‘Passwords updated!’,‘🔑’);
-} catch(e){ err.textContent=‘❌ Error saving passwords.’; err.style.display=‘block’; }
-showLoading(false);
+  const err=document.getElementById('cp-error'), suc=document.getElementById('cp-success');
+  err.style.display='none'; suc.style.display='none';
+  const adminCurrent=document.getElementById('cp-admin-current').value;
+  const adminNew=document.getElementById('cp-admin-new').value, adminConfirm=document.getElementById('cp-admin-confirm').value;
+  const memberNew=document.getElementById('cp-member-new').value, memberConfirm=document.getElementById('cp-member-confirm').value;
+  const viewerNew=document.getElementById('cp-viewer-new').value, viewerConfirm=document.getElementById('cp-viewer-confirm').value;
+  if(!adminCurrent){err.textContent='⚠️ Enter current Admin password to authorise.';err.style.display='block';return;}
+  if(adminCurrent!==PASSWORDS.admin){err.textContent='❌ Current Admin password is incorrect.';err.style.display='block';return;}
+  if(adminNew&&adminNew!==adminConfirm){err.textContent='❌ New Admin passwords do not match.';err.style.display='block';return;}
+  if(memberNew&&memberNew!==memberConfirm){err.textContent='❌ New Member passwords do not match.';err.style.display='block';return;}
+  if(viewerNew&&viewerNew!==viewerConfirm){err.textContent='❌ New Viewer passwords do not match.';err.style.display='block';return;}
+  if(adminNew&&adminNew.length<6){err.textContent='⚠️ Admin password must be at least 6 characters.';err.style.display='block';return;}
+  let changed=[];
+  if(adminNew){PASSWORDS.admin=adminNew;changed.push('Admin');}
+  if(memberNew){PASSWORDS.member=memberNew;changed.push('Member');}
+  if(viewerNew){PASSWORDS.viewer=viewerNew;changed.push('Viewer');}
+  if(!changed.length){err.textContent='⚠️ No new passwords entered.';err.style.display='block';return;}
+  showLoading(true);
+  try {
+    await fbSet('config','passwords',PASSWORDS);
+    ['cp-admin-current','cp-admin-new','cp-admin-confirm','cp-member-new','cp-member-confirm','cp-viewer-new','cp-viewer-confirm'].forEach(i=>document.getElementById(i).value='');
+    suc.textContent='✅ Password(s) updated for: '+changed.join(', ');
+    suc.style.display='block'; toast('Passwords updated!','🔑');
+  } catch(e){ err.textContent='❌ Error saving passwords.'; err.style.display='block'; }
+  showLoading(false);
 }
 
 // ── QR JOIN ──
 function getJoinURL() {
-const base = window.location.href.split(’?’)[0];
-return base + ‘?join=1’;
+  const base = window.location.href.split('?')[0];
+  return base + '?join=1';
 }
 
 function renderQR() {
-const url = getJoinURL();
-document.getElementById(‘join-url-display’).textContent = url;
-const container = document.getElementById(‘qr-code’);
-container.innerHTML = ‘’;
+  const url = getJoinURL();
+  document.getElementById('join-url-display').textContent = url;
+  const container = document.getElementById('qr-code');
+  container.innerHTML = '';
 
-// Try QRCode.js library first, fall back to Google Charts API
-if (typeof QRCode !== ‘undefined’ && QRCode) {
-try {
-new QRCode(container, {
-text: url, width: 200, height: 200,
-colorDark: ‘#0D1B3E’, colorLight: ‘#ffffff’,
-correctLevel: QRCode.CorrectLevel.H
-});
-return;
-} catch(e) {}
-}
+  // Try QRCode.js library first, fall back to Google Charts API
+  if (typeof QRCode !== 'undefined' && QRCode) {
+    try {
+      new QRCode(container, {
+        text: url, width: 200, height: 200,
+        colorDark: '#0D1B3E', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      return;
+    } catch(e) {}
+  }
 
-// Reliable fallback: Google Charts QR API
-const encoded = encodeURIComponent(url);
-const img = document.createElement(‘img’);
-img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&color=0D1B3E&bgcolor=FFFFFF&qzone=1`;
-img.width = 200; img.height = 200;
-img.alt = ‘QR Code’;
-img.style.borderRadius = ‘8px’;
-img.onerror = function() {
-// Final fallback: show link only
-container.innerHTML = `<div style="width:200px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f5f5f5;border-radius:8px;padding:16px;text-align:center"> <div style="font-size:36px;margin-bottom:8px">🔗</div> <div style="font-size:11px;color:#666;word-break:break-all">${url}</div> </div>`;
-};
-container.appendChild(img);
+  // Reliable fallback: Google Charts QR API
+  const encoded = encodeURIComponent(url);
+  const img = document.createElement('img');
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&color=0D1B3E&bgcolor=FFFFFF&qzone=1`;
+  img.width = 200; img.height = 200;
+  img.alt = 'QR Code';
+  img.style.borderRadius = '8px';
+  img.onerror = function() {
+    // Final fallback: show link only
+    container.innerHTML = `<div style="width:200px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f5f5f5;border-radius:8px;padding:16px;text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">🔗</div>
+      <div style="font-size:11px;color:#666;word-break:break-all">${url}</div>
+    </div>`;
+  };
+  container.appendChild(img);
 }
 
 function copyJoinLink() {
-const url = getJoinURL();
-navigator.clipboard.writeText(url).then(() => toast(‘Link copied!’,‘📋’)).catch(() => {
-prompt(‘Copy this link:’, url);
-});
+  const url = getJoinURL();
+  navigator.clipboard.writeText(url).then(() => toast('Link copied!','📋')).catch(() => {
+    prompt('Copy this link:', url);
+  });
 }
 
 function printQR() {
-const url = getJoinURL();
-const encoded = encodeURIComponent(url);
-const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encoded}&color=0D1B3E&bgcolor=FFFFFF&qzone=1`;
-const iframe = document.createElement(‘iframe’);
-iframe.style.cssText = ‘position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:99999;background:white’;
-document.body.appendChild(iframe);
-const d = iframe.contentDocument || iframe.contentWindow.document;
-d.open();
-d.write(`<!DOCTYPE html><html><head><title>ABVP Join QR</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Barlow,sans-serif;background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:30px}
-.qr-print{text-align:center;border:3px solid #0D1B3E;border-radius:20px;padding:36px 48px;max-width:400px}
-.logo{width:70px;height:70px;background:#FF6B00;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:Rajdhani;font-weight:700;font-size:22px;color:white}
-h1{font-family:Rajdhani;font-size:24px;color:#0D1B3E;margin-bottom:4px}
-p{font-size:13px;color:#777;margin-bottom:20px}
-.qr-box{display:inline-block;padding:14px;border:2px solid #eee;border-radius:12px;margin-bottom:16px}
-.url{font-size:11px;color:#999;word-break:break-all;margin-top:12px}
-.inst{background:#FFF8F0;border-radius:8px;padding:12px 16px;margin-top:16px;font-size:13px;color:#555;text-align:left}
-.inst strong{color:#FF6B00}
-@media print{body{padding:0}}</style>
-
+  const url = getJoinURL();
+  const encoded = encodeURIComponent(url);
+  const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encoded}&color=0D1B3E&bgcolor=FFFFFF&qzone=1`;
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:99999;background:white';
+  document.body.appendChild(iframe);
+  const d = iframe.contentDocument || iframe.contentWindow.document;
+  d.open();
+  d.write(`<!DOCTYPE html><html><head><title>ABVP Join QR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Barlow,sans-serif;background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:30px}
+    .qr-print{text-align:center;border:3px solid #0D1B3E;border-radius:20px;padding:36px 48px;max-width:400px}
+    .logo{width:70px;height:70px;background:#FF6B00;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:Rajdhani;font-weight:700;font-size:22px;color:white}
+    h1{font-family:Rajdhani;font-size:24px;color:#0D1B3E;margin-bottom:4px}
+    p{font-size:13px;color:#777;margin-bottom:20px}
+    .qr-box{display:inline-block;padding:14px;border:2px solid #eee;border-radius:12px;margin-bottom:16px}
+    .url{font-size:11px;color:#999;word-break:break-all;margin-top:12px}
+    .inst{background:#FFF8F0;border-radius:8px;padding:12px 16px;margin-top:16px;font-size:13px;color:#555;text-align:left}
+    .inst strong{color:#FF6B00}
+    @media print{body{padding:0}}</style>
   </head><body><div class="qr-print">
     <div class="logo">ABVP</div>
     <h1>Join ABVP</h1>
@@ -1538,86 +1538,98 @@ p{font-size:13px;color:#777;margin-bottom:20px}
 
 // ── JOIN PAGE (public, no login) ──
 function showJoinPage() {
-document.getElementById(‘login-screen’).style.display = ‘none’;
-document.getElementById(‘main-app’).style.display = ‘none’;
-document.getElementById(‘join-page’).style.display = ‘block’;
-// Try to show unit name from Firestore
-getDoc(doc(db,‘config’,‘settings’)).then(snap => {
-if (snap.exists() && snap.data().unitName) {
-document.getElementById(‘join-unit-name’).textContent = snap.data().unitName;
-}
-}).catch(()=>{});
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('join-page').style.display = 'block';
+  // Try to show unit name from Firestore
+  getDoc(doc(db,'config','settings')).then(snap => {
+    if (snap.exists() && snap.data().unitName) {
+      document.getElementById('join-unit-name').textContent = snap.data().unitName;
+    }
+  }).catch(()=>{});
 }
 
 window.submitJoinRequest = async function() {
-const name = document.getElementById(‘jf-name’).value.trim();
-const phone = document.getElementById(‘jf-phone’).value.trim();
-const err = document.getElementById(‘jf-error’);
-err.style.display = ‘none’;
-if (!name) { err.textContent = ‘⚠️ Full name is required.’; err.style.display=‘block’; return; }
-if (!phone) { err.textContent = ‘⚠️ Phone number is required.’; err.style.display=‘block’; return; }
-const btn = document.querySelector(’#join-form-fields button’);
-btn.textContent = ‘Submitting…’; btn.disabled = true;
-try {
-const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-await setDoc(doc(db,‘pending’,id), {
-name, phone,
-address: document.getElementById(‘jf-address’).value.trim(),
-duty: document.getElementById(‘jf-duty’).value.trim(),
-year: document.getElementById(‘jf-year’).value.trim(),
-submittedAt: Date.now()
-});
-document.getElementById(‘join-form-fields’).style.display = ‘none’;
-document.getElementById(‘join-success’).style.display = ‘block’;
-} catch(e) {
-err.textContent = ‘❌ Error submitting. Please try again.’;
-err.style.display = ‘block’;
-btn.textContent = ‘Submit Request →’; btn.disabled = false;
-}
+  const name = document.getElementById('jf-name').value.trim();
+  const phone = document.getElementById('jf-phone').value.trim();
+  const err = document.getElementById('jf-error');
+  err.style.display = 'none';
+  if (!name) { err.textContent = '⚠️ Full name is required.'; err.style.display='block'; return; }
+  if (!phone) { err.textContent = '⚠️ Phone number is required.'; err.style.display='block'; return; }
+  const btn = document.querySelector('#join-form-fields button');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+  try {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    await setDoc(doc(db,'pending',id), {
+      name, phone,
+      address: document.getElementById('jf-address').value.trim(),
+      duty: document.getElementById('jf-duty').value.trim(),
+      year: document.getElementById('jf-year').value.trim(),
+      submittedAt: Date.now()
+    });
+    document.getElementById('join-form-fields').style.display = 'none';
+    document.getElementById('join-success').style.display = 'block';
+  } catch(e) {
+    err.textContent = '❌ Error submitting. Please try again.';
+    err.style.display = 'block';
+    btn.textContent = 'Submit Request →'; btn.disabled = false;
+  }
 };
 
 // ── PENDING APPROVALS ──
 function renderPending() {
-const count = data.pending.length;
-const badge = document.getElementById(‘pending-badge’);
-const label = document.getElementById(‘pending-count-label’);
-if (count > 0) {
-badge.style.display = ‘inline’; badge.textContent = count;
-} else {
-badge.style.display = ‘none’;
-}
-if (label) label.textContent = count ? count + ’ pending’ : ‘’;
-const container = document.getElementById(‘pending-list’);
-if (!container) return;
-if (!count) {
-container.innerHTML = ‘<div class="empty-state"><div class="icon">✅</div>No pending requests</div>’;
-return;
-}
-const sorted = […data.pending].sort((a,b) => (a.submittedAt||0) - (b.submittedAt||0));
-container.innerHTML = sorted.map(p => ` <div style="border:1px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"> <div style="flex:1;min-width:180px"> <div style="font-weight:700;font-size:15px;color:var(--navy)">${p.name}</div> <div style="font-size:13px;color:var(--gray-600);margin-top:3px">📱 ${p.phone||'—'} &nbsp;|&nbsp; 📍 ${p.address||'—'}</div> <div style="font-size:13px;color:var(--gray-600)">📚 ${p.duty||'—'} &nbsp;|&nbsp; 📅 Joined: ${p.year||'—'}</div> <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Submitted: ${p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-IN') : '—'}</div> </div> <div style="display:flex;gap:7px;flex-shrink:0;align-items:center"> <button class="btn btn-primary btn-sm" onclick="approvePending('${p.id}')">✅ Approve</button> <button class="btn btn-danger btn-sm" onclick="rejectPending('${p.id}')">❌ Reject</button> </div> </div>`).join(’’);
+  const count = data.pending.length;
+  const badge = document.getElementById('pending-badge');
+  const label = document.getElementById('pending-count-label');
+  if (count > 0) {
+    badge.style.display = 'inline'; badge.textContent = count;
+  } else {
+    badge.style.display = 'none';
+  }
+  if (label) label.textContent = count ? count + ' pending' : '';
+  const container = document.getElementById('pending-list');
+  if (!container) return;
+  if (!count) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">✅</div>No pending requests</div>';
+    return;
+  }
+  const sorted = [...data.pending].sort((a,b) => (a.submittedAt||0) - (b.submittedAt||0));
+  container.innerHTML = sorted.map(p => `
+    <div style="border:1px solid var(--gray-200);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px">
+        <div style="font-weight:700;font-size:15px;color:var(--navy)">${p.name}</div>
+        <div style="font-size:13px;color:var(--gray-600);margin-top:3px">📱 ${p.phone||'—'} &nbsp;|&nbsp; 📍 ${p.address||'—'}</div>
+        <div style="font-size:13px;color:var(--gray-600)">📚 ${p.duty||'—'} &nbsp;|&nbsp; 📅 Joined: ${p.year||'—'}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Submitted: ${p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-IN') : '—'}</div>
+      </div>
+      <div style="display:flex;gap:7px;flex-shrink:0;align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="approvePending('${p.id}')">✅ Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="rejectPending('${p.id}')">❌ Reject</button>
+      </div>
+    </div>`).join('');
 }
 
 async function approvePending(id) {
-const p = data.pending.find(x=>x.id===id); if(!p) return;
-showLoading(true);
-try {
-const newId = uid();
-await fbSet(‘members’, newId, {
-name:p.name, phone:p.phone||’’, address:p.address||’’,
-duty:p.duty||’’, year:p.year||’’, meetings:0, events:0, createdAt:Date.now()
-});
-await fbDel(‘pending’, id);
-toast(p.name + ’ approved & added!’,‘✅’);
-} catch(e){ toast(‘Error’,‘❌’); }
-showLoading(false);
+  const p = data.pending.find(x=>x.id===id); if(!p) return;
+  showLoading(true);
+  try {
+    const newId = uid();
+    await fbSet('members', newId, {
+      name:p.name, phone:p.phone||'', address:p.address||'',
+      duty:p.duty||'', year:p.year||'', meetings:0, events:0, createdAt:Date.now()
+    });
+    await fbDel('pending', id);
+    toast(p.name + ' approved & added!','✅');
+  } catch(e){ toast('Error','❌'); }
+  showLoading(false);
 }
 
 async function rejectPending(id) {
-const p = data.pending.find(x=>x.id===id); if(!p) return;
-if (!confirm(’Reject ’ + p.name + ‘'s request?’)) return;
-showLoading(true);
-try { await fbDel(‘pending’,id); toast(‘Request rejected’,‘🗑️’); } catch(e){ toast(‘Error’,‘❌’); }
-showLoading(false);
+  const p = data.pending.find(x=>x.id===id); if(!p) return;
+  if (!confirm('Reject ' + p.name + '\'s request?')) return;
+  showLoading(true);
+  try { await fbDel('pending',id); toast('Request rejected','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
 }
 
 // ── RENDER ALL ──
@@ -1640,7 +1652,5 @@ window.approvePending=approvePending; window.rejectPending=rejectPending;
 // ── START ──
 init();
 </script>
-
 </body>
 </html>
-
