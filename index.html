@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ABVP – Member & Activity Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" onerror="window.QRCode=null"></script>
 <style>
 :root {
   --saffron: #FF6B00;
@@ -1462,17 +1462,31 @@ const url = getJoinURL();
 document.getElementById(‘join-url-display’).textContent = url;
 const container = document.getElementById(‘qr-code’);
 container.innerHTML = ‘’;
+
+// Try QRCode.js library first, fall back to Google Charts API
+if (typeof QRCode !== ‘undefined’ && QRCode) {
 try {
 new QRCode(container, {
-text: url,
-width: 200, height: 200,
-colorDark: ‘#0D1B3E’,
-colorLight: ‘#ffffff’,
+text: url, width: 200, height: 200,
+colorDark: ‘#0D1B3E’, colorLight: ‘#ffffff’,
 correctLevel: QRCode.CorrectLevel.H
 });
-} catch(e) {
-container.innerHTML = `<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:8px;font-size:13px;color:#999;text-align:center;padding:20px">QR library loading...<br><br><a href="${url}" style="color:var(--saffron)">${url}</a></div>`;
+return;
+} catch(e) {}
 }
+
+// Reliable fallback: Google Charts QR API
+const encoded = encodeURIComponent(url);
+const img = document.createElement(‘img’);
+img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&color=0D1B3E&bgcolor=FFFFFF&qzone=1`;
+img.width = 200; img.height = 200;
+img.alt = ‘QR Code’;
+img.style.borderRadius = ‘8px’;
+img.onerror = function() {
+// Final fallback: show link only
+container.innerHTML = `<div style="width:200px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f5f5f5;border-radius:8px;padding:16px;text-align:center"> <div style="font-size:36px;margin-bottom:8px">🔗</div> <div style="font-size:11px;color:#666;word-break:break-all">${url}</div> </div>`;
+};
+container.appendChild(img);
 }
 
 function copyJoinLink() {
@@ -1484,10 +1498,14 @@ prompt(‘Copy this link:’, url);
 
 function printQR() {
 const url = getJoinURL();
-const qrDiv = document.getElementById(‘qr-code’).innerHTML;
-const win = window.open(’’,’_blank’);
-if (!win) { alert(‘Allow popups to print QR’); return; }
-win.document.write(`<!DOCTYPE html><html><head><title>ABVP Join QR</title>
+const encoded = encodeURIComponent(url);
+const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encoded}&color=0D1B3E&bgcolor=FFFFFF&qzone=1`;
+const iframe = document.createElement(‘iframe’);
+iframe.style.cssText = ‘position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:99999;background:white’;
+document.body.appendChild(iframe);
+const d = iframe.contentDocument || iframe.contentWindow.document;
+d.open();
+d.write(`<!DOCTYPE html><html><head><title>ABVP Join QR</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Barlow,sans-serif;background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:30px}
 .qr-print{text-align:center;border:3px solid #0D1B3E;border-radius:20px;padding:36px 48px;max-width:400px}
@@ -1504,11 +1522,18 @@ p{font-size:13px;color:#777;margin-bottom:20px}
     <div class="logo">ABVP</div>
     <h1>Join ABVP</h1>
     <p>Akhil Bharatiya Vidyarthi Parishad</p>
-    <div class="qr-box">${qrDiv}</div>
+    <div class="qr-box"><img src="${qrImgSrc}" width="220" height="220" style="border-radius:8px;display:block"></div>
     <div class="url">${url}</div>
     <div class="inst"><strong>How to join:</strong><br>1. Scan the QR code with your phone<br>2. Fill in your details<br>3. Submit — Admin will approve you</div>
   </div></body></html>`);
-  win.document.close(); win.focus(); setTimeout(() => win.print(), 600);
+  d.close();
+  iframe.onload = function() {
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => { if(iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 1000);
+    }, 800);
+  };
 }
 
 // ── JOIN PAGE (public, no login) ──
@@ -1618,3 +1643,4 @@ init();
 
 </body>
 </html>
+
