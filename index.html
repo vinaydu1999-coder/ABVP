@@ -447,7 +447,10 @@ tr:hover td{background:#FFF8F5}
       </div>
     </div>
     <div class="card" id="pending-card" style="display:none">
-      <div class="card-header">&#9203; Pending Approvals</div>
+      <div class="card-header" style="justify-content:space-between">
+        <span>&#9203; Pending Approvals</span>
+        <button class="btn btn-sm btn-navy" onclick="refreshPending()" style="font-size:11px">&#128260; Refresh</button>
+      </div>
       <div id="pending-list"></div>
     </div>
   </div>
@@ -907,31 +910,46 @@ function addMember() {
   renderMembers();
 }
 
+var _editMemberId = null;
 function openEditMember(id) {
   var m = null;
   for (var i = 0; i < data.members.length; i++) { if (data.members[i].id === id) { m = data.members[i]; break; } }
-  if (!m) return;
-  var fields = ['id','name','phone','address','duty','year','birthday'];
-  for (var i = 0; i < fields.length; i++) {
-    var el = document.getElementById('edit-' + fields[i]);
-    if (el) el.value = m[fields[i]] || '';
-  }
+  if (!m) { toast('Member not found','⚠️'); return; }
+  _editMemberId = id;
+  var el;
+  el = document.getElementById('edit-id'); if(el) el.value = id;
+  el = document.getElementById('edit-name'); if(el) el.value = m.name || '';
+  el = document.getElementById('edit-phone'); if(el) el.value = m.phone || '';
+  el = document.getElementById('edit-address'); if(el) el.value = m.address || '';
+  el = document.getElementById('edit-duty'); if(el) el.value = m.duty || '';
+  el = document.getElementById('edit-year'); if(el) el.value = m.year || '';
+  el = document.getElementById('edit-birthday'); if(el) el.value = m.birthday || '';
   document.getElementById('edit-modal').classList.add('open');
 }
 
 function saveEditMember() {
-  var id = v('edit-id');
+  // Use global _editMemberId as backup if hidden input fails
+  var id = v('edit-id') || _editMemberId;
+  if (!id) { toast('Error: no member selected','⚠️'); return; }
   var m = null;
   for (var i = 0; i < data.members.length; i++) { if (data.members[i].id === id) { m = data.members[i]; break; } }
-  if (!m) return;
+  if (!m) { toast('Member not found in data','⚠️'); return; }
+  var name = v('edit-name').trim();
+  if (!name) { toast('Name cannot be empty','⚠️'); return; }
   var updated = {
-    name: v('edit-name').trim(), phone: v('edit-phone').trim(),
-    address: v('edit-address').trim(), duty: v('edit-duty').trim(),
-    year: v('edit-year').trim(), birthday: v('edit-birthday'),
-    meetings: m.meetings || 0, events: m.events || 0, createdAt: m.createdAt || Date.now()
+    name: name,
+    phone: v('edit-phone').trim(),
+    address: v('edit-address').trim(),
+    duty: v('edit-duty').trim(),
+    year: v('edit-year').trim(),
+    birthday: v('edit-birthday'),
+    meetings: m.meetings || 0,
+    events: m.events || 0,
+    createdAt: m.createdAt || Date.now()
   };
   fbSet('members', id, updated);
   document.getElementById('edit-modal').classList.remove('open');
+  _editMemberId = null;
   toast('Member updated! ✓');
   renderMembers();
 }
@@ -1906,6 +1924,19 @@ function rejectPending(id) {
   fbDel('pending', id);
   toast('Request rejected', '🗑️');
   renderPending();
+}
+
+function refreshPending() {
+  toast('Fetching latest requests...', '🔄');
+  fbGetCol('pending').then(function(docs) {
+    data.pending = docs;
+    lsSave();
+    renderPending();
+    toast(data.pending.length + ' pending request(s)', '📋');
+  }).catch(function() {
+    toast('Could not reach Firebase', '⚠️');
+    renderPending();
+  });
 }
 
 // ── PASSWORDS ──
