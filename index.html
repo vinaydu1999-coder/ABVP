@@ -1264,6 +1264,14 @@ function applyRoleRestrictions() {
     return;
   }
   document.getElementById('chpwd-btn').style.display='none';
+  if(currentRole==='member'){
+    document.getElementById('finance-tab').style.display='';
+    document.querySelectorAll('.no-member').forEach(el=>el.style.display='none');
+    // Hide add donation, add expense cards — keep balance sheet visible
+    document.querySelectorAll('#section-finance .no-print').forEach(el=>el.style.display='none');
+    return;
+  }
+  // viewer
   document.getElementById('finance-tab').style.display='none';
   document.querySelectorAll('.no-viewer,.no-member').forEach(el=>el.style.display='none');
 }
@@ -2042,4 +2050,5 @@ init();
 </script>
 </body>
 </html>
+
 
