@@ -510,10 +510,26 @@ tr:hover td{background:#FFF8F5}
 //  Safari-compatible JS (ES5 + var)
 // ══════════════════════════════════════════
 
-// ── FIREBASE REST API (no SDK, no CDN, Safari-safe) ──
+// ── DATA LAYER: localStorage with background Firebase sync ──
 var PROJ = "abvp-gkp";
 var APIKEY = "AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w";
 var FS_BASE = "https://firestore.googleapis.com/v1/projects/" + PROJ + "/databases/(default)/documents/";
+
+// Fetch with timeout
+function fetchWithTimeout(url, options, ms) {
+  ms = ms || 6000;
+  return new Promise(function(resolve, reject) {
+    var done = false;
+    var timer = setTimeout(function() {
+      if (!done) { done = true; reject(new Error('timeout')); }
+    }, ms);
+    fetch(url, options || {}).then(function(r) {
+      if (!done) { done = true; clearTimeout(timer); resolve(r); }
+    }).catch(function(e) {
+      if (!done) { done = true; clearTimeout(timer); reject(e); }
+    });
+  });
+}
 
 // Convert Firestore REST value to JS value
 function fsVal(v) {
@@ -529,7 +545,6 @@ function fsVal(v) {
     return result;
   }
   if (v.mapValue) return fsFields(v.mapValue.fields || {});
-  if (v.nullValue !== undefined) return null;
   return null;
 }
 function fsFields(fields) {
@@ -537,8 +552,6 @@ function fsFields(fields) {
   for (var k in fields) { if (fields.hasOwnProperty(k)) obj[k] = fsVal(fields[k]); }
   return obj;
 }
-
-// Convert JS value to Firestore REST value
 function toFsVal(val) {
   if (val === null || val === undefined) return { nullValue: null };
   if (typeof val === 'boolean') return { booleanValue: val };
@@ -561,17 +574,15 @@ function toFsVal(val) {
 }
 function toFsDoc(obj) {
   var fields = {};
-  for (var k in obj) {
-    if (obj.hasOwnProperty(k) && k !== 'id') fields[k] = toFsVal(obj[k]);
-  }
+  for (var k in obj) { if (obj.hasOwnProperty(k) && k !== 'id') fields[k] = toFsVal(obj[k]); }
   return { fields: fields };
 }
 
-// Firebase REST: GET collection
+// fbGetCol - get from Firebase, fallback returns []
 function fbGetCol(col) {
   var url = FS_BASE + col + "?key=" + APIKEY + "&pageSize=200";
-  return fetchWithTimeout(url, {}, 10000).then(function(r) { return r.json(); }).then(function(json) {
-    if (json.error) { throw new Error(json.error.message || 'Firebase error'); }
+  return fetchWithTimeout(url, {}, 6000).then(function(r) { return r.json(); }).then(function(json) {
+    if (json.error) throw new Error(json.error.message);
     var docs = json.documents || [];
     var result = [];
     for (var i = 0; i < docs.length; i++) {
@@ -585,81 +596,54 @@ function fbGetCol(col) {
   });
 }
 
-// Test Firebase connection and show result
-function testFirebase() {
-  var dot = document.getElementById('sync-dot');
-  var lbl = document.getElementById('sync-label');
-  if (dot) dot.style.background = '#FFB800';
-  if (lbl) lbl.textContent = 'Testing...';
-  toast('Testing Firebase...', '🔄');
-  var url = FS_BASE + "config/passwords?key=" + APIKEY;
-  fetchWithTimeout(url, {}, 8000)
-    .then(function(r) { return r.json(); })
-    .then(function(json) {
-      if (json.error) {
-        toast('Firebase Error: ' + json.error.message, '❌');
-        if (dot) dot.style.background = '#EF4444';
-        if (lbl) lbl.textContent = 'Error';
-      } else {
-        toast('Firebase Connected!', '✅');
-        if (dot) dot.style.background = '#22C55E';
-        if (lbl) lbl.textContent = 'Synced';
-        // Reload all data
-        loadFromFirebase(function() { render(); });
-      }
-    })
-    .catch(function(e) {
-      toast('No Firebase: ' + (e.message||'offline'), '⚠️');
-      if (dot) dot.style.background = '#FFB800';
-      if (lbl) lbl.textContent = 'Offline';
-    });
-}
-
-// Fetch with timeout helper
-function fetchWithTimeout(url, options, ms) {
-  ms = ms || 8000;
-  return new Promise(function(resolve, reject) {
-    var done = false;
-    var timer = setTimeout(function() {
-      if (!done) { done = true; reject(new Error('timeout')); }
-    }, ms);
-    fetch(url, options).then(function(r) {
-      if (!done) { done = true; clearTimeout(timer); resolve(r); }
-    }).catch(function(e) {
-      if (!done) { done = true; clearTimeout(timer); reject(e); }
-    });
-  });
-}
-
-// Firebase REST: SET document
+// fbSet - save locally FIRST (instant), then sync to Firebase silently
 function fbSet(col, id, obj) {
-  // Always update local immediately
   var arr = data[col] || [];
   var found = false;
   for (var i = 0; i < arr.length; i++) {
-    if (arr[i].id === id) { arr[i] = Object.assign({id:id}, obj); found = true; break; }
+    if (arr[i].id === id) { arr[i] = Object.assign({}, obj, {id:id}); found = true; break; }
   }
-  if (!found) arr.push(Object.assign({id:id}, obj));
+  if (!found) arr.push(Object.assign({}, obj, {id:id}));
   data[col] = arr;
   lsSave();
-
-  // Then sync to Firebase in background
+  // Background Firebase sync - silent, never blocks UI
   var url = FS_BASE + col + "/" + id + "?key=" + APIKEY;
-  var body = JSON.stringify(toFsDoc(obj));
-  return fetchWithTimeout(url, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:body }, 8000)
-    .catch(function() { /* silent fail - data already saved locally */ });
+  fetchWithTimeout(url, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(toFsDoc(obj)) }, 6000)
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (!json.error) { setSyncStatus(true); }
+    })
+    .catch(function() { setSyncStatus(false); });
+  return Promise.resolve();
 }
 
-// Firebase REST: DELETE document
+// fbDel - delete locally FIRST, then sync to Firebase silently
 function fbDel(col, id) {
-  // Always update local immediately
   data[col] = (data[col] || []).filter(function(x){ return x.id !== id; });
   lsSave();
-
-  // Then sync to Firebase in background
   var url = FS_BASE + col + "/" + id + "?key=" + APIKEY;
-  return fetchWithTimeout(url, { method:'DELETE' }, 8000)
-    .catch(function() { /* silent fail - data already saved locally */ });
+  fetchWithTimeout(url, { method:'DELETE' }, 6000).catch(function() {});
+  return Promise.resolve();
+}
+
+// Update sync badge
+function setSyncStatus(ok) {
+  var dot = document.getElementById('sync-dot');
+  var lbl = document.getElementById('sync-label');
+  if (dot) dot.style.background = ok ? '#22C55E' : '#EF4444';
+  if (lbl) lbl.textContent = ok ? 'Synced' : 'Error';
+}
+
+// Test Firebase and reload
+function testFirebase() {
+  var lbl = document.getElementById('sync-label');
+  if (lbl) lbl.textContent = '...';
+  toast('Syncing with Firebase...', '🔄');
+  loadFromFirebase(function(ok) {
+    if (ok) { toast('Firebase synced!', '✅'); render(); }
+    else { toast('Firebase unreachable. Using local data.', '⚠️'); }
+    setSyncStatus(ok);
+  });
 }
 
 // ── STATE ──
@@ -776,34 +760,38 @@ function doLogin() {
   var pw = v('pw-input');
   if (!role) { toast('Please select a role', '⚠️'); return; }
   if (!pw) { toast('Please enter password', '⚠️'); return; }
-  // Try to fetch latest passwords from Firebase, fallback to local
+
   var tryLogin = function() {
-    try {
-      var savedPwd = localStorage.getItem(LS_PWD);
-      if (savedPwd) { PASSWORDS = JSON.parse(savedPwd); }
-    } catch(e) {}
-    if (pw !== PASSWORDS[role]) {
-      toast('Wrong password!', '❌');
-      return;
-    }
+    try { var s = localStorage.getItem(LS_PWD); if (s) PASSWORDS = JSON.parse(s); } catch(e) {}
+    if (pw !== PASSWORDS[role]) { toast('Wrong password! ❌'); return; }
     currentRole = role;
     sessionStorage.setItem('abvp_role', role);
     showApp();
   };
-  // Fetch latest passwords from Firebase first
-  var pwdUrl = "https://firestore.googleapis.com/v1/projects/abvp-gkp/databases/(default)/documents/config/passwords?key=AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w";
-  fetch(pwdUrl).then(function(r) { return r.json(); }).then(function(json) {
-    if (json.fields) {
-      var fetched = fsFields(json.fields);
-      if (fetched.admin) {
-        PASSWORDS = fetched;
-        try { localStorage.setItem(LS_PWD, JSON.stringify(PASSWORDS)); } catch(e) {}
+
+  // Try Firebase for latest passwords
+  var pwdUrl = FS_BASE + "config/passwords?key=" + APIKEY;
+  fetchWithTimeout(pwdUrl, {}, 5000)
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (json.fields) {
+        // Got passwords from Firebase
+        var fetched = fsFields(json.fields);
+        if (fetched.admin) {
+          PASSWORDS = fetched;
+          try { localStorage.setItem(LS_PWD, JSON.stringify(PASSWORDS)); } catch(e) {}
+        }
+      } else if (json.error && json.error.code === 404) {
+        // Document doesn't exist yet — create it with default passwords
+        fbSet('config', 'passwords', PASSWORDS);
+        toast('Firebase connected! Passwords initialised.', '✅');
       }
-    }
-    tryLogin();
-  }).catch(function() {
-    tryLogin();
-  });
+      tryLogin();
+    })
+    .catch(function() {
+      // Firebase unreachable — use local passwords
+      tryLogin();
+    });
 }
 window.doLogin = doLogin;
 
@@ -891,32 +879,17 @@ function loadFromFirebase(onDone) {
 
 function subscribeToData() {
   showLoading(true);
-  lsLoad(); // Show cached data immediately
+  lsLoad();
   render();
-  // Then fetch fresh from Firebase
   loadFromFirebase(function(ok) {
     showLoading(false);
     render();
-    // Update sync badge
-    var dot = document.getElementById('sync-dot');
-    var lbl = document.getElementById('sync-label');
-    if (ok) {
-      if (dot) { dot.style.background = '#4CAF50'; }
-      if (lbl) lbl.textContent = 'Synced';
-    } else {
-      if (dot) { dot.style.background = '#FFB800'; }
-      if (lbl) lbl.textContent = 'Local';
-    }
-    // Poll every 30 seconds for updates
+    setSyncStatus(ok);
+    if (ok) toast('Firebase synced ✓', '🔥');
+    // Poll every 30s
     if (pollTimer) clearInterval(pollTimer);
     pollTimer = setInterval(function() {
-      loadFromFirebase(function(ok2) {
-        render();
-        var dot2 = document.getElementById('sync-dot');
-        var lbl2 = document.getElementById('sync-label');
-        if (dot2) dot2.style.background = ok2 ? '#4CAF50' : '#FFB800';
-        if (lbl2) lbl2.textContent = ok2 ? 'Synced' : 'Local';
-      });
+      loadFromFirebase(function(ok2) { render(); setSyncStatus(ok2); });
     }, 30000);
   });
 }
@@ -927,7 +900,6 @@ function addMember() {
   if (!name) { toast('Name required', '⚠️'); return; }
   var id = uid();
   var m = { name:name, phone:v('m-phone').trim(), address:v('m-address').trim(), duty:v('m-duty').trim(), year:v('m-year').trim(), birthday:v('m-birthday'), meetings:0, events:0, createdAt:Date.now() };
-  showLoading(true);
   fbSet('members', id, m).then(function() {
     var fields = ['m-name','m-phone','m-address','m-duty','m-year','m-birthday'];
     for (var i = 0; i < fields.length; i++) {
@@ -961,17 +933,14 @@ function saveEditMember() {
     year: v('edit-year').trim(), birthday: v('edit-birthday'),
     meetings: m.meetings || 0, events: m.events || 0, createdAt: m.createdAt || Date.now()
   };
-  showLoading(true);
-  fbSet('members', id, updated).then(function() {
-    document.getElementById('edit-modal').classList.remove('open');
-    toast('Member updated!'); showLoading(false);
-  }).catch(function() { toast('Error', '❌'); showLoading(false); });
+  fbSet('members', id, updated);
 }
 
 function deleteMember(id) {
   if (!confirm('Delete this member?')) return;
-  showLoading(true);
-  fbDel('members', id).then(function() { toast('Deleted', '🗑️'); showLoading(false); }).catch(function() { toast('Error', '❌'); showLoading(false); });
+  fbDel('members', id);
+  toast('Member deleted', '🗑️');
+  renderMembers();
 }
 
 function renderMembers() {
@@ -1279,19 +1248,12 @@ function saveInvitation() {
   var id = uid();
   inv.id = id;
   currentInvPreview = inv;
-  showLoading(true);
-  fbSet('invitations', id, inv).then(function() {
-    invSelectedIds = [];
-    renderSelectedMembers('inv');
-    renderInvPreview(inv);
-    toast('Invitation saved!'); showLoading(false);
-  }).catch(function() { toast('Error','❌'); showLoading(false); });
+  fbSet('invitations', id, inv);
 }
 
 function deleteInvitation(id) {
   if (!confirm('Delete this invitation?')) return;
-  showLoading(true);
-  fbDel('invitations', id).then(function() { toast('Deleted','🗑️'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  fbDel('invitations', id);
 }
 
 function renderInvPreview(inv) {
@@ -1416,7 +1378,6 @@ function renderFinance() {
 function addDonation() {
   var name = v('dn-name').trim(), amount = parseFloat(v('dn-amount')), date = v('dn-date');
   if (!name || !amount || !date) { toast('Name, amount, date required','⚠️'); return; }
-  showLoading(true);
   fbSet('donations', uid(), { name:name, amount:amount, date:date, mode:v('dn-mode'), note:v('dn-note').trim(), createdAt:Date.now() }).then(function() {
     var fields = ['dn-name','dn-amount','dn-date','dn-note'];
     for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
@@ -1427,7 +1388,6 @@ function addDonation() {
 function addExpense() {
   var title = v('ex-title').trim(), amount = parseFloat(v('ex-amount')), date = v('ex-date');
   if (!title || !amount || !date) { toast('Title, amount, date required','⚠️'); return; }
-  showLoading(true);
   fbSet('expenses', uid(), { title:title, amount:amount, date:date, category:v('ex-cat'), event:v('ex-event').trim(), paidTo:v('ex-paidto').trim(), desc:v('ex-desc').trim(), createdAt:Date.now() }).then(function() {
     var fields = ['ex-title','ex-amount','ex-date','ex-event','ex-paidto','ex-desc'];
     for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
@@ -1437,14 +1397,12 @@ function addExpense() {
 
 function deleteDonation(id) {
   if (!confirm('Delete donation?')) return;
-  showLoading(true);
-  fbDel('donations', id).then(function() { toast('Deleted','🗑️'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  fbDel('donations', id);
 }
 
 function deleteExpense(id) {
   if (!confirm('Delete expense?')) return;
-  showLoading(true);
-  fbDel('expenses', id).then(function() { toast('Deleted','🗑️'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  fbDel('expenses', id);
 }
 
 function printFinance() {
@@ -1873,17 +1831,12 @@ function submitJoinRequest() {
   var name = v('jf-name').trim();
   if (!name) { toast('Name required','⚠️'); return; }
   var btn = document.getElementById('jf-submit-btn');
-  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
   var req = { name:name, phone:v('jf-phone').trim(), address:v('jf-address').trim(), duty:v('jf-duty').trim(), year:v('jf-year').trim(), birthday:v('jf-birthday'), submittedAt:Date.now() };
-  fbSet('pending', uid(), req).then(function() {
-    var fields = ['jf-name','jf-phone','jf-address','jf-duty','jf-year','jf-birthday'];
-    for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
-    if (btn) { btn.textContent = '✅ Submitted! Awaiting Approval'; btn.disabled = false; }
-    toast('Request submitted!','📨');
-  }).catch(function() {
-    if (btn) { btn.textContent = '📨 Submit Request'; btn.disabled = false; }
-    toast('Error','❌');
-  });
+  fbSet('pending', uid(), req);
+  var fields = ['jf-name','jf-phone','jf-address','jf-duty','jf-year','jf-birthday'];
+  for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
+  if (btn) { btn.textContent = '✅ Submitted! Awaiting Approval'; btn.disabled = true; }
+  toast('Request submitted! Admin will approve shortly.','📨');
 }
 
 function renderPending() {
@@ -1919,8 +1872,7 @@ function approvePending(id) {
 
 function rejectPending(id) {
   if (!confirm('Reject this request?')) return;
-  showLoading(true);
-  fbDel('pending', id).then(function() { toast('Rejected','🗑️'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  fbDel('pending', id);
 }
 
 // ── PASSWORDS ──
