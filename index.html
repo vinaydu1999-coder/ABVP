@@ -687,28 +687,6 @@ function lsLoad() {
   } catch(e) {}
 }
 
-// ── FIRESTORE CRUD (with localStorage fallback) ──
-function fbSet(col, id, obj) {
-  if (useFirebase && db) { return db.collection(col).doc(id).set(obj); }
-  return new Promise(function(resolve) {
-    var arr = data[col] || [];
-    var found = false;
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i].id === id) { arr[i] = Object.assign({id:id}, obj); found = true; break; }
-    }
-    if (!found) arr.push(Object.assign({id:id}, obj));
-    data[col] = arr; lsSave(); render(); resolve();
-  });
-}
-function fbDel(col, id) {
-  if (useFirebase && db) { return db.collection(col).doc(id).delete(); }
-  return new Promise(function(resolve) {
-    var arr = data[col] || [];
-    data[col] = arr.filter(function(x){ return x.id !== id; });
-    lsSave(); render(); resolve();
-  });
-}
-
 // ── HELPERS ──
 function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
 function escQ(s) { return (s||'').replace(/'/g,"&#39;"); }
@@ -752,10 +730,6 @@ function showSection(id) {
   if (sec) sec.classList.add('active');
   if (id === 'dashboard') renderDashboard();
 }
-
-// ── FIRESTORE CRUD ──
-function fbSet(col, id, obj) { return db.collection(col).doc(id).set(obj); }
-function fbDel(col, id) { return db.collection(col).doc(id).delete(); }
 
 // ── LOGIN ──
 function doLogin() {
