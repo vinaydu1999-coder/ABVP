@@ -900,14 +900,11 @@ function addMember() {
   if (!name) { toast('Name required', '⚠️'); return; }
   var id = uid();
   var m = { name:name, phone:v('m-phone').trim(), address:v('m-address').trim(), duty:v('m-duty').trim(), year:v('m-year').trim(), birthday:v('m-birthday'), meetings:0, events:0, createdAt:Date.now() };
-  fbSet('members', id, m).then(function() {
-    var fields = ['m-name','m-phone','m-address','m-duty','m-year','m-birthday'];
-    for (var i = 0; i < fields.length; i++) {
-      var el = document.getElementById(fields[i]);
-      if (el) el.value = '';
-    }
-    toast('Member added!'); showLoading(false);
-  }).catch(function() { toast('Error saving', '❌'); showLoading(false); });
+  fbSet('members', id, m);
+  var fields = ['m-name','m-phone','m-address','m-duty','m-year','m-birthday'];
+  for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
+  toast('Member added! ✓');
+  renderMembers();
 }
 
 function openEditMember(id) {
@@ -934,6 +931,9 @@ function saveEditMember() {
     meetings: m.meetings || 0, events: m.events || 0, createdAt: m.createdAt || Date.now()
   };
   fbSet('members', id, updated);
+  document.getElementById('edit-modal').classList.remove('open');
+  toast('Member updated! ✓');
+  renderMembers();
 }
 
 function deleteMember(id) {
@@ -1040,8 +1040,7 @@ function saveMeeting() {
     presided: presided, motions: v('mt-motions').trim(),
     invitedIds: mtSelectedIds.slice(), otherAttendees: mtOtherAttendees.slice(), createdAt: Date.now()
   };
-  showLoading(true);
-  // Update member meeting counts
+    // Update member meeting counts
   var updates = [];
   for (var i = 0; i < mtSelectedIds.length; i++) {
     var mid = mtSelectedIds[i];
@@ -1065,7 +1064,6 @@ function saveMeeting() {
 
 function deleteMeeting(id) {
   if (!confirm('Delete this meeting?')) return;
-  showLoading(true);
   var mt = null;
   for (var i = 0; i < data.meetings.length; i++) { if (data.meetings[i].id === id) { mt = data.meetings[i]; break; } }
   var updates = [];
@@ -1081,7 +1079,7 @@ function deleteMeeting(id) {
     }
   }
   updates.push(fbDel('meetings', id));
-  Promise.all(updates).then(function() { toast('Deleted','🗑️'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  Promise.all(updates).then(function() { toast('Deleted 🗑️'); renderMeetings(); });
 }
 
 function renderMeetings() {
@@ -1147,7 +1145,6 @@ function saveEvent() {
   var date = v('ev-date');
   if (!name || !date) { toast('Name and date required', '⚠️'); return; }
   var ev = { name:name, date:date, presided:v('ev-presided').trim(), agenda:v('ev-agenda').trim(), presentIds:evSelectedIds.slice(), createdAt:Date.now() };
-  showLoading(true);
   var updates = [];
   for (var i = 0; i < evSelectedIds.length; i++) {
     var mid = evSelectedIds[i];
@@ -1171,7 +1168,6 @@ function saveEvent() {
 
 function deleteEvent(id) {
   if (!confirm('Delete this event?')) return;
-  showLoading(true);
   var ev = null;
   for (var i = 0; i < data.events.length; i++) { if (data.events[i].id === id) { ev = data.events[i]; break; } }
   var updates = [];
@@ -1187,7 +1183,7 @@ function deleteEvent(id) {
     }
   }
   updates.push(fbDel('events', id));
-  Promise.all(updates).then(function() { toast('Deleted','🗑️'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  Promise.all(updates).then(function() { toast('Deleted 🗑️'); renderMeetings(); });
 }
 
 function renderEvents() {
@@ -1831,12 +1827,32 @@ function submitJoinRequest() {
   var name = v('jf-name').trim();
   if (!name) { toast('Name required','⚠️'); return; }
   var btn = document.getElementById('jf-submit-btn');
+  if (btn) { btn.textContent = '⏳ Submitting...'; btn.disabled = true; }
   var req = { name:name, phone:v('jf-phone').trim(), address:v('jf-address').trim(), duty:v('jf-duty').trim(), year:v('jf-year').trim(), birthday:v('jf-birthday'), submittedAt:Date.now() };
-  fbSet('pending', uid(), req);
-  var fields = ['jf-name','jf-phone','jf-address','jf-duty','jf-year','jf-birthday'];
-  for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
-  if (btn) { btn.textContent = '✅ Submitted! Awaiting Approval'; btn.disabled = true; }
-  toast('Request submitted! Admin will approve shortly.','📨');
+  var id = uid();
+  // Directly POST to Firebase REST — no login required
+  var url = FS_BASE + 'pending/' + id + '?key=' + APIKEY;
+  var body = JSON.stringify(toFsDoc(req));
+  fetchWithTimeout(url, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:body }, 8000)
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (json.error) { throw new Error(json.error.message); }
+      var fields = ['jf-name','jf-phone','jf-address','jf-duty','jf-year','jf-birthday'];
+      for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
+      if (btn) { btn.textContent = '✅ Submitted! Awaiting Approval'; }
+      toast('Request submitted! Admin will approve shortly.','📨');
+    })
+    .catch(function(e) {
+      // Fallback: save locally
+      if (!data.pending) data.pending = [];
+      req.id = id;
+      data.pending.push(req);
+      lsSave();
+      var fields = ['jf-name','jf-phone','jf-address','jf-duty','jf-year','jf-birthday'];
+      for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
+      if (btn) { btn.textContent = '✅ Submitted! Awaiting Approval'; }
+      toast('Request submitted!','📨');
+    });
 }
 
 function renderPending() {
@@ -1864,10 +1880,13 @@ function approvePending(id) {
   var p = null;
   for (var i = 0; i < data.pending.length; i++) { if (data.pending[i].id === id) { p = data.pending[i]; break; } }
   if (!p) return;
-  showLoading(true);
   var mid = uid();
   var m = { name:p.name||'', phone:p.phone||'', address:p.address||'', duty:p.duty||'', year:p.year||'', birthday:p.birthday||'', meetings:0, events:0, createdAt:Date.now() };
-  Promise.all([fbSet('members', mid, m), fbDel('pending', id)]).then(function() { toast('Approved!','✅'); showLoading(false); }).catch(function() { toast('Error','❌'); showLoading(false); });
+  fbSet('members', mid, m);
+  fbDel('pending', id);
+  toast('Approved! ✅');
+  renderMembers();
+  renderPending();
 }
 
 function rejectPending(id) {
@@ -1890,7 +1909,6 @@ function savePasswords() {
     member: newMember || PASSWORDS.member,
     viewer: newViewer || PASSWORDS.viewer
   };
-  showLoading(true);
   try { localStorage.setItem(LS_PWD, JSON.stringify(updated)); } catch(e) {}
   PASSWORDS = updated;
   // Also save to Firebase
@@ -1898,7 +1916,7 @@ function savePasswords() {
   var fields = ['cp-admin-current','cp-admin-new','cp-admin-confirm','cp-member-new','cp-member-confirm','cp-viewer-new','cp-viewer-confirm'];
   for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if(el) el.value=''; }
   document.getElementById('chpwd-modal').classList.remove('open');
-  toast('Passwords updated!','🔑');
+  toast('Passwords updated! 🔑');
 }
 
 // ── PRINT HELPER ──
