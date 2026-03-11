@@ -455,6 +455,19 @@ tr:hover td { background: rgba(255,107,0,0.03); }
   height: 6px;
 }
 
+/* ── FINANCE ── */
+.finance-summary { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+.fin-card { flex:1; min-width:130px; background:white; border-radius:10px; padding:14px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.fin-card.income { border-top:4px solid #2E7D32; }
+.fin-card.expense { border-top:4px solid #C62828; }
+.fin-card.balance-pos { border-top:4px solid var(--saffron); }
+.fin-card.balance-neg { border-top:4px solid #C62828; }
+.fin-amount { font-family:'Rajdhani'; font-size:26px; font-weight:700; line-height:1; }
+.fin-amount.green { color:#2E7D32; }
+.fin-amount.red { color:#C62828; }
+.fin-amount.orange { color:var(--saffron); }
+.fin-label { font-size:11px; color:var(--gray-400); margin-top:3px; }
+
 /* ── PRINT ── */
 @media print {
   .header, .nav-tabs, .no-print, .toast, .modal-overlay { display: none !important; }
@@ -494,7 +507,7 @@ tr:hover td { background: rgba(255,107,0,0.03); }
         <label>Password</label>
         <input type="password" id="login-password" placeholder="Enter your password">
       </div>
-      <button class="login-btn">Login →</button>
+      <button class="login-btn" id="login-btn" onclick="window.doLogin && window.doLogin()">Login →</button>
       <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
     </div>
   </div>
@@ -534,6 +547,7 @@ tr:hover td { background: rgba(255,107,0,0.03); }
     <div class="nav-tab" onclick="showSection('events',event)">🎯 Events</div>
     <div class="nav-tab no-viewer" onclick="showSection('invitations',event)">✉️ Invitations</div>
     <div class="nav-tab no-viewer no-member" onclick="showSection('qrjoin',event)">📲 QR Join <span id="pending-badge" style="display:none;background:var(--danger);color:white;border-radius:20px;padding:1px 7px;font-size:11px;margin-left:4px">0</span></div>
+    <div class="nav-tab admin-only" id="finance-tab" onclick="showSection('finance',event)" style="display:none">💰 Finance</div>
   </div>
 
   <!-- MAIN -->
@@ -757,6 +771,146 @@ tr:hover td { background: rgba(255,107,0,0.03); }
 
     </div>
 
+    <!-- ══ FINANCE ══ -->
+    <div class="section" id="section-finance">
+
+      <!-- Summary Cards -->
+      <div class="stats-row" id="finance-stats"></div>
+
+      <!-- Add Donation -->
+      <div class="card no-print">
+        <div class="card-header"><span>➕ Add <span class="accent">Donation</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Donor Name *</label>
+              <input type="text" id="dn-name" placeholder="e.g. Ramesh Kumar">
+            </div>
+            <div class="form-group">
+              <label>Amount (₹) *</label>
+              <input type="number" id="dn-amount" placeholder="e.g. 500" min="1">
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="dn-date">
+            </div>
+            <div class="form-group">
+              <label>Payment Mode</label>
+              <select id="dn-mode">
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Note / Purpose (optional)</label>
+              <input type="text" id="dn-note" placeholder="e.g. Annual donation, Event support">
+            </div>
+          </div>
+          <div style="margin-top:13px">
+            <button class="btn btn-primary" onclick="addDonation()">💰 Add Donation</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Expense -->
+      <div class="card no-print">
+        <div class="card-header"><span>➖ Add <span class="accent">Expense</span></span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Expense Title *</label>
+              <input type="text" id="ex-title" placeholder="e.g. Banner printing">
+            </div>
+            <div class="form-group">
+              <label>Amount (₹) *</label>
+              <input type="number" id="ex-amount" placeholder="e.g. 300" min="1">
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="ex-date">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="ex-category">
+                <option value="Event">Event</option>
+                <option value="Stationery">Stationery</option>
+                <option value="Food & Refreshments">Food & Refreshments</option>
+                <option value="Transport">Transport</option>
+                <option value="Printing">Printing</option>
+                <option value="Decoration">Decoration</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Related Event (optional)</label>
+              <input type="text" id="ex-event" placeholder="e.g. Annual Meet 2025">
+            </div>
+            <div class="form-group">
+              <label>Paid To</label>
+              <input type="text" id="ex-paidto" placeholder="e.g. Print Shop, Vendor name">
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label>Description (optional)</label>
+              <input type="text" id="ex-desc" placeholder="More details about the expense">
+            </div>
+          </div>
+          <div style="margin-top:13px">
+            <button class="btn btn-danger" onclick="addExpense()">💸 Add Expense</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Sheet -->
+      <div class="card">
+        <div class="card-header">
+          <span>📊 Balance <span class="accent">Sheet</span></span>
+          <button class="btn btn-sm btn-print" onclick="printFinance()">🖨️ Print Report</button>
+        </div>
+        <div class="card-body" style="padding:0">
+
+          <!-- Donations Table -->
+          <div style="padding:16px 18px 8px">
+            <div style="font-family:Rajdhani;font-weight:700;font-size:15px;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+              💰 Donations Received
+              <span id="donations-total-badge" style="background:#E8F5E9;color:#2E7D32;border-radius:20px;padding:2px 10px;font-size:12px"></span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Donor Name</th><th>Amount</th><th>Date</th><th>Mode</th><th>Note</th><th class="no-print">Action</th></tr>
+              </thead>
+              <tbody id="donations-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Expenses Table -->
+          <div style="padding:16px 18px 8px;margin-top:8px;border-top:2px solid var(--gray-200)">
+            <div style="font-family:Rajdhani;font-weight:700;font-size:15px;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+              💸 Expenses
+              <span id="expenses-total-badge" style="background:#FFEBEE;color:#C62828;border-radius:20px;padding:2px 10px;font-size:12px"></span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Title</th><th>Amount</th><th>Date</th><th>Category</th><th>Event</th><th>Paid To</th><th class="no-print">Action</th></tr>
+              </thead>
+              <tbody id="expenses-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Balance Row -->
+          <div id="balance-row" style="padding:16px 18px;border-top:3px solid var(--saffron);margin-top:4px"></div>
+
+        </div>
+      </div>
+
+    </div>
+
   </div><!-- /main -->
 </div><!-- /main-app -->
 
@@ -894,8 +1048,8 @@ tr:hover td { background: rgba(255,107,0,0.03); }
             <input type="text" id="jf-address" placeholder="Your address" style="width:100%;border:2px solid var(--gray-200);border-radius:8px;padding:10px 13px;font-family:Barlow;font-size:14px">
           </div>
           <div style="margin-bottom:14px">
-           <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Duty / Role</label>
-            <input type="text" id="jf-duty" placeholder="e.g. Secretary, President, Member" style="width:100%;border:2px solid var(--gray-200);border-radius:8px;padding:10px 13px;font-family:Barlow;font-size:14px">
+            <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Course / Stream</label>
+            <input type="text" id="jf-duty" placeholder="e.g. B.A. Political Science" style="width:100%;border:2px solid var(--gray-200);border-radius:8px;padding:10px 13px;font-family:Barlow;font-size:14px">
           </div>
           <div style="margin-bottom:20px">
             <label style="font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Year of Joining</label>
@@ -918,11 +1072,11 @@ tr:hover td { background: rgba(255,107,0,0.03); }
 <!-- TOAST -->
 <div class="toast" id="toast"><span class="ti">✓</span><span id="toast-msg"></span></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-// ── FIREBASE CONFIG ──
+<!-- Firebase compat SDKs — work on ALL browsers including iPhone Safari -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" onerror="window._firebaseFailed=true"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" onerror="window._firebaseFailed=true"></script>
+<script>
+// ── FIREBASE SETUP ──
 const firebaseConfig = {
   apiKey: "AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w",
   authDomain: "abvp-gkp.firebaseapp.com",
@@ -931,34 +1085,43 @@ const firebaseConfig = {
   messagingSenderId: "925614384142",
   appId: "1:925614384142:web:3ee919103ac065bbefc85f"
 };
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+
+let db = null;
+try {
+  if (typeof firebase !== 'undefined' && !window._firebaseFailed) {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+  }
+} catch(e) { db = null; }
+
+// Safe Firebase helpers — fall back gracefully if db is null
+async function fbSet(col, id, obj) {
+  if (!db) return;
+  await db.collection(col).doc(id).set(JSON.parse(JSON.stringify(obj)));
+}
+async function fbDel(col, id) {
+  if (!db) return;
+  await db.collection(col).doc(id).delete();
+}
+function saveAll() {}
 
 // ── PASSWORDS ──
 const DEFAULT_PASSWORDS = { admin:'abvp@admin2024', member:'abvp@member2024', viewer:'abvp@viewer2024' };
 let PASSWORDS = { ...DEFAULT_PASSWORDS };
 
 // ── DATA ──
-let data = { members:[], meetings:[], events:[], invitations:[], pending:[] };
+let data = { members:[], meetings:[], events:[], invitations:[], pending:[], donations:[], expenses:[] };
 let currentRole=null, mtSelectedIds=[], mtOtherAttendees=[], evSelectedIds=[], invSelectedIds=[];
 let currentInvPreview=null;
 let unsubscribers=[];
 
-// Firebase helpers
-async function fbSet(col, id, obj) {
-  const clean = JSON.parse(JSON.stringify(obj));
-  await setDoc(doc(db, col, id), clean);
-}
-async function fbDel(col, id) { await deleteDoc(doc(db, col, id)); }
-function saveAll() {} // no-op — Firebase is live
-
 // ── INIT ──
 async function init() {
-  // Wire up login button explicitly (fixes iPhone Safari module scope issue)
-  const loginBtn = document.querySelector('.login-btn');
-  if (loginBtn) loginBtn.onclick = doLogin;
+  // Wire up login button — must use getElementById for reliability on iPhone Safari
+  const loginBtn = document.getElementById('login-btn');
+  if (loginBtn) loginBtn.onclick = function() { doLogin(); };
   const pwdInput = document.getElementById('login-password');
-  if (pwdInput) pwdInput.onkeydown = (e) => { if(e.key==='Enter') doLogin(); };
+  if (pwdInput) pwdInput.onkeydown = function(e) { if(e.key==='Enter') doLogin(); };
 
   // Check if this is the public join page (?join=1)
   if (window.location.search.includes('join=1')) {
@@ -968,14 +1131,15 @@ async function init() {
 
   // Load passwords from Firestore (with timeout fallback)
   try {
-    const timeout = new Promise((_,rej) => setTimeout(()=>rej('timeout'),5000));
-    const pwdFetch = getDoc(doc(db, 'config', 'passwords'));
-    const pwdSnap = await Promise.race([pwdFetch, timeout]);
-    if (pwdSnap && pwdSnap.exists && pwdSnap.exists()) {
-      PASSWORDS = { ...DEFAULT_PASSWORDS, ...pwdSnap.data() };
+    if (db) {
+      const timeout = new Promise((_,rej) => setTimeout(()=>rej('timeout'),5000));
+      const pwdFetch = db.collection('config').doc('passwords').get();
+      const pwdSnap = await Promise.race([pwdFetch, timeout]);
+      if (pwdSnap && pwdSnap.exists) {
+        PASSWORDS = { ...DEFAULT_PASSWORDS, ...pwdSnap.data() };
+      }
     }
   } catch(e) {
-    // Use default passwords if Firestore unreachable
     PASSWORDS = { ...DEFAULT_PASSWORDS };
   }
 
@@ -992,31 +1156,40 @@ async function init() {
 // ── REALTIME LISTENERS ──
 function subscribeToData() {
   showLoading(true);
+  if (!db) { showLoading(false); render(); return; }
   let loaded = { members:false, meetings:false, events:false, invitations:false };
   function checkLoaded() {
     if (Object.values(loaded).every(Boolean)) { showLoading(false); render(); }
   }
-  const u1 = onSnapshot(collection(db,'members'), snap => {
+  const u1 = db.collection('members').onSnapshot(snap => {
     data.members = snap.docs.map(d=>({id:d.id,...d.data()}));
     loaded.members=true; checkLoaded(); renderMembers();
   });
-  const u2 = onSnapshot(collection(db,'meetings'), snap => {
+  const u2 = db.collection('meetings').onSnapshot(snap => {
     data.meetings = snap.docs.map(d=>({id:d.id,...d.data()}));
     loaded.meetings=true; checkLoaded(); renderMeetings();
   });
-  const u3 = onSnapshot(collection(db,'events'), snap => {
+  const u3 = db.collection('events').onSnapshot(snap => {
     data.events = snap.docs.map(d=>({id:d.id,...d.data()}));
     loaded.events=true; checkLoaded(); renderEvents();
   });
-  const u4 = onSnapshot(collection(db,'invitations'), snap => {
+  const u4 = db.collection('invitations').onSnapshot(snap => {
     data.invitations = snap.docs.map(d=>({id:d.id,...d.data()}));
     loaded.invitations=true; checkLoaded(); renderInvitations();
   });
-  const u5 = onSnapshot(collection(db,'pending'), snap => {
+  const u5 = db.collection('pending').onSnapshot(snap => {
     data.pending = snap.docs.map(d=>({id:d.id,...d.data()}));
     renderPending();
   });
-  unsubscribers = [u1,u2,u3,u4,u5];
+  const u6 = db.collection('donations').onSnapshot(snap => {
+    data.donations = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderFinance();
+  });
+  const u7 = db.collection('expenses').onSnapshot(snap => {
+    data.expenses = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderFinance();
+  });
+  unsubscribers = [u1,u2,u3,u4,u5,u6,u7];
 }
 
 // ── LOGIN / LOGOUT ──
@@ -1029,6 +1202,7 @@ function doLogin() {
   err.classList.remove('show');
   currentRole=role; sessionStorage.setItem('abvp_role',role); showApp();
 }
+window.doLogin = doLogin;
 
 function showApp() {
   document.getElementById('login-screen').style.display='none';
@@ -1051,8 +1225,13 @@ function logoutUser() {
 }
 
 function applyRoleRestrictions() {
-  if(currentRole==='admin'){ document.getElementById('chpwd-btn').style.display='flex'; return; }
+  if(currentRole==='admin'){
+    document.getElementById('chpwd-btn').style.display='flex';
+    document.getElementById('finance-tab').style.display='';
+    return;
+  }
   document.getElementById('chpwd-btn').style.display='none';
+  document.getElementById('finance-tab').style.display='none';
   document.querySelectorAll('.no-viewer,.no-member').forEach(el=>el.style.display='none');
 }
 
@@ -1542,8 +1721,8 @@ function showJoinPage() {
   document.getElementById('main-app').style.display = 'none';
   document.getElementById('join-page').style.display = 'block';
   // Try to show unit name from Firestore
-  getDoc(doc(db,'config','settings')).then(snap => {
-    if (snap.exists() && snap.data().unitName) {
+  if (db) db.collection('config').doc('settings').get().then(snap => {
+    if (snap.exists && snap.data().unitName) {
       document.getElementById('join-unit-name').textContent = snap.data().unitName;
     }
   }).catch(()=>{});
@@ -1560,7 +1739,7 @@ window.submitJoinRequest = async function() {
   btn.textContent = 'Submitting...'; btn.disabled = true;
   try {
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-    await setDoc(doc(db,'pending',id), {
+    await db.collection('pending').doc(id).set({
       name, phone,
       address: document.getElementById('jf-address').value.trim(),
       duty: document.getElementById('jf-duty').value.trim(),
@@ -1632,8 +1811,157 @@ async function rejectPending(id) {
   showLoading(false);
 }
 
+// ── FINANCE ──
+async function addDonation() {
+  const name=v('dn-name').trim(), amtStr=v('dn-amount'), date=v('dn-date');
+  if(!name) return toast('Donor name required','⚠️');
+  const amount=parseFloat(amtStr); if(!amount||amount<=0) return toast('Enter valid amount','⚠️');
+  if(!date) return toast('Date required','⚠️');
+  const id=uid();
+  showLoading(true);
+  try {
+    await fbSet('donations',id,{ name, amount, date, mode:v('dn-mode'), note:v('dn-note').trim(), createdAt:Date.now() });
+    ['dn-name','dn-amount','dn-date','dn-note'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('dn-mode').value='Cash';
+    toast('Donation added!','💰');
+  } catch(e){ toast('Error saving','❌'); }
+  showLoading(false);
+}
+
+async function deleteDonation(id) {
+  if(!confirm('Delete this donation entry?')) return;
+  showLoading(true);
+  try { await fbDel('donations',id); toast('Deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
+}
+
+async function addExpense() {
+  const title=v('ex-title').trim(), amtStr=v('ex-amount'), date=v('ex-date');
+  if(!title) return toast('Expense title required','⚠️');
+  const amount=parseFloat(amtStr); if(!amount||amount<=0) return toast('Enter valid amount','⚠️');
+  if(!date) return toast('Date required','⚠️');
+  const id=uid();
+  showLoading(true);
+  try {
+    await fbSet('expenses',id,{ title, amount, date, category:v('ex-category'), event:v('ex-event').trim(), paidTo:v('ex-paidto').trim(), desc:v('ex-desc').trim(), createdAt:Date.now() });
+    ['ex-title','ex-amount','ex-date','ex-event','ex-paidto','ex-desc'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('ex-category').value='Event';
+    toast('Expense added!','💸');
+  } catch(e){ toast('Error saving','❌'); }
+  showLoading(false);
+}
+
+async function deleteExpense(id) {
+  if(!confirm('Delete this expense entry?')) return;
+  showLoading(true);
+  try { await fbDel('expenses',id); toast('Deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  showLoading(false);
+}
+
+function renderFinance() {
+  const totalDonations = data.donations.reduce((s,d)=>s+(d.amount||0),0);
+  const totalExpenses  = data.expenses.reduce((s,e)=>s+(e.amount||0),0);
+  const balance = totalDonations - totalExpenses;
+
+  // Summary stats
+  const statsEl = document.getElementById('finance-stats');
+  if(statsEl) statsEl.innerHTML=`
+    <div class="stat-card green"><div class="stat-number" style="color:#2E7D32">₹${totalDonations.toLocaleString('en-IN')}</div><div class="stat-label">Total Donations</div></div>
+    <div class="stat-card" style="border-color:#C62828"><div class="stat-number" style="color:#C62828">₹${totalExpenses.toLocaleString('en-IN')}</div><div class="stat-label">Total Expenses</div></div>
+    <div class="stat-card" style="border-color:${balance>=0?'var(--saffron)':'#C62828'}"><div class="stat-number" style="color:${balance>=0?'var(--saffron)':'#C62828'}">${balance>=0?'':'−'}₹${Math.abs(balance).toLocaleString('en-IN')}</div><div class="stat-label">${balance>=0?'Balance Available':'Deficit'}</div></div>
+    <div class="stat-card navy"><div class="stat-number">${data.donations.length}</div><div class="stat-label">Donors</div></div>`;
+
+  // Donations table
+  const sortedDon = [...data.donations].sort((a,b)=>b.date.localeCompare(a.date));
+  const dTbody = document.getElementById('donations-tbody');
+  if(dTbody) {
+    dTbody.innerHTML = sortedDon.length ? sortedDon.map((d,i)=>`
+      <tr>
+        <td style="color:var(--gray-400);font-size:11px">${i+1}</td>
+        <td><strong>${d.name}</strong></td>
+        <td><strong style="color:#2E7D32">₹${(d.amount||0).toLocaleString('en-IN')}</strong></td>
+        <td>${formatDate(d.date)}</td>
+        <td><span style="background:#E8F5E9;color:#2E7D32;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:600">${d.mode||'Cash'}</span></td>
+        <td style="font-size:12px;color:var(--gray-600)">${d.note||'—'}</td>
+        <td class="no-print"><button class="btn btn-sm btn-danger" onclick="deleteDonation('${d.id}')">🗑️</button></td>
+      </tr>`).join('') :
+      '<tr><td colspan="7" style="padding:14px;text-align:center;color:#999">No donations recorded yet</td></tr>';
+    const badge = document.getElementById('donations-total-badge');
+    if(badge) badge.textContent = `Total: ₹${totalDonations.toLocaleString('en-IN')}`;
+  }
+
+  // Expenses table
+  const sortedExp = [...data.expenses].sort((a,b)=>b.date.localeCompare(a.date));
+  const eTbody = document.getElementById('expenses-tbody');
+  if(eTbody) {
+    eTbody.innerHTML = sortedExp.length ? sortedExp.map((e,i)=>`
+      <tr>
+        <td style="color:var(--gray-400);font-size:11px">${i+1}</td>
+        <td><strong>${e.title}</strong>${e.desc?`<br><span style="font-size:11px;color:var(--gray-400)">${e.desc}</span>`:''}</td>
+        <td><strong style="color:#C62828">₹${(e.amount||0).toLocaleString('en-IN')}</strong></td>
+        <td>${formatDate(e.date)}</td>
+        <td><span style="background:#FFEBEE;color:#C62828;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:600">${e.category||'Other'}</span></td>
+        <td style="font-size:12px;color:var(--gray-600)">${e.event||'—'}</td>
+        <td style="font-size:12px;color:var(--gray-600)">${e.paidTo||'—'}</td>
+        <td class="no-print"><button class="btn btn-sm btn-danger" onclick="deleteExpense('${e.id}')">🗑️</button></td>
+      </tr>`).join('') :
+      '<tr><td colspan="8" style="padding:14px;text-align:center;color:#999">No expenses recorded yet</td></tr>';
+    const badge = document.getElementById('expenses-total-badge');
+    if(badge) badge.textContent = `Total: ₹${totalExpenses.toLocaleString('en-IN')}`;
+  }
+
+  // Balance row
+  const balRow = document.getElementById('balance-row');
+  if(balRow) balRow.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="font-family:Rajdhani;font-size:16px;font-weight:700;color:var(--navy)">NET BALANCE</div>
+      <div style="font-family:Rajdhani;font-size:28px;font-weight:700;color:${balance>=0?'#2E7D32':'#C62828'}">
+        ${balance>=0?'':'−'}₹${Math.abs(balance).toLocaleString('en-IN')}
+        <span style="font-size:14px;font-weight:400;color:var(--gray-400)"> = ₹${totalDonations.toLocaleString('en-IN')} − ₹${totalExpenses.toLocaleString('en-IN')}</span>
+      </div>
+    </div>`;
+}
+
+function printFinance() {
+  const totalDon = data.donations.reduce((s,d)=>s+(d.amount||0),0);
+  const totalExp = data.expenses.reduce((s,e)=>s+(e.amount||0),0);
+  const bal = totalDon - totalExp;
+  const sortedDon = [...data.donations].sort((a,b)=>b.date.localeCompare(a.date));
+  const sortedExp = [...data.expenses].sort((a,b)=>b.date.localeCompare(a.date));
+
+  const donRows = sortedDon.map((d,i)=>`<tr><td>${i+1}</td><td>${d.name}</td><td style="color:#2E7D32;font-weight:700">₹${(d.amount||0).toLocaleString('en-IN')}</td><td>${formatDate(d.date)}</td><td>${d.mode||'Cash'}</td><td>${d.note||'—'}</td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#999;padding:10px">No donations</td></tr>';
+  const expRows = sortedExp.map((e,i)=>`<tr><td>${i+1}</td><td>${e.title}${e.desc?'<br><small style="color:#999">'+e.desc+'</small>':''}</td><td style="color:#C62828;font-weight:700">₹${(e.amount||0).toLocaleString('en-IN')}</td><td>${formatDate(e.date)}</td><td>${e.category||'—'}</td><td>${e.event||'—'}</td><td>${e.paidTo||'—'}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#999;padding:10px">No expenses</td></tr>';
+
+  const content = `
+    ${printHeader('Finance & Balance Sheet')}
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+      <div style="flex:1;min-width:120px;background:#E8F5E9;border-radius:8px;padding:12px 16px;text-align:center"><div style="font-size:11px;color:#555;text-transform:uppercase;font-weight:600">Total Donations</div><div style="font-family:Rajdhani;font-size:24px;font-weight:700;color:#2E7D32">₹${totalDon.toLocaleString('en-IN')}</div></div>
+      <div style="flex:1;min-width:120px;background:#FFEBEE;border-radius:8px;padding:12px 16px;text-align:center"><div style="font-size:11px;color:#555;text-transform:uppercase;font-weight:600">Total Expenses</div><div style="font-family:Rajdhani;font-size:24px;font-weight:700;color:#C62828">₹${totalExp.toLocaleString('en-IN')}</div></div>
+      <div style="flex:1;min-width:120px;background:${bal>=0?'#FFF8F0':'#FFEBEE'};border-radius:8px;padding:12px 16px;text-align:center;border:2px solid ${bal>=0?'#FF6B00':'#C62828'}"><div style="font-size:11px;color:#555;text-transform:uppercase;font-weight:600">Net Balance</div><div style="font-family:Rajdhani;font-size:24px;font-weight:700;color:${bal>=0?'#FF6B00':'#C62828'}">${bal>=0?'':'−'}₹${Math.abs(bal).toLocaleString('en-IN')}</div></div>
+    </div>
+    <h3 style="font-family:Rajdhani;font-size:16px;color:#0D1B3E;margin-bottom:8px;text-transform:uppercase;border-bottom:2px solid #FF6B00;padding-bottom:5px">💰 Donations Received</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px">
+      <thead><tr style="background:#0D1B3E"><th style="color:white;padding:7px 9px;text-align:left">#</th><th style="color:white;padding:7px 9px;text-align:left">Donor</th><th style="color:white;padding:7px 9px;text-align:left">Amount</th><th style="color:white;padding:7px 9px;text-align:left">Date</th><th style="color:white;padding:7px 9px;text-align:left">Mode</th><th style="color:white;padding:7px 9px;text-align:left">Note</th></tr></thead>
+      <tbody>${donRows}</tbody>
+      <tfoot><tr style="background:#E8F5E9"><td colspan="2" style="padding:7px 9px;font-weight:700">TOTAL</td><td style="padding:7px 9px;font-weight:700;color:#2E7D32">₹${totalDon.toLocaleString('en-IN')}</td><td colspan="3"></td></tr></tfoot>
+    </table>
+    <h3 style="font-family:Rajdhani;font-size:16px;color:#0D1B3E;margin-bottom:8px;text-transform:uppercase;border-bottom:2px solid #C62828;padding-bottom:5px">💸 Expenses</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px">
+      <thead><tr style="background:#0D1B3E"><th style="color:white;padding:7px 9px;text-align:left">#</th><th style="color:white;padding:7px 9px;text-align:left">Title</th><th style="color:white;padding:7px 9px;text-align:left">Amount</th><th style="color:white;padding:7px 9px;text-align:left">Date</th><th style="color:white;padding:7px 9px;text-align:left">Category</th><th style="color:white;padding:7px 9px;text-align:left">Event</th><th style="color:white;padding:7px 9px;text-align:left">Paid To</th></tr></thead>
+      <tbody>${expRows}</tbody>
+      <tfoot><tr style="background:#FFEBEE"><td colspan="2" style="padding:7px 9px;font-weight:700">TOTAL</td><td style="padding:7px 9px;font-weight:700;color:#C62828">₹${totalExp.toLocaleString('en-IN')}</td><td colspan="4"></td></tr></tfoot>
+    </table>
+    <div style="background:${bal>=0?'#FFF8F0':'#FFEBEE'};border:2px solid ${bal>=0?'#FF6B00':'#C62828'};border-radius:8px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:Rajdhani;font-size:18px;font-weight:700;color:#0D1B3E">NET BALANCE (Donations − Expenses)</span>
+      <span style="font-family:Rajdhani;font-size:26px;font-weight:700;color:${bal>=0?'#FF6B00':'#C62828'}">${bal>=0?'':'−'}₹${Math.abs(bal).toLocaleString('en-IN')}</span>
+    </div>
+    ${printSignatures('Treasurer')}`;
+
+  triggerPrint(content,'document');
+}
+
 // ── RENDER ALL ──
-function render(){ renderMembers(); renderMeetings(); renderEvents(); renderInvitations(); }
+function render(){ renderMembers(); renderMeetings(); renderEvents(); renderInvitations(); renderFinance(); }
 
 // ── EXPOSE GLOBALS ──
 window.doLogin=doLogin; window.logoutUser=logoutUser; window.showSection=showSection;
@@ -1648,10 +1976,12 @@ window.openModal=openModal; window.closeModal=closeModal;
 window.changePasswords=changePasswords;
 window.copyJoinLink=copyJoinLink; window.printQR=printQR;
 window.approvePending=approvePending; window.rejectPending=rejectPending;
+window.addDonation=addDonation; window.deleteDonation=deleteDonation;
+window.addExpense=addExpense; window.deleteExpense=deleteExpense;
+window.printFinance=printFinance;
 
 // ── START ──
 init();
 </script>
 </body>
 </html>
-
