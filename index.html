@@ -729,6 +729,14 @@ function showSection(id) {
   var sec = document.getElementById('section-' + id);
   if (sec) sec.classList.add('active');
   if (id === 'dashboard') renderDashboard();
+  if (id === 'qr' && currentRole === 'admin') {
+    fbGetCol('pending').then(function(docs) {
+      data.pending = docs;
+      lsSave();
+      renderPending();
+      if (docs.length > 0) toast(docs.length + ' pending request(s)!', '🔔');
+    }).catch(function() { renderPending(); });
+  }
 }
 
 // ── LOGIN ──
@@ -1850,7 +1858,6 @@ function submitJoinRequest() {
 function renderPending() {
   var card = document.getElementById('pending-card');
   if (!card) return;
-  // Badge on QR tab
   var qrTab = document.getElementById('nav-tab-qr');
   var count = (currentRole === 'admin') ? data.pending.length : 0;
   if (qrTab) {
@@ -1858,8 +1865,12 @@ function renderPending() {
       ? '&#128247; QR JOIN <span style="background:#EF4444;color:white;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:4px">' + count + '</span>'
       : '&#128247; QR JOIN';
   }
-  if (currentRole !== 'admin' || !data.pending.length) { card.style.display = 'none'; return; }
+  if (currentRole !== 'admin') { card.style.display = 'none'; return; }
   card.style.display = '';
+  if (!data.pending.length) {
+    document.getElementById('pending-list').innerHTML = '<div style="text-align:center;color:#888;padding:20px;font-size:13px">&#10003; No pending requests</div>';
+    return;
+  }
   var sorted = data.pending.slice().sort(function(a,b) { return (b.submittedAt||0)-(a.submittedAt||0); });
   var html = '';
   for (var i = 0; i < sorted.length; i++) {
@@ -2001,3 +2012,4 @@ generateQR();
 
 </body>
 </html>
+
