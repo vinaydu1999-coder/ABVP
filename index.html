@@ -569,7 +569,8 @@ tr:hover td { background: rgba(255,107,0,0.03); }
 
   <!-- NAV -->
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('members',event)">👥 Master List</div>
+    <div class="nav-tab active admin-only" id="dashboard-tab" onclick="showSection('dashboard',event)">🏠 Dashboard</div>
+<div class="nav-tab" onclick="showSection('members',event)">👥 Master List</div>
     <div class="nav-tab" onclick="showSection('meetings',event)">📋 Meetings</div>
     <div class="nav-tab" onclick="showSection('events',event)">🎯 Events</div>
     <div class="nav-tab no-viewer" onclick="showSection('invitations',event)">✉️ Invitations</div>
@@ -580,8 +581,11 @@ tr:hover td { background: rgba(255,107,0,0.03); }
   <!-- MAIN -->
   <div class="main">
 
-    <!-- ══ MEMBERS ══ -->
-    <div class="section active" id="section-members">
+    <!-- ══ DASHBOARD ══ -->
+<div class="section active" id="section-dashboard"></div>
+
+<!-- ══ MEMBERS ══ -->
+<div class="section" id="section-members">
       <div class="stats-row" id="member-stats"></div>
 
       <div class="card no-print no-viewer no-member">
@@ -1258,11 +1262,13 @@ function logoutUser() {
 }
 
 function applyRoleRestrictions() {
-  if(currentRole==='admin'){
+if(currentRole==='admin'){
     document.getElementById('chpwd-btn').style.display='flex';
     document.getElementById('finance-tab').style.display='';
+    document.getElementById('dashboard-tab').style.display='';
     return;
   }
+  document.getElementById('dashboard-tab').style.display='none';
   document.getElementById('chpwd-btn').style.display='none';
   if(currentRole==='member'){
     document.getElementById('finance-tab').style.display='';
@@ -1350,11 +1356,82 @@ function renderMembers() {
 }
 function renderStats() {
   const total=data.members.length, active=data.members.filter(m=>((m.meetings||0)+(m.events||0))>0).length;
-  document.getElementById('member-stats').innerHTML=`
+  const totalDon=data.donations.reduce((s,d)=>s+(d.amount||0),0);
+  const totalExp=data.expenses.reduce((s,e)=>s+(e.amount||0),0);
+  const balance=totalDon-totalExp;
+
+  // Old small stats for Master List page (non-admin)
+  const el = document.getElementById('member-stats');
+  if(el) el.innerHTML=`
     <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Total Members</div></div>
     <div class="stat-card navy"><div class="stat-number">${active}</div><div class="stat-label">Active Members</div></div>
     <div class="stat-card gold"><div class="stat-number">${data.meetings.length}</div><div class="stat-label">Meetings Held</div></div>
     <div class="stat-card green"><div class="stat-number">${data.events.length}</div><div class="stat-label">Events Conducted</div></div>`;
+
+  // Admin dashboard
+  if(currentRole!=='admin') return;
+  const dash = document.getElementById('section-dashboard');
+  if(!dash) return;
+  dash.innerHTML=`
+    <div style="background:linear-gradient(135deg,#0D1B3E,#1E3060);border-radius:14px;padding:20px 22px;margin-bottom:18px;display:flex;align-items:center;gap:16px">
+      <img src="${document.querySelector('.logo-circle img')?.src||''}" style="width:56px;height:56px;border-radius:50%;background:white;padding:3px;object-fit:contain">
+      <div>
+        <div style="font-family:Rajdhani;font-size:20px;font-weight:700;color:white">Akhil Bharatiya Vidyarthi Parishad</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px">Admin Dashboard · ${new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
+      </div>
+    </div>
+
+    <div style="font-family:Rajdhani;font-size:15px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">👥 Members</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #0D1B3E;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#0D1B3E">${total}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Total Members</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #2E7D32;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#2E7D32">${active}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Active Members</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #9E9E9E;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#555">${total-active}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Inactive Members</div>
+      </div>
+    </div>
+
+    <div style="font-family:Rajdhani;font-size:15px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Activities</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #FF6B00;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#FF6B00">${data.meetings.length}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Meetings Held</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #7B1FA2;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#7B1FA2">${data.events.length}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Events Concluded</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #1565C0;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#1565C0">${data.invitations.length}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Invitations Sent</div>
+      </div>
+    </div>
+
+    <div style="font-family:Rajdhani;font-size:15px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">💰 Finance Summary</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #2E7D32;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:28px;font-weight:700;color:#2E7D32">₹${totalDon.toLocaleString('en-IN')}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Total Donations</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #C62828;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:28px;font-weight:700;color:#C62828">₹${totalExp.toLocaleString('en-IN')}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Total Expenses</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid ${balance>=0?'#FF6B00':'#C62828'};box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:28px;font-weight:700;color:${balance>=0?'#FF6B00':'#C62828'}">${balance>=0?'':'−'}₹${Math.abs(balance).toLocaleString('en-IN')}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">${balance>=0?'Balance Available':'Deficit'}</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;border-top:4px solid #FFB800;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+        <div style="font-family:Rajdhani;font-size:32px;font-weight:700;color:#E65100">${data.donations.length}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Total Donors</div>
+      </div>
+    </div>`;
 }
 
 // ── MEMBER DROPDOWN ──
@@ -2051,6 +2128,7 @@ init();
 </script>
 </body>
 </html>
+
 
 
 
