@@ -1409,7 +1409,17 @@ async function saveMeeting() {
 async function deleteMeeting(id) {
   if(!confirm('Delete this meeting?')) return;
   showLoading(true);
-  try { await fbDel('meetings',id); toast('Meeting deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  try {
+    const mt = data.meetings.find(x=>x.id===id);
+    if(mt && mt.invitedIds && mt.invitedIds.length) {
+      const updates = mt.invitedIds.map(mid => {
+        const m = data.members.find(x=>x.id===mid);
+        if(m) { const u={...m}; delete u.id; u.meetings=Math.max(0,(u.meetings||1)-1); return fbSet('members',mid,u); }
+      }).filter(Boolean);
+      await Promise.all(updates);
+    }
+    await fbDel('meetings',id); toast('Meeting deleted','🗑️');
+  } catch(e){ toast('Error','❌'); }
   showLoading(false);
 }
 function renderMeetings() {
@@ -1473,7 +1483,17 @@ async function saveEvent() {
 async function deleteEvent(id) {
   if(!confirm('Delete this event?')) return;
   showLoading(true);
-  try { await fbDel('events',id); toast('Event deleted','🗑️'); } catch(e){ toast('Error','❌'); }
+  try {
+    const ev = data.events.find(x=>x.id===id);
+    if(ev && ev.presentIds && ev.presentIds.length) {
+      const updates = ev.presentIds.map(mid => {
+        const m = data.members.find(x=>x.id===mid);
+        if(m) { const u={...m}; delete u.id; u.events=Math.max(0,(u.events||1)-1); return fbSet('members',mid,u); }
+      }).filter(Boolean);
+      await Promise.all(updates);
+    }
+    await fbDel('events',id); toast('Event deleted','🗑️');
+  } catch(e){ toast('Error','❌'); }
   showLoading(false);
 }
 function renderEvents() {
@@ -2022,3 +2042,4 @@ init();
 </script>
 </body>
 </html>
+
