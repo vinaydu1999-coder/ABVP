@@ -311,6 +311,7 @@ img{display:block;}
 .btn-green{background:#2E7D32;color:#fff}
 .btn-red{background:#EF4444;color:#fff}
 .btn-wa{background:#25D366;color:#fff}
+.btn-orange{background:#FF6B00;color:#fff}
 .btn-sm{padding:7px 13px;font-size:12px;border-radius:8px}
 .btn-dl{background:linear-gradient(135deg,#1565C0,#1E88E5);color:#fff}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;}
@@ -765,139 +766,8 @@ tr{transition:background .1s;}
    PRINT STYLES — CLEAN A4
 ════════════════════════════ */
 @media print{
-  /* Hide all UI chrome */
-  .app-hdr,
-  .nav-bar,
-  .no-print,
-  .admin-only,
-  .btn,
-  .bday-banner,
-  .home-hero,
-  .home-stats-row,
-  .viewer-banner,
-  .g-toolbar,
-  .srch,
-  .g-container,
-  .g-grid,
-  .g-list-item,
-  #g-container,
-  #g-stats,
-  .g-acts,
-  img.g-list-thumb,
-  .collage-grid,
-  .collage-cell,
-  #sec-media,
-  #sec-home .home-hero,
-  #sec-home .home-stats-row,
-  #toast,
-  #lightbox,
-  .modal-overlay,
-  #loading-overlay,
-  .hdr-acts,
-  .sync-badge,
-  .icn-btn,
-  .up-modal {
-    display:none!important;
-  }
-
-  /* Show only active section */
-  .section{display:none!important;}
-  .section.active{display:block!important;}
-
-  /* Page setup */
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-  html,body{
-    background:#fff!important;
-    font-size:12pt;
-    margin:0;padding:0;
-  }
-  body::before{
-    content:'ABVP — Akhil Bharatiya Vidyarthi Parishad';
-    display:block;
-    font-size:11pt;font-weight:700;
-    color:#0D1B3E;
-    text-align:center;
-    border-bottom:2px solid #FF6B00;
-    padding-bottom:8pt;
-    margin-bottom:16pt;
-    letter-spacing:1px;
-  }
-
-  /* Cards */
-  .card{
-    box-shadow:none!important;
-    border:1px solid #E5E7EB!important;
-    border-radius:8pt!important;
-    padding:14pt!important;
-    margin-bottom:12pt!important;
-    page-break-inside:avoid;
-  }
-  .card-hdr{
-    font-size:10pt!important;
-    border-bottom:1pt solid #E5E7EB!important;
-    padding-bottom:6pt!important;
-    margin-bottom:10pt!important;
-  }
-
-  /* Tables */
-  table{border-collapse:collapse!important;width:100%!important;font-size:10pt!important;}
-  th{
-    background:#0D1B3E!important;
-    color:#fff!important;
-    padding:7pt 9pt!important;
-    font-size:9pt!important;
-  }
-  td{padding:7pt 9pt!important;border-bottom:0.5pt solid #E5E7EB!important;}
-  tr:hover td{background:none!important;}
-  .table-wrap{border:1pt solid #E5E7EB!important;border-radius:6pt!important;}
-
-  /* Badges */
-  .badge{border:0.5pt solid currentColor!important;background:transparent!important;padding:2pt 5pt!important;}
-
-  /* Meeting / event cards */
-  #mt-list .card img,
-  #ev-list .card img,
-  #inv-list .card img{display:none!important;}
-
-  /* Invitation preview */
-  .inv-card{border:1pt solid #0D1B3E!important;page-break-inside:avoid;}
-  .inv-top{background:#0D1B3E!important;color:#fff!important;padding:12pt!important;}
-  .inv-body{padding:12pt!important;}
-
-  /* Member profile photos — show in print */
-  .m-avatar{
-    width:28pt!important;height:28pt!important;
-    border-radius:50%!important;
-    border:1pt solid #FF6B00!important;
-  }
-  .av-ph{
-    width:28pt!important;height:28pt!important;
-    border-radius:50%!important;
-  }
-
-  /* Finance print */
-  .fin-sum{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8pt!important;}
-  .fin-box{border:1pt solid #E5E7EB!important;border-radius:6pt!important;padding:8pt!important;}
-
-  /* Chips */
-  .chip{background:none!important;color:#0D1B3E!important;border:1pt solid #0D1B3E!important;}
-  .chip button{display:none!important;}
-
-  /* Page breaks */
-  h2,h3,.card-hdr{page-break-after:avoid;}
-  tr{page-break-inside:avoid;}
-
-  /* Links */
-  a{color:#0D1B3E!important;text-decoration:none!important;}
-
-  /* Footer */
-  @page{
-    margin:15mm;
-    @bottom-center{
-      content:"ABVP Manager — Printed " counter(page) " of " counter(pages);
-      font-size:8pt;color:#9CA3AF;
-    }
-  }
+  /* Printing happens in dedicated windows — suppress main app printing */
+  body{display:none!important;}
 }
 </style>
 </head>
@@ -1038,7 +908,7 @@ tr{transition:background .1s;}
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
         <div style="font-size:18px;font-weight:800;color:#0D1B3E">👥 Member List</div>
-        <button class="btn btn-sm btn-navy admin-only no-print" onclick="window.print()" style="display:none">🖨️ Print</button>
+        <button class="btn btn-sm btn-navy admin-only no-print" onclick="printMembers()" style="display:none">🖨️ Print List</button>
       </div>
       <div class="srch"><input id="m-srch" placeholder="Search members..." oninput="renderMembersDebounced()"></div>
       <div class="table-wrap">
@@ -1087,6 +957,7 @@ tr{transition:background .1s;}
       </div>
     </div>
     <div id="mt-list"></div>
+    <div id="mt-preview"></div>
   </div>
 
   <!-- EVENTS -->
@@ -1110,6 +981,9 @@ tr{transition:background .1s;}
       </div>
     </div>
     <div id="ev-list"></div>
+    <div id="ev-print-bar" style="display:none;margin-top:8px;text-align:right">
+      <button class="btn btn-sm btn-navy" onclick="printEvents()">🖨️ Print All Events</button>
+    </div>
   </div>
 
   <!-- INVITATIONS -->
@@ -1291,6 +1165,7 @@ var data = {members:[],meetings:[],events:[],invitations:[],pending:[],donations
 var currentRole = null;
 var mtSelIds=[], evSelIds=[], invSelIds=[], mtOthers=[];
 var tempPhotoUrl = '', gFilter='all', gView='grid';
+var currentPrintInv = null;
 var upState = {step:1,cat:'',catLabel:'',occId:'',occLabel:'',occType:'',files:[]};
 var lbCurrentUrl = '';
 
@@ -1989,6 +1864,331 @@ function doLogout(){
   document.getElementById('pwd-field').style.display='block';
 }
 
+// ══════════════════════════════════════════
+//  PRINT SYSTEM — opens clean print window
+// ══════════════════════════════════════════
+var LOGO_B64=(function(){
+  var imgs=document.querySelectorAll('.hdr-logo img');
+  return imgs.length?imgs[0].src:'';
+})();
+
+function _printBase(){
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
+    '<style>'+
+    '*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}'+
+    'body{font-family:-apple-system,"Segoe UI",Arial,sans-serif;font-size:11pt;color:#1C1C2E;background:#fff;padding:0;}'+
+    '@page{margin:15mm 15mm 18mm 15mm;}'+
+    '.ph{display:flex;align-items:center;gap:12pt;border-bottom:2.5pt solid #FF6B00;padding-bottom:10pt;margin-bottom:18pt;}'+
+    '.ph img{width:52pt;height:52pt;object-fit:contain;}'+
+    '.ph-txt h1{font-size:16pt;font-weight:900;color:#0D1B3E;letter-spacing:.5px;}'+
+    '.ph-txt p{font-size:9pt;color:#6B7280;margin-top:2pt;}'+
+    '.ph-right{margin-left:auto;text-align:right;font-size:9pt;color:#6B7280;}'+
+    '.sec-title{font-size:13pt;font-weight:800;color:#0D1B3E;border-left:4pt solid #FF6B00;padding-left:8pt;margin-bottom:14pt;}'+
+    'table{width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:16pt;}'+
+    'th{background:#0D1B3E;color:#fff;padding:6pt 8pt;text-align:left;font-size:9pt;}'+
+    'td{padding:6pt 8pt;border-bottom:.5pt solid #E5E7EB;vertical-align:top;}'+
+    'tr:nth-child(even) td{background:#F9FAFB;}'+
+    '.badge{display:inline-block;padding:2pt 6pt;border-radius:4pt;font-size:8pt;font-weight:700;border:.5pt solid currentColor;}'+
+    '.b-navy{background:#EEF2FF;color:#0D1B3E;border-color:#0D1B3E;}'+
+    '.b-green{background:#F0FDF4;color:#16A34A;border-color:#16A34A;}'+
+    '.b-red{background:#FEF2F2;color:#DC2626;border-color:#DC2626;}'+
+    '.b-orange{background:#FFF7ED;color:#FF6B00;border-color:#FF6B00;}'+
+    '.b-blue{background:#EFF6FF;color:#2563EB;border-color:#2563EB;}'+
+    '.b-gray{background:#F3F4F6;color:#6B7280;border-color:#9CA3AF;}'+
+    '.card{border:1pt solid #E5E7EB;border-radius:8pt;padding:12pt;margin-bottom:12pt;page-break-inside:avoid;}'+
+    '.card-hdr{font-size:10pt;font-weight:800;color:#0D1B3E;border-bottom:1pt solid #F3F4F6;padding-bottom:6pt;margin-bottom:10pt;}'+
+    '.chips{display:flex;flex-wrap:wrap;gap:4pt;margin-top:5pt;}'+
+    '.fin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10pt;margin-bottom:18pt;}'+
+    '.fin-box{border:1pt solid #E5E7EB;border-radius:8pt;padding:10pt;text-align:center;}'+
+    '.fin-amt{font-size:18pt;font-weight:900;}'+
+    '.fin-lbl{font-size:9pt;color:#9CA3AF;margin-top:3pt;}'+
+    '.inv-top{background:#0D1B3E;color:#fff;padding:14pt;border-radius:8pt 8pt 0 0;}'+
+    '.inv-body{border:1pt solid #0D1B3E;border-top:none;border-radius:0 0 8pt 8pt;padding:14pt;}'+
+    '.inv-label{font-size:8pt;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:2px;margin-bottom:4pt;}'+
+    '.inv-title{font-size:17pt;font-weight:900;color:#fff;line-height:1.3;}'+
+    '.venue-box{background:#FFF7ED;border-left:3pt solid #FF6B00;padding:8pt 12pt;border-radius:4pt;margin-bottom:10pt;font-size:11pt;}'+
+    '.agenda-box{background:#F9FAFB;border-radius:8pt;padding:10pt;margin-bottom:10pt;}'+
+    '.agenda-item{display:flex;gap:8pt;padding:4pt 0;border-bottom:.5pt solid #F3F4F6;font-size:10pt;color:#374151;}'+
+    '.agenda-num{color:#FF6B00;font-weight:700;flex-shrink:0;}'+
+    '.sig-area{margin-top:24pt;display:flex;justify-content:space-between;}'+
+    '.sig-box{text-align:center;}'+
+    '.sig-line{width:120pt;border-bottom:1pt solid #374151;margin-bottom:4pt;}'+
+    '.sig-name{font-size:10pt;font-weight:700;color:#0D1B3E;}'+
+    '.sig-desig{font-size:9pt;color:#6B7280;}'+
+    '.bday-letter{border:2pt solid #FF6B00;border-radius:12pt;padding:20pt;text-align:center;margin-bottom:16pt;page-break-inside:avoid;}'+
+    '.bday-top{font-size:36pt;margin-bottom:8pt;}'+
+    '.bday-name{font-size:20pt;font-weight:900;color:#0D1B3E;margin-bottom:4pt;}'+
+    '.bday-msg{font-size:11pt;color:#6B7280;line-height:1.6;margin-bottom:12pt;}'+
+    '.bday-seal{font-size:28pt;margin-bottom:4pt;}'+
+    '.no-data{text-align:center;color:#9CA3AF;padding:24pt;font-size:11pt;}'+
+    '.footer{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:8pt;color:#9CA3AF;padding:6pt;border-top:.5pt solid #E5E7EB;background:#fff;}'+
+    '</style></head><body>';
+}
+
+function _printHeader(title,subtitle){
+  var logoSrc=document.querySelector('.hdr-logo img')?document.querySelector('.hdr-logo img').src:'';
+  var now=new Date();
+  var dateStr=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  return '<div class="ph">'+
+    (logoSrc?'<img src="'+logoSrc+'" alt="ABVP">':'')+
+    '<div class="ph-txt"><h1>ABVP Gorakhpur</h1><p>Akhil Bharatiya Vidyarthi Parishad</p></div>'+
+    '<div class="ph-right"><div style="font-weight:700;color:#0D1B3E">'+title+'</div><div>'+dateStr+'</div>'+(subtitle?'<div>'+subtitle+'</div>':'')+'</div>'+
+    '</div>';
+}
+
+function printMembers(){
+  var list=(data.members||[]).slice().sort(function(a,b){return(a.name||'').localeCompare(b.name||'');});
+  var w=window.open('','_blank','width=900,height=700');
+  var html=_printBase()+_printHeader('Member Directory','Total: '+list.length+' members');
+  html+='<div class="sec-title">📋 Member Directory</div>';
+  if(!list.length){html+='<div class="no-data">No members found.</div>';}
+  else{
+    html+='<table><thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Phone</th><th>Address</th><th>Birthday</th><th>Meetings</th><th>Events</th><th>Score</th></tr></thead><tbody>';
+    list.forEach(function(mb,i){
+      var mtgC=(data.meetings||[]).filter(function(m){return(m.memberIds||[]).indexOf(mb.id)>-1;}).length;
+      var evtC=(data.events||[]).filter(function(e){return(e.memberIds||[]).indexOf(mb.id)>-1;}).length;
+      var score=mtgC*3+evtC*5;
+      var sCls=score>=30?'b-green':score>=15?'b-orange':'b-gray';
+      html+='<tr>'+
+        '<td style="color:#9CA3AF">'+(i+1)+'</td>'+
+        '<td style="font-weight:700;color:#0D1B3E">'+esc(mb.name||'—')+'</td>'+
+        '<td><span class="badge b-navy">'+esc(mb.duty||'—')+'</span></td>'+
+        '<td>'+esc(mb.phone||'—')+'</td>'+
+        '<td style="font-size:9pt">'+esc(mb.address||'—')+'</td>'+
+        '<td>'+(mb.birthday?'<span class="badge b-orange">'+fd(mb.birthday)+'</span>':'—')+'</td>'+
+        '<td style="text-align:center">'+mtgC+'</td>'+
+        '<td style="text-align:center">'+evtC+'</td>'+
+        '<td><span class="badge '+sCls+'">'+score+'</span></td>'+
+        '</tr>';
+    });
+    html+='</tbody></table>';
+  }
+  html+='<div class="footer">ABVP Gorakhpur — Member Directory — Confidential</div>';
+  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
+  w.document.write(html);w.document.close();
+}
+
+function printMeeting(id){
+  var mt=null;
+  for(var i=0;i<(data.meetings||[]).length;i++){if(data.meetings[i].id===id){mt=data.meetings[i];break;}}
+  if(!mt)return;
+  var mNames=[];
+  (mt.memberIds||[]).forEach(function(mid){for(var i=0;i<data.members.length;i++){if(data.members[i].id===mid){mNames.push(data.members[i].name);break;}}});
+  var w=window.open('','_blank','width=850,height=700');
+  var h=_printBase()+_printHeader('Meeting Record','');
+  h+='<div style="border:1.5pt solid #E5E7EB;border-radius:10pt;padding:16pt;margin-bottom:14pt;page-break-inside:avoid">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1pt solid #F3F4F6;padding-bottom:10pt;margin-bottom:12pt">';
+  h+='<div><div style="font-size:15pt;font-weight:900;color:#0D1B3E">📋 Meeting — '+esc(fd(mt.date||''))+'</div>';
+  if(mt.presided)h+='<div style="font-size:10pt;color:#6B7280;margin-top:3pt">Presiding Officer: <strong>'+esc(mt.presided)+'</strong></div>';
+  h+='</div>';
+  h+='<span class="badge b-navy">'+mNames.length+' Members Present</span>';
+  h+='</div>';
+  if(mt.agenda)h+='<div style="margin-bottom:12pt"><div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:5pt">Agenda</div><div style="font-size:11pt;color:#374151;line-height:1.7;white-space:pre-wrap">'+esc(mt.agenda)+'</div></div>';
+  if(mt.motions)h+='<div style="margin-bottom:12pt"><div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:5pt">Motions / Decisions Passed</div><div style="font-size:11pt;color:#374151;line-height:1.7;white-space:pre-wrap">'+esc(mt.motions)+'</div></div>';
+  if(mNames.length){
+    h+='<div style="margin-bottom:10pt"><div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:6pt">Members Present ('+mNames.length+')</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4pt">';
+    mNames.forEach(function(n){h+='<span class="badge b-gray">'+esc(n)+'</span>';});
+    h+='</div></div>';
+  }
+  if((mt.others||[]).length){
+    h+='<div style="margin-bottom:10pt"><div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:6pt">Others Present</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4pt">';
+    (mt.others||[]).forEach(function(o){h+='<span class="badge b-orange">'+esc(o.name)+(o.role?' ('+esc(o.role)+')':'')+'</span>';});
+    h+='</div></div>';
+  }
+  if(mt.nextDate)h+='<div style="margin-top:8pt"><span class="badge b-blue">Next Meeting: '+esc(fd(mt.nextDate))+'</span></div>';
+  h+='<div style="margin-top:20pt;display:flex;justify-content:space-between">';
+  h+='<div style="text-align:center"><div style="width:100pt;border-bottom:1pt solid #374151;margin-bottom:4pt"></div><div style="font-size:9pt;color:#6B7280">Presiding Officer</div></div>';
+  h+='<div style="text-align:center"><div style="width:100pt;border-bottom:1pt solid #374151;margin-bottom:4pt"></div><div style="font-size:9pt;color:#6B7280">Secretary</div></div>';
+  h+='</div>';
+  h+='</div>';
+  h+='<div class="footer">ABVP Gorakhpur — Meeting Record — '+esc(fd(mt.date||''))+'</div>';
+  h+='<script>window.onload=function(){window.print();}<\/script></body></html>';
+  w.document.write(h);w.document.close();
+}
+
+function printEvent(id){
+  var ev=null;
+  for(var i=0;i<(data.events||[]).length;i++){if(data.events[i].id===id){ev=data.events[i];break;}}
+  if(!ev)return;
+  var mNames=[];
+  (ev.memberIds||[]).forEach(function(mid){for(var i=0;i<data.members.length;i++){if(data.members[i].id===mid){mNames.push(data.members[i].name);break;}}});
+  var w=window.open('','_blank','width=850,height=700');
+  var h=_printBase()+_printHeader('Event Record','');
+  h+='<div style="border:1.5pt solid #E5E7EB;border-radius:10pt;padding:16pt;margin-bottom:14pt;page-break-inside:avoid">';
+  h+='<div style="border-bottom:1pt solid #F3F4F6;padding-bottom:10pt;margin-bottom:12pt">';
+  h+='<div style="font-size:15pt;font-weight:900;color:#0D1B3E">🎯 '+esc(ev.name||'Event')+'</div>';
+  h+='<div style="font-size:10pt;color:#6B7280;margin-top:3pt">'+esc(fd(ev.date||''))+(ev.presided?' — Presided by <strong>'+esc(ev.presided)+'</strong>':'')+'</div>';
+  h+='</div>';
+  if(ev.description)h+='<div style="margin-bottom:12pt"><div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:5pt">Description</div><div style="font-size:11pt;color:#374151;line-height:1.7">'+esc(ev.description)+'</div></div>';
+  if(mNames.length){
+    h+='<div style="margin-bottom:10pt"><div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:6pt">Members Attended ('+mNames.length+')</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4pt">';
+    mNames.forEach(function(n){h+='<span class="badge b-gray">'+esc(n)+'</span>';});
+    h+='</div></div>';
+  }
+  h+='<div style="margin-top:20pt;display:flex;justify-content:space-between">';
+  h+='<div style="text-align:center"><div style="width:100pt;border-bottom:1pt solid #374151;margin-bottom:4pt"></div><div style="font-size:9pt;color:#6B7280">Presiding Officer</div></div>';
+  h+='<div style="text-align:center"><div style="width:100pt;border-bottom:1pt solid #374151;margin-bottom:4pt"></div><div style="font-size:9pt;color:#6B7280">Secretary</div></div>';
+  h+='</div>';
+  h+='</div>';
+  h+='<div class="footer">ABVP Gorakhpur — Event Record — '+esc(fd(ev.date||''))+'</div>';
+  h+='<script>window.onload=function(){window.print();}<\/script></body></html>';
+  w.document.write(h);w.document.close();
+}
+
+function printInvitation(inv){
+  if(!inv)return;
+  var tl={meeting:'Meeting Invitation',event:'Event Invitation',program:'Programme Notice',seminar:'Seminar Invitation',conference:'Conference Invitation'};
+  var agenda=(inv.agenda||'').split('\n').filter(function(l){return l.trim();});
+  var mNames=[];
+  (inv.memberIds||[]).forEach(function(mid){for(var i=0;i<data.members.length;i++){if(data.members[i].id===mid){mNames.push(data.members[i]);break;}}});
+  var w=window.open('','_blank','width=900,height=700');
+  var html=_printBase()+_printHeader(tl[inv.type]||'Invitation','');
+  html+='<div class="inv-top">';
+  html+='<div class="inv-label">'+esc(tl[inv.type]||'Invitation')+'</div>';
+  html+='<div class="inv-title">'+esc(inv.title||'')+'</div>';
+  if(inv.unit)html+='<div style="font-size:10pt;color:rgba(255,255,255,.6);margin-top:5pt">🏛 '+esc(inv.unit)+'</div>';
+  html+='<div style="display:flex;gap:16pt;margin-top:8pt">';
+  if(inv.date)html+='<div style="font-size:10pt;color:rgba(255,255,255,.8)">📅 '+esc(fd(inv.date))+'</div>';
+  if(inv.time)html+='<div style="font-size:11pt;font-weight:700;color:#FFB800">⏰ '+esc(inv.time)+'</div>';
+  html+='</div></div>';
+  html+='<div class="inv-body">';
+  if(inv.venue)html+='<div class="venue-box">📍 <strong>'+esc(inv.venue)+'</strong></div>';
+  if(agenda.length){
+    html+='<div class="agenda-box">';
+    html+='<div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:6pt">Agenda</div>';
+    agenda.forEach(function(a,idx){
+      html+='<div class="agenda-item"><span class="agenda-num">'+(idx+1)+'.</span><span>'+esc(a.replace(/^\d+\.\s*/,''))+'</span></div>';
+    });
+    html+='</div>';
+  }
+  if(mNames.length){
+    html+='<div style="font-size:10pt;margin-bottom:10pt"><strong>Invited Members:</strong>';
+    html+='<div class="chips">';
+    mNames.forEach(function(m){html+='<span class="badge b-navy">'+esc(m.name)+'</span>';});
+    html+='</div></div>';
+  }
+  if(inv.note)html+='<div style="font-size:10pt;color:#888;font-style:italic;padding:8pt 10pt;background:#FFFBF5;border-radius:6pt;margin-bottom:10pt">📝 '+esc(inv.note)+'</div>';
+  html+='<div class="sig-area">';
+  html+='<div class="sig-box"><div class="sig-line"></div><div class="sig-name">'+esc(inv.by||'—')+'</div>';
+  if(inv.designation)html+='<div class="sig-desig">'+esc(inv.designation)+'</div>';
+  if(inv.contact)html+='<div class="sig-desig">📞 '+esc(inv.contact)+'</div>';
+  html+='</div>';
+  html+='<div class="sig-box"><div style="font-size:9pt;color:#9CA3AF;margin-top:4pt">वन्दे मातरम्</div></div>';
+  html+='</div>';
+  html+='</div>';
+  html+='<div class="footer">ABVP Gorakhpur — '+esc(inv.title||'Invitation')+'</div>';
+  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
+  w.document.write(html);w.document.close();
+}
+
+function printBirthday(mb){
+  if(!mb)return;
+  var w=window.open('','_blank','width=900,height=700');
+  var html=_printBase()+_printHeader('Birthday Greeting','');
+  html+='<div class="bday-letter">';
+  html+='<div class="bday-top">🎂</div>';
+  html+='<div class="bday-name">'+esc(mb.name)+'</div>';
+  html+='<div class="bday-msg">'+
+    'On behalf of <strong>ABVP Gorakhpur Unit</strong>, we extend our warmest birthday wishes to you.<br>'+
+    'Your dedication and contribution to our organisation is deeply valued.<br>'+
+    'May this birthday bring you joy, good health, and continued success in all your endeavours.<br><br>'+
+    '<em>ज्ञान • शील • एकता</em>'+
+    '</div>';
+  if(mb.birthday)html+='<div style="font-size:10pt;color:#6B7280;margin-bottom:12pt">🎂 '+fd(mb.birthday)+'</div>';
+  if(mb.duty)html+='<div><span class="badge b-navy">'+esc(mb.duty)+'</span></div>';
+  html+='<div style="font-size:28pt;margin-top:14pt">🇮🇳</div>';
+  html+='<div style="font-size:11pt;font-weight:700;color:#FF6B00;margin-top:6pt">वन्दे मातरम् • जय हिन्द</div>';
+  html+='</div>';
+  html+='<div class="sig-area" style="margin-top:32pt">';
+  html+='<div class="sig-box"><div class="sig-line"></div><div class="sig-name">Unit Secretary</div><div class="sig-desig">ABVP Gorakhpur</div></div>';
+  html+='<div class="sig-box"><div class="sig-line"></div><div class="sig-name">Unit President</div><div class="sig-desig">ABVP Gorakhpur</div></div>';
+  html+='</div>';
+  html+='<div class="footer">ABVP Gorakhpur — Birthday Greeting</div>';
+  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
+  w.document.write(html);w.document.close();
+}
+
+function printFinance(type){
+  // type: 'all' | 'donations' | 'expenses' | 'balance'
+  var donations=(data.donations||[]).slice().sort(function(a,b){return(a.date||'').localeCompare(b.date||'');});
+  var expenses=(data.expenses||[]).slice().sort(function(a,b){return(a.date||'').localeCompare(b.date||'');});
+  var totD=donations.reduce(function(s,d){return s+(parseFloat(d.amount)||0);},0);
+  var totE=expenses.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
+  var bal=totD-totE;
+  var titles={all:'Full Financial Ledger',donations:'Donation / Income Register',expenses:'Expense Register',balance:'Balance Sheet'};
+  var w=window.open('','_blank','width=900,height=700');
+  var html=_printBase()+_printHeader(titles[type]||'Finance Report','');
+
+  if(type==='balance'||type==='all'){
+    html+='<div class="fin-grid">';
+    html+='<div class="fin-box"><div class="fin-amt" style="color:#16A34A">₹'+totD.toLocaleString('en-IN')+'</div><div class="fin-lbl">Total Income</div></div>';
+    html+='<div class="fin-box"><div class="fin-amt" style="color:#DC2626">₹'+totE.toLocaleString('en-IN')+'</div><div class="fin-lbl">Total Expenses</div></div>';
+    html+='<div class="fin-box"><div class="fin-amt" style="color:'+(bal>=0?'#16A34A':'#DC2626')+'">₹'+Math.abs(bal).toLocaleString('en-IN')+'</div><div class="fin-lbl">'+(bal>=0?'Net Balance':'Deficit')+'</div></div>';
+    html+='</div>';
+    if(type==='balance'){
+      // Detailed balance sheet
+      html+='<div class="sec-title">Income Statement</div>';
+      html+='<table><thead><tr><th>#</th><th>Date</th><th>Donor / Source</th><th>Note</th><th style="text-align:right">Amount (₹)</th></tr></thead><tbody>';
+      var dn=0;
+      donations.forEach(function(d,i){
+        dn+=parseFloat(d.amount)||0;
+        html+='<tr><td style="color:#9CA3AF">'+(i+1)+'</td><td>'+esc(fd(d.date||''))+'</td><td style="font-weight:600">'+esc(d.name||'—')+'</td><td style="font-size:9pt;color:#6B7280">'+esc(d.note||'')+'</td><td style="text-align:right;color:#16A34A;font-weight:700">'+parseFloat(d.amount||0).toLocaleString('en-IN')+'</td></tr>';
+      });
+      html+='<tr style="background:#F0FDF4"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12pt">Total Income</td><td style="text-align:right;font-weight:900;color:#16A34A;font-size:12pt">₹'+totD.toLocaleString('en-IN')+'</td></tr>';
+      html+='</tbody></table>';
+      html+='<div class="sec-title" style="margin-top:16pt">Expenditure Statement</div>';
+      html+='<table><thead><tr><th>#</th><th>Date</th><th>Description</th><th>Note</th><th style="text-align:right">Amount (₹)</th></tr></thead><tbody>';
+      expenses.forEach(function(e,i){
+        html+='<tr><td style="color:#9CA3AF">'+(i+1)+'</td><td>'+esc(fd(e.date||''))+'</td><td style="font-weight:600">'+esc(e.description||'—')+'</td><td style="font-size:9pt;color:#6B7280">'+esc(e.note||'')+'</td><td style="text-align:right;color:#DC2626;font-weight:700">'+parseFloat(e.amount||0).toLocaleString('en-IN')+'</td></tr>';
+      });
+      html+='<tr style="background:#FEF2F2"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12pt">Total Expenses</td><td style="text-align:right;font-weight:900;color:#DC2626;font-size:12pt">₹'+totE.toLocaleString('en-IN')+'</td></tr>';
+      html+='</tbody></table>';
+      html+='<div style="border:2pt solid '+(bal>=0?'#16A34A':'#DC2626')+';border-radius:8pt;padding:12pt;display:flex;justify-content:space-between;align-items:center;margin-top:8pt">';
+      html+='<div style="font-size:13pt;font-weight:800;color:#0D1B3E">'+(bal>=0?'Net Balance':'Net Deficit')+'</div>';
+      html+='<div style="font-size:18pt;font-weight:900;color:'+(bal>=0?'#16A34A':'#DC2626')+'">₹'+Math.abs(bal).toLocaleString('en-IN')+'</div>';
+      html+='</div>';
+    }
+  }
+
+  if(type==='donations'||type==='all'){
+    html+='<div class="sec-title">'+(type==='all'?'':'')+'💰 Donations / Income Register</div>';
+    if(!donations.length){html+='<div class="no-data">No donations recorded.</div>';}
+    else{
+      html+='<table><thead><tr><th>#</th><th>Date</th><th>Donor Name</th><th>Note</th><th style="text-align:right">Amount (₹)</th></tr></thead><tbody>';
+      var runTotal=0;
+      donations.forEach(function(d,i){
+        runTotal+=parseFloat(d.amount)||0;
+        html+='<tr><td style="color:#9CA3AF">'+(i+1)+'</td><td>'+esc(fd(d.date||''))+'</td><td style="font-weight:600">'+esc(d.name||'—')+'</td><td style="font-size:9pt;color:#6B7280">'+esc(d.note||'')+'</td><td style="text-align:right;color:#16A34A;font-weight:700">'+parseFloat(d.amount||0).toLocaleString('en-IN')+'</td></tr>';
+      });
+      html+='<tr style="background:#F0FDF4"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12pt">Grand Total</td><td style="text-align:right;font-weight:900;color:#16A34A;font-size:13pt">₹'+totD.toLocaleString('en-IN')+'</td></tr>';
+      html+='</tbody></table>';
+    }
+  }
+
+  if(type==='expenses'||type==='all'){
+    html+='<div class="sec-title">'+(type==='all'?'':'')+'💸 Expense Register</div>';
+    if(!expenses.length){html+='<div class="no-data">No expenses recorded.</div>';}
+    else{
+      html+='<table><thead><tr><th>#</th><th>Date</th><th>Description</th><th>Note</th><th style="text-align:right">Amount (₹)</th></tr></thead><tbody>';
+      expenses.forEach(function(e,i){
+        html+='<tr><td style="color:#9CA3AF">'+(i+1)+'</td><td>'+esc(fd(e.date||''))+'</td><td style="font-weight:600">'+esc(e.description||'—')+'</td><td style="font-size:9pt;color:#6B7280">'+esc(e.note||'')+'</td><td style="text-align:right;color:#DC2626;font-weight:700">'+parseFloat(e.amount||0).toLocaleString('en-IN')+'</td></tr>';
+      });
+      html+='<tr style="background:#FEF2F2"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12pt">Grand Total</td><td style="text-align:right;font-weight:900;color:#DC2626;font-size:13pt">₹'+totE.toLocaleString('en-IN')+'</td></tr>';
+      html+='</tbody></table>';
+    }
+    if(type==='expenses'){
+      html+='<div style="text-align:right;font-size:11pt;margin-top:4pt;color:#DC2626;font-weight:700">Total Expenses: ₹'+totE.toLocaleString('en-IN')+'</div>';
+    }
+  }
+
+  html+='<div class="footer">ABVP Gorakhpur — '+esc(titles[type]||'Finance')+'</div>';
+  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
+  w.document.write(html);w.document.close();
+}
+
 function showApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').classList.add('vis');
@@ -2082,7 +2282,7 @@ function renderMembers(){
       +'<td class="hide-mob">'+evtC+'</td>'
       +'<td><span class="badge '+sBadge+'">'+score+'</span></td>'
       +'<td>'+waHtml+'</td>'
-      +(isA?'<td style="white-space:nowrap"><button class="btn btn-sm btn-navy" onclick="editMember(\''+mb.id+'\')">✏️</button> <button class="btn btn-sm btn-red" onclick="delMember(\''+mb.id+'\')">🗑️</button></td>':'')
+      +(isA?'<td style="white-space:nowrap"><button class="btn btn-sm btn-navy" onclick="editMember(\''+mb.id+'\')">✏️</button> '+(mb.birthday?'<button class="btn btn-sm btn-orange" onclick="printBirthday(getMemberById(\''+mb.id+'\'))" title="Print Birthday Letter">🎂</button> ':'')+' <button class="btn btn-sm btn-red" onclick="delMember(\''+mb.id+'\')">🗑️</button></td>':'')
       +'</tr>';
   });
   document.getElementById('m-tbody').innerHTML=html;
@@ -2203,6 +2403,7 @@ function renderMeetings(){
     html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
     html+='<div><div style="font-size:15px;font-weight:800;color:#0D1B3E">📋 '+esc(fd(mt.date))+'</div><div style="font-size:12px;color:#6B7280;margin-top:2px">Presiding: <strong>'+esc(mt.presided||'—')+'</strong></div></div>';
     html+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    html+='<button class="btn btn-sm btn-navy" onclick="printMeeting(\''+mt.id+'\')">🖨️ Print</button>';
     if(currentRole==='admin'){
       html+='<button class="btn btn-sm btn-primary no-print" onclick="openUpModalFor(\'meeting\',\''+mt.id+'\',\'Meeting — '+esc(fd(mt.date))+'\')">📸 Photos</button>';
       html+='<button class="btn btn-sm btn-red no-print" onclick="delMeeting(\''+mt.id+'\')">🗑️</button>';
@@ -2260,6 +2461,7 @@ function renderEvents(){
     html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
     html+='<div><div style="font-size:15px;font-weight:800;color:#0D1B3E">🎯 '+esc(ev.name||'Event')+'</div><div style="font-size:12px;color:#6B7280;margin-top:2px">'+esc(fd(ev.date))+(ev.presided?' — Presided by <strong>'+esc(ev.presided)+'</strong>':'')+'</div></div>';
     html+='<div style="display:flex;gap:6px">';
+    html+='<button class="btn btn-sm btn-navy" onclick="printEvent(\''+ev.id+'\')">🖨️ Print</button>';
     if(currentRole==='admin'){
       html+='<button class="btn btn-sm btn-primary no-print" onclick="openUpModalFor(\'event\',\''+ev.id+'\',\''+esc(ev.name||'Event')+'\')">📸 Photos</button>';
       html+='<button class="btn btn-sm btn-red no-print" onclick="delEvent(\''+ev.id+'\')">🗑️</button>';
@@ -2300,6 +2502,7 @@ function saveInv(){
   renderInvitations();
 }
 function renderInvPreview(inv,id){
+  currentPrintInv=inv;
   var tl={meeting:'Meeting Invitation',event:'Event Invitation',program:'Programme Notice',seminar:'Seminar Invitation',conference:'Conference Invitation'};
   var agenda=(inv.agenda||'').split('\n').filter(function(l){return l.trim();});
   var mNames=[];
@@ -2339,7 +2542,7 @@ function renderInvPreview(inv,id){
   h+='</div>';
   h+='<div style="display:flex;gap:6px;flex-wrap:wrap" class="no-print">';
   if(id)h+='<button class="btn btn-sm btn-primary" onclick="openUpModalFor(\'invitation\',\''+id+'\',\''+esc(inv.title)+'\')">📸 Add Photos</button>';
-  h+='<button class="btn btn-sm btn-navy" onclick="window.print()">🖨️ Print</button>';
+  h+='<button class="btn btn-sm btn-navy" onclick="printInvitation(currentPrintInv)">🖨️ Print</button>';
   h+='</div></div>';
   if(inv.note)h+='<div style="margin-top:10px;font-size:12px;color:#888;font-style:italic;padding:8px 12px;background:#FFFBF5;border-radius:6px">📝 '+esc(inv.note)+'</div>';
   h+='</div></div>';
@@ -2389,6 +2592,10 @@ function viewInv(id){
   var inv=null;for(var i=0;i<data.invitations.length;i++){if(data.invitations[i].id===id){inv=data.invitations[i];break;}}
   if(inv)renderInvPreview(inv,id);
 }
+function getMemberById(id){
+  for(var i=0;i<(data.members||[]).length;i++){if(data.members[i].id===id)return data.members[i];}
+  return null;
+}
 function delInv(id){if(!confirm('Delete this invitation?'))return;fbDel('invitations',id);toast('Invitation deleted','🗑️');renderInvitations();}
 function sendWA(){
   var title=v('inv-title')||'Programme',dt=v('inv-date'),tm=v('inv-time'),venue=v('inv-venue');
@@ -2429,7 +2636,11 @@ function renderFinance(){
   }
   html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
     +'<div style="font-weight:800;color:#0D1B3E">📊 Transaction Ledger</div>'
-    +(isA?'<button class="btn btn-sm btn-navy no-print" onclick="window.print()">🖨️ Print</button>':'')
+    +(isA?'<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+      '<button class="btn btn-sm btn-navy no-print" onclick="printFinance(\'donations\')">🖨️ Donations</button>'+
+      '<button class="btn btn-sm btn-navy no-print" onclick="printFinance(\'expenses\')">🖨️ Expenses</button>'+
+      '<button class="btn btn-sm btn-primary no-print" onclick="printFinance(\'balance\')">🖨️ Balance Sheet</button>'+
+      '</div>':'')
     +'</div>';
   html+='<div class="table-wrap"><table><thead><tr>'
     +'<th>Date</th><th>Description</th><th>Type</th><th>Amount</th>'
