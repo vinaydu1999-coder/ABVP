@@ -770,6 +770,7 @@ tr{transition:background .1s;}
   body{display:none!important;}
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -2686,16 +2687,25 @@ function delExpense(id){if(!confirm('Delete this expense?'))return;fbDel('expens
 
 // ── QR ──
 function generateQR(){
-  var c=document.getElementById('qr-canvas');
   var ql=document.getElementById('qr-link-box');
-  if(ql)ql.innerHTML='Join link: <a href="'+JOIN_URL+'" style="color:#FF6B00;word-break:break-all;">'+JOIN_URL+'</a>';
-  if(typeof QRCode!=='undefined'){
-    QRCode.toCanvas(c,JOIN_URL,{width:200,margin:2,color:{dark:'#0D1B3E',light:'#ffffff'}},function(err){
-      if(err)drawFallbackQR(c);
-    });
-  } else {
-    drawFallbackQR(c);
+  if(ql)ql.innerHTML='Join link: <a href="'+JOIN_URL+'" style="color:#FF6B00;word-break:break-all">'+JOIN_URL+'</a>';
+  var wrap=document.getElementById('qr-wrap-div');
+  if(!wrap){
+    wrap=document.createElement('div');
+    wrap.id='qr-wrap-div';
+    var c=document.getElementById('qr-canvas');
+    c.style.display='none';
+    c.parentNode.insertBefore(wrap,c);
   }
+  wrap.innerHTML='';
+  wrap.style.display='inline-block';
+  new QRCode(wrap,{
+    text:JOIN_URL,
+    width:200,height:200,
+    colorDark:'#0D1B3E',
+    colorLight:'#ffffff',
+    correctLevel:QRCode.CorrectLevel.H
+  });
 }
 function drawFallbackQR(c){
   var ctx=c.getContext('2d');
@@ -2831,3 +2841,4 @@ setTimeout(generateQR,1500);
 </script>
 </body>
 </html>
+
