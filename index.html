@@ -1883,6 +1883,24 @@ var LOGO_B64=(function(){
   return imgs.length?imgs[0].src:'';
 })();
 
+function _doPrint(html){
+  // Remove any existing print iframe
+  var old=document.getElementById('_print_frame');
+  if(old)old.parentNode.removeChild(old);
+  var iframe=document.createElement('iframe');
+  iframe.id='_print_frame';
+  iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  // Wait for content + images to load then print
+  iframe.onload=function(){
+    setTimeout(function(){
+      try{iframe.contentWindow.focus();iframe.contentWindow.print();}catch(e){}
+    },300);
+  };
+}
 function _printBase(){
   return '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
     '<style>'+
@@ -1949,7 +1967,6 @@ function _printHeader(title,subtitle){
 
 function printMembers(){
   var list=(data.members||[]).slice().sort(function(a,b){return(a.name||'').localeCompare(b.name||'');});
-  var w=window.open('','_blank','width=900,height=700');
   var html=_printBase()+_printHeader('Member Directory','Total: '+list.length+' members');
   html+='<div class="sec-title">📋 Member Directory</div>';
   if(!list.length){html+='<div class="no-data">No members found.</div>';}
@@ -1975,8 +1992,8 @@ function printMembers(){
     html+='</tbody></table>';
   }
   html+='<div class="footer">ABVP Gorakhpur — Member Directory — Confidential</div>';
-  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
-  w.document.write(html);w.document.close();
+  html+='</body></html>';
+  _doPrint(html);
 }
 
 function printMeeting(id){
@@ -1985,7 +2002,6 @@ function printMeeting(id){
   if(!mt)return;
   var mNames=[];
   (mt.memberIds||[]).forEach(function(mid){for(var i=0;i<data.members.length;i++){if(data.members[i].id===mid){mNames.push(data.members[i].name);break;}}});
-  var w=window.open('','_blank','width=850,height=700');
   var h=_printBase()+_printHeader('Meeting Record','');
   h+='<div style="border:1.5pt solid #E5E7EB;border-radius:10pt;padding:16pt;margin-bottom:14pt;page-break-inside:avoid">';
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1pt solid #F3F4F6;padding-bottom:10pt;margin-bottom:12pt">';
@@ -2015,8 +2031,8 @@ function printMeeting(id){
   h+='</div>';
   h+='</div>';
   h+='<div class="footer">ABVP Gorakhpur — Meeting Record — '+esc(fd(mt.date||''))+'</div>';
-  h+='<script>window.onload=function(){window.print();}<\/script></body></html>';
-  w.document.write(h);w.document.close();
+  h+='</body></html>';
+  _doPrint(h);
 }
 
 function printEvent(id){
@@ -2025,7 +2041,6 @@ function printEvent(id){
   if(!ev)return;
   var mNames=[];
   (ev.memberIds||[]).forEach(function(mid){for(var i=0;i<data.members.length;i++){if(data.members[i].id===mid){mNames.push(data.members[i].name);break;}}});
-  var w=window.open('','_blank','width=850,height=700');
   var h=_printBase()+_printHeader('Event Record','');
   h+='<div style="border:1.5pt solid #E5E7EB;border-radius:10pt;padding:16pt;margin-bottom:14pt;page-break-inside:avoid">';
   h+='<div style="border-bottom:1pt solid #F3F4F6;padding-bottom:10pt;margin-bottom:12pt">';
@@ -2045,8 +2060,8 @@ function printEvent(id){
   h+='</div>';
   h+='</div>';
   h+='<div class="footer">ABVP Gorakhpur — Event Record — '+esc(fd(ev.date||''))+'</div>';
-  h+='<script>window.onload=function(){window.print();}<\/script></body></html>';
-  w.document.write(h);w.document.close();
+  h+='</body></html>';
+  _doPrint(h);
 }
 
 function printInvitation(inv){
@@ -2055,7 +2070,6 @@ function printInvitation(inv){
   var agenda=(inv.agenda||'').split('\n').filter(function(l){return l.trim();});
   var mNames=[];
   (inv.memberIds||[]).forEach(function(mid){for(var i=0;i<data.members.length;i++){if(data.members[i].id===mid){mNames.push(data.members[i]);break;}}});
-  var w=window.open('','_blank','width=900,height=700');
   var html=_printBase()+_printHeader(tl[inv.type]||'Invitation','');
   html+='<div class="inv-top">';
   html+='<div class="inv-label">'+esc(tl[inv.type]||'Invitation')+'</div>';
@@ -2091,8 +2105,8 @@ function printInvitation(inv){
   html+='</div>';
   html+='</div>';
   html+='<div class="footer">ABVP Gorakhpur — '+esc(inv.title||'Invitation')+'</div>';
-  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
-  w.document.write(html);w.document.close();
+  html+='</body></html>';
+  _doPrint(html);
 }
 
 function printBirthday(mb){
@@ -2104,7 +2118,6 @@ function printBirthday(mb){
     if(!president&&(d==='president'||d==='unit president'||d==='अध्यक्ष'))president=m;
     if(!secretary&&(d==='secretary'||d==='unit secretary'||d==='सचिव'||d==='general secretary'))secretary=m;
   });
-  var w=window.open('','_blank','width=900,height=700');
   var html=_printBase()+_printHeader('Birthday Greeting','');
   html+='<div class="bday-letter">';
   html+='<div class="bday-top">🎂</div>';
@@ -2130,8 +2143,8 @@ function printBirthday(mb){
     '<div class="sig-desig">President, ABVP Gorakhpur</div></div>';
   html+='</div>';
   html+='<div class="footer">ABVP Gorakhpur — Birthday Greeting</div>';
-  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
-  w.document.write(html);w.document.close();
+  html+='</body></html>';
+  _doPrint(html);
 }
 
 function printFinance(type){
@@ -2142,7 +2155,6 @@ function printFinance(type){
   var totE=expenses.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
   var bal=totD-totE;
   var titles={all:'Full Financial Ledger',donations:'Donation / Income Register',expenses:'Expense Register',balance:'Balance Sheet'};
-  var w=window.open('','_blank','width=900,height=700');
   var html=_printBase()+_printHeader(titles[type]||'Finance Report','');
 
   if(type==='balance'||type==='all'){
@@ -2208,8 +2220,8 @@ function printFinance(type){
   }
 
   html+='<div class="footer">ABVP Gorakhpur — '+esc(titles[type]||'Finance')+'</div>';
-  html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
-  w.document.write(html);w.document.close();
+  html+='</body></html>';
+  _doPrint(html);
 }
 
 function showApp(){
