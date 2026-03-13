@@ -1159,7 +1159,13 @@ tr{transition:background .1s;}
 var IMGBB = '030d136fc61019c46734903688bc8403';
 var PROJ = 'abvp-gkp', AKEY = 'AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w';
 var FSB = 'https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/';
-var JOIN_URL = window.location.href.split('?')[0]+'?join=1';
+function makeJoinToken(){
+  // Token = base64 of date (valid for today only) + secret
+  var secret='ABVP_GKP_2024';
+  var today=new Date().toISOString().slice(0,10).replace(/-/g,'');
+  return btoa(today+':'+secret);
+}
+var JOIN_URL = window.location.href.split('?')[0]+'?join='+makeJoinToken();
 var LS_KEY = 'abvp_v4', LS_PWD = 'abvp_pwds4';
 var PASSWORDS = {admin:'abvp@admin2024', member:'abvp@member2024'};
 var data = {members:[],meetings:[],events:[],invitations:[],pending:[],donations:[],expenses:[],media:[]};
@@ -2807,7 +2813,15 @@ function savePwds(){
 lsLoad();
 
 // Handle ?join=1 self-registration via QR
-if(window.location.search.indexOf('join=1')>-1){
+function validateJoinToken(token){
+  var secret='ABVP_GKP_2024';
+  var today=new Date().toISOString().slice(0,10).replace(/-/g,'');
+  try{var decoded=atob(token);return decoded===today+':'+secret;}
+  catch(e){return false;}
+}
+var urlParams=new URLSearchParams(window.location.search);
+var joinToken=urlParams.get('join');
+if(joinToken&&validateJoinToken(joinToken)){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').classList.add('vis');
   currentRole='viewer';
@@ -2841,5 +2855,6 @@ setTimeout(generateQR,1500);
 </script>
 </body>
 </html>
+
 
 
