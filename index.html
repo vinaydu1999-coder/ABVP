@@ -770,6 +770,7 @@ tr{transition:background .1s;}
   body{display:none!important;}
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -1078,7 +1079,7 @@ tr{transition:background .1s;}
       <div class="card-hdr">🔗 Member Self-Registration QR</div>
       <div style="text-align:center;padding:10px">
         <p style="color:#666;font-size:13px;margin-bottom:12px">Share this QR code. Members scan to fill their details for approval.</p>
-        <canvas id="qr-canvas" width="200" height="200" style="border:1px solid #eee;border-radius:8px;display:inline-block;"></canvas>
+        <div id="qr-canvas" style="display:inline-block;padding:12px;background:#fff;border:1px solid #eee;border-radius:8px;"></div>
         <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
           <button class="btn btn-sm btn-primary" onclick="generateQR()">🔄 Refresh</button>
           <button class="btn btn-sm btn-wa admin-only no-print" onclick="shareQR()" style="display:none">📲 Share QR</button>
@@ -2715,20 +2716,20 @@ function generateQR(){
   var c=document.getElementById('qr-canvas');
   var ql=document.getElementById('qr-link-box');
   if(ql)ql.innerHTML='Join link: <a href="'+JOIN_URL+'" style="color:#FF6B00;word-break:break-all;">'+JOIN_URL+'</a>';
+  if(!c)return;
+  c.innerHTML='';
   if(typeof QRCode!=='undefined'){
-    QRCode.toCanvas(c,JOIN_URL,{width:200,margin:2,color:{dark:'#0D1B3E',light:'#ffffff'}},function(err){
-      if(err)drawFallbackQR(c);
+    new QRCode(c,{
+      text:JOIN_URL,
+      width:200,
+      height:200,
+      colorDark:'#0D1B3E',
+      colorLight:'#ffffff',
+      correctLevel:QRCode.CorrectLevel.H
     });
   } else {
-    drawFallbackQR(c);
+    c.innerHTML='<div style="width:200px;height:200px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;flex-direction:column;border-radius:8px;"><div style="font-size:13px;color:#0D1B3E;font-weight:700;text-align:center;padding:12px">Use the link below to join</div></div>';
   }
-}
-function drawFallbackQR(c){
-  var ctx=c.getContext('2d');
-  ctx.fillStyle='#F3F4F6';ctx.fillRect(0,0,200,200);
-  ctx.fillStyle='#0D1B3E';ctx.font='bold 13px Arial';ctx.textAlign='center';
-  ctx.fillText('Add qrcode.js for QR code',100,90);
-  ctx.fillText('Use the link below to join',100,115);
 }
 function shareQR(){
   if(navigator.share){
