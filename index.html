@@ -2117,7 +2117,8 @@ function printBirthday(mb){
     '</div>';
   if(mb.birthday)html+='<div style="font-size:10pt;color:#6B7280;margin-bottom:12pt">🎂 '+fd(mb.birthday)+'</div>';
   if(mb.duty)html+='<div><span class="badge b-navy">'+esc(mb.duty)+'</span></div>';
-  html+='<div style="font-size:28pt;margin-top:14pt">🇮🇳</div>';
+  var logoSrc=document.querySelector('.hdr-logo img')?document.querySelector('.hdr-logo img').src:'';
+  html+='<div style="margin-top:14pt">'+(logoSrc?'<img src="'+logoSrc+'" style="width:60pt;height:60pt;object-fit:contain">':'')+'</div>';
   html+='<div style="font-size:11pt;font-weight:700;color:#FF6B00;margin-top:6pt">वन्दे मातरम् • जय हिन्द</div>';
   html+='</div>';
   html+='<div class="sig-area" style="margin-top:32pt">';
