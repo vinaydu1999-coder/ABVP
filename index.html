@@ -2097,6 +2097,13 @@ function printInvitation(inv){
 
 function printBirthday(mb){
   if(!mb)return;
+  // Find President and Secretary from members by duty
+  var president=null, secretary=null;
+  (data.members||[]).forEach(function(m){
+    var d=(m.duty||'').toLowerCase();
+    if(!president&&(d==='president'||d==='unit president'||d==='अध्यक्ष'))president=m;
+    if(!secretary&&(d==='secretary'||d==='unit secretary'||d==='सचिव'||d==='general secretary'))secretary=m;
+  });
   var w=window.open('','_blank','width=900,height=700');
   var html=_printBase()+_printHeader('Birthday Greeting','');
   html+='<div class="bday-letter">';
@@ -2114,8 +2121,12 @@ function printBirthday(mb){
   html+='<div style="font-size:11pt;font-weight:700;color:#FF6B00;margin-top:6pt">वन्दे मातरम् • जय हिन्द</div>';
   html+='</div>';
   html+='<div class="sig-area" style="margin-top:32pt">';
-  html+='<div class="sig-box"><div class="sig-line"></div><div class="sig-name">Unit Secretary</div><div class="sig-desig">ABVP Gorakhpur</div></div>';
-  html+='<div class="sig-box"><div class="sig-line"></div><div class="sig-name">Unit President</div><div class="sig-desig">ABVP Gorakhpur</div></div>';
+  html+='<div class="sig-box"><div class="sig-line"></div>'+
+    '<div class="sig-name" style="font-family:Georgia,serif;font-size:13pt;color:#0D1B3E">'+esc(secretary?secretary.name:'Unit Secretary')+'</div>'+
+    '<div class="sig-desig">Secretary, ABVP Gorakhpur</div></div>';
+  html+='<div class="sig-box"><div class="sig-line"></div>'+
+    '<div class="sig-name" style="font-family:Georgia,serif;font-size:13pt;color:#0D1B3E">'+esc(president?president.name:'Unit President')+'</div>'+
+    '<div class="sig-desig">President, ABVP Gorakhpur</div></div>';
   html+='</div>';
   html+='<div class="footer">ABVP Gorakhpur — Birthday Greeting</div>';
   html+='<script>window.onload=function(){window.print();}<\/script></body></html>';
@@ -2774,15 +2785,56 @@ function renderPending(){
   }
   var html='';
   list.forEach(function(p){
-    html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F3F4F6;flex-wrap:wrap;gap:8px">';
-    html+='<div><div style="font-weight:700;font-size:13px;color:#0D1B3E">'+esc(p.name)+'</div>';
-    html+='<div style="font-size:11px;color:#9CA3AF">'+esc(p.phone||'—')+' · '+esc(p.address||'—')+(p.duty?' · '+esc(p.duty):'')+'</div></div>';
-    html+='<div style="display:flex;gap:6px">';
+    html+='<div style="border:1.5px solid #F3F4F6;border-radius:12px;padding:12px;margin-bottom:10px">';
+    // Info row
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
+    html+='<div>';
+    html+='<div style="font-weight:800;font-size:14px;color:#0D1B3E">'+esc(p.name)+'</div>';
+    html+='<div style="font-size:11px;color:#9CA3AF;margin-top:2px">'+
+      esc(p.phone||'—')+' · '+esc(p.address||'—')+
+      (p.duty?' · <span style="color:#FF6B00;font-weight:600">'+esc(p.duty)+'</span>':'')+
+      (p.birthday?' · 🎂 '+esc(fd(p.birthday)):'')+
+    '</div>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    html+='<button class="btn btn-sm btn-navy" onclick="togglePendingEdit(\''+p.id+'\')">✏️ Edit</button>';
     html+='<button class="btn btn-sm btn-green" onclick="approvePending(\''+p.id+'\')">✓ Approve</button>';
     html+='<button class="btn btn-sm btn-red" onclick="rejectPending(\''+p.id+'\')">✗ Reject</button>';
     html+='</div></div>';
+    // Inline edit form — hidden by default
+    html+='<div id="pedit-'+p.id+'" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #F3F4F6">';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Full Name *</label><input id="pe-name-'+p.id+'" value="'+esc(p.name||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Phone</label><input id="pe-phone-'+p.id+'" value="'+esc(p.phone||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Address</label><input id="pe-addr-'+p.id+'" value="'+esc(p.address||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Designation</label><input id="pe-duty-'+p.id+'" value="'+esc(p.duty||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Year</label><input id="pe-year-'+p.id+'" value="'+esc(p.year||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Birthday</label><input type="date" id="pe-bday-'+p.id+'" value="'+esc(p.birthday||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='</div>';
+    html+='<button class="btn btn-sm btn-primary" onclick="savePendingEdit(\''+p.id+'\')">💾 Save Changes</button>';
+    html+='</div>';
+    html+='</div>';
   });
   document.getElementById('pending-list').innerHTML=html;
+}
+function togglePendingEdit(id){
+  var el=document.getElementById('pedit-'+id);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+function savePendingEdit(id){
+  var p=null;for(var i=0;i<data.pending.length;i++){if(data.pending[i].id===id){p=data.pending[i];break;}}
+  if(!p)return;
+  var name=document.getElementById('pe-name-'+id).value.trim();
+  if(!name){toast('Name is required','⚠️');return;}
+  p.name=name;
+  p.phone=document.getElementById('pe-phone-'+id).value.trim();
+  p.address=document.getElementById('pe-addr-'+id).value.trim();
+  p.duty=document.getElementById('pe-duty-'+id).value.trim();
+  p.year=document.getElementById('pe-year-'+id).value.trim();
+  p.birthday=document.getElementById('pe-bday-'+id).value;
+  fbSet('pending',id,p);
+  toast('Request updated ✓','✏️');
+  renderPending();
 }
 function approvePending(id){
   var p=null;for(var i=0;i<data.pending.length;i++){if(data.pending[i].id===id){p=data.pending[i];break;}}
