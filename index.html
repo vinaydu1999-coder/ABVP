@@ -1710,6 +1710,7 @@ document.addEventListener('keydown',function(e){
   }
 });
 function downloadCurrent(){
+  if(currentRole==='viewer'){toast('Download not allowed for viewers','🚫');return;}
   if(!lbCurrentUrl)return;
   var a=document.createElement('a');
   a.href=lbCurrentUrl;
@@ -1812,6 +1813,7 @@ function renderGallery(){
   con.innerHTML=html;
 }
 function dlPhoto(url){
+  if(currentRole==='viewer'){toast('Download not allowed for viewers','🚫');return;}
   var a=document.createElement('a');
   a.href=url;a.download='ABVP_photo_'+Date.now()+'.jpg';
   a.target='_blank';
@@ -2855,6 +2857,7 @@ setTimeout(generateQR,1500);
 </script>
 </body>
 </html>
+
 
 
 
