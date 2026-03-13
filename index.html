@@ -782,7 +782,7 @@ tr{transition:background .1s;}
   <button class="lb-close-btn" onclick="closeLB()">×</button>
   <img id="lb-img" src="" alt="">
   <div id="lb-info"><div id="lb-cap"></div><div id="lb-sub"></div></div>
-  <button class="lb-dl-btn" id="lb-dl-btn" onclick="downloadCurrent()">⬇ Download Photo</button>
+  
 </div>
 
 <!-- UPLOAD MODAL -->
@@ -1749,9 +1749,7 @@ function getAllMedia(){
   (data.media||[]).forEach(function(m){
     all.push({id:m.id,url:m.url,thumb:m.thumb||m.url,caption:m.caption||m.fileName||'Photo',category:m.category||'general',categoryLabel:m.categoryLabel||'General',occasionLabel:m.occasionLabel||'',occasionType:m.occasionType||m.category||'general',createdAt:m.createdAt||0,source:'media'});
   });
-  (data.members||[]).forEach(function(mb){
-    if(mb.photoUrl)all.push({id:'m-'+mb.id,url:mb.photoUrl,thumb:mb.photoUrl,caption:mb.name,category:'member',categoryLabel:'Member Photo',occasionLabel:mb.name+(mb.duty?' — '+mb.duty:''),occasionType:'member',createdAt:mb.createdAt||0,source:'member',refId:mb.id});
-  });
+  // Member profile photos excluded from gallery — shown only in member list
   return all;
 }
 function renderGallery(){
@@ -1788,7 +1786,6 @@ function renderGallery(){
           +'<div class="g-lbl">'+esc(m.caption)+'</div>'
         +'</div>'
         +'<div class="g-acts">'
-          +'<button class="g-act-btn" title="Download" onclick="event.stopPropagation();dlPhoto(\''+esc(m.url)+'\')">⬇</button>'
           +(canDel?'<button class="g-act-btn del" title="Delete" onclick="event.stopPropagation();delMedia(\''+m.id+'\',\''+m.source+'\',\''+esc(m.refId||'')+'\')">×</button>':'')
         +'</div>'
         +'</div>';
@@ -1807,7 +1804,6 @@ function renderGallery(){
           +'</div>'
         +'</div>'
         +'<div class="g-list-acts">'
-          +'<button class="btn btn-sm btn-dl" onclick="dlPhoto(\''+esc(m.url)+'\')">⬇</button>'
           +(canDel?'<button class="btn btn-sm btn-red" onclick="delMedia(\''+m.id+'\',\''+m.source+'\',\''+esc(m.refId||'')+'\')">🗑️</button>':'')
         +'</div>'
         +'</div>';
@@ -1815,13 +1811,7 @@ function renderGallery(){
   }
   con.innerHTML=html;
 }
-function dlPhoto(url){
-  var a=document.createElement('a');
-  a.href=url;a.download='ABVP_photo_'+Date.now()+'.jpg';
-  a.target='_blank';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  toast('Downloading...','⬇');
-}
+
 function delMedia(id,source,refId){
   if(!confirm('Delete this photo permanently?'))return;
   if(source==='media')fbDel('media',id);
