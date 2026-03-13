@@ -2811,16 +2811,16 @@ if(window.location.search.indexOf('join=1')>-1){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').classList.add('vis');
   currentRole='viewer';
-  document.getElementById('role-lbl').textContent='Self-Registration';
-  applyRoles();
-  showSec('qr');
-  setActive(document.getElementById('tab-qr'));
+  document.getElementById('role-lbl').textContent='Fill form to join';
+  document.querySelector('.hdr-title h2').textContent='ABVP — Join Request';
+  document.querySelector('.nav-bar').style.display='none';
+  document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});
+  var qrSec=document.getElementById('sec-qr');
+  qrSec.style.display='block';
+  var qrCard=qrSec.querySelector('.card');
+  if(qrCard)qrCard.style.display='none';
   var jfc=document.getElementById('jf-card');
-  if(jfc){
-    jfc.style.display='block';
-    var hdr=jfc.querySelector('.card-hdr');
-    if(hdr)hdr.textContent='👤 Submit Join Request';
-  }
+  if(jfc){jfc.style.display='block';jfc.querySelector('.card-hdr').textContent='👤 Submit Join Request';}
   var pc=document.getElementById('pending-card');if(pc)pc.style.display='none';
   loadFB(function(){});
   showLoading(false);
@@ -2841,4 +2841,5 @@ setTimeout(generateQR,1500);
 </script>
 </body>
 </html>
+
 
