@@ -770,7 +770,6 @@ tr{transition:background .1s;}
   body{display:none!important;}
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -935,6 +934,16 @@ tr{transition:background .1s;}
         <div class="fg"><label>Meeting Date *</label><input type="date" id="mt-date"></div>
         <div class="fg"><label>Next Meeting Date</label><input type="date" id="mt-ndate"></div>
         <div class="fg full"><label>Presiding Officer *</label><input id="mt-presided" placeholder="Name"></div>
+        <div class="fg full" style="flex-direction:row;align-items:center;gap:10px">
+          <label style="margin:0;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;color:#0D1B3E">
+            <input type="checkbox" id="mt-isonline" onchange="toggleMtLink()" style="width:18px;height:18px;accent-color:#FF6B00;cursor:pointer">
+            🌐 Online Meeting
+          </label>
+        </div>
+        <div class="fg full" id="mt-link-row" style="display:none">
+          <label>Meeting Link (Teams / Zoom / Meet)</label>
+          <input id="mt-link" placeholder="Paste meeting link here e.g. https://teams.microsoft.com/..." style="font-size:12px">
+        </div>
         <div class="fg full"><label>Agenda</label><textarea id="mt-agenda" placeholder="Meeting agenda..."></textarea></div>
         <div class="fg full"><label>Motions Passed</label><textarea id="mt-motions" placeholder="Decisions taken..."></textarea></div>
         <div class="fg full">
@@ -1159,13 +1168,7 @@ tr{transition:background .1s;}
 var IMGBB = '030d136fc61019c46734903688bc8403';
 var PROJ = 'abvp-gkp', AKEY = 'AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w';
 var FSB = 'https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/';
-function makeJoinToken(){
-  // Token = base64 of date (valid for today only) + secret
-  var secret='ABVP_GKP_2024';
-  var today=new Date().toISOString().slice(0,10).replace(/-/g,'');
-  return btoa(today+':'+secret);
-}
-var JOIN_URL = window.location.href.split('?')[0]+'?join='+makeJoinToken();
+var JOIN_URL = window.location.href.split('?')[0]+'?join=1';
 var LS_KEY = 'abvp_v4', LS_PWD = 'abvp_pwds4';
 var PASSWORDS = {admin:'abvp@admin2024', member:'abvp@member2024'};
 var data = {members:[],meetings:[],events:[],invitations:[],pending:[],donations:[],expenses:[],media:[]};
@@ -1710,7 +1713,6 @@ document.addEventListener('keydown',function(e){
   }
 });
 function downloadCurrent(){
-  if(currentRole==='viewer'){toast('Download not allowed for viewers','🚫');return;}
   if(!lbCurrentUrl)return;
   var a=document.createElement('a');
   a.href=lbCurrentUrl;
@@ -1813,7 +1815,6 @@ function renderGallery(){
   con.innerHTML=html;
 }
 function dlPhoto(url){
-  if(currentRole==='viewer'){toast('Download not allowed for viewers','🚫');return;}
   var a=document.createElement('a');
   a.href=url;a.download='ABVP_photo_'+Date.now()+'.jpg';
   a.target='_blank';
@@ -2388,12 +2389,21 @@ function renderOthers(){
   });
   var d=document.getElementById('mt-olist');if(d)d.innerHTML=html;
 }
+function toggleMtLink(){
+  var cb=document.getElementById('mt-isonline');
+  var row=document.getElementById('mt-link-row');
+  if(row)row.style.display=cb&&cb.checked?'flex':'none';
+}
 function saveMeeting(){
   if(!v('mt-date')||!v('mt-presided')){toast('Fill date and presiding officer','⚠️');return;}
   var id=uid();
-  fbSet('meetings',id,{date:v('mt-date'),nextDate:v('mt-ndate'),presided:v('mt-presided'),agenda:v('mt-agenda'),motions:v('mt-motions'),memberIds:mtSelIds.slice(),others:mtOthers.slice(),createdAt:Date.now()});
+  var isOnline=document.getElementById('mt-isonline').checked;
+  var link=isOnline?v('mt-link').trim():'';
+  fbSet('meetings',id,{date:v('mt-date'),nextDate:v('mt-ndate'),presided:v('mt-presided'),agenda:v('mt-agenda'),motions:v('mt-motions'),memberIds:mtSelIds.slice(),others:mtOthers.slice(),isOnline:isOnline,meetingLink:link,createdAt:Date.now()});
   mtSelIds=[];mtOthers=[];
-  ['mt-date','mt-ndate','mt-presided','mt-agenda','mt-motions','mt-ms'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  ['mt-date','mt-ndate','mt-presided','mt-agenda','mt-motions','mt-ms','mt-link'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  document.getElementById('mt-isonline').checked=false;
+  document.getElementById('mt-link-row').style.display='none';
   renderSelChips('mt');renderOthers();
   toast('Meeting saved ✓','📋');
   renderMeetings();
@@ -2411,13 +2421,20 @@ function renderMeetings(){
     var mtPhotos=(data.media||[]).filter(function(m){return m.occasionId===mt.id;});
     html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
     html+='<div><div style="font-size:15px;font-weight:800;color:#0D1B3E">📋 '+esc(fd(mt.date))+'</div><div style="font-size:12px;color:#6B7280;margin-top:2px">Presiding: <strong>'+esc(mt.presided||'—')+'</strong></div></div>';
-    html+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    html+='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">';
+    if(mt.isOnline)html+='<span class="badge badge-blue" style="font-size:11px">🌐 Online</span>';
     html+='<button class="btn btn-sm btn-navy" onclick="printMeeting(\''+mt.id+'\')">🖨️ Print</button>';
     if(currentRole==='admin'){
       html+='<button class="btn btn-sm btn-primary no-print" onclick="openUpModalFor(\'meeting\',\''+mt.id+'\',\'Meeting — '+esc(fd(mt.date))+'\')">📸 Photos</button>';
       html+='<button class="btn btn-sm btn-red no-print" onclick="delMeeting(\''+mt.id+'\')">🗑️</button>';
     }
     html+='</div></div>';
+    if(mt.isOnline&&mt.meetingLink){
+      html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:10px;flex-wrap:wrap">';
+      html+='<span style="font-size:13px;font-weight:700;color:#1D4ED8">🌐 Online Meeting</span>';
+      html+='<a href="'+esc(mt.meetingLink)+'" target="_blank" rel="noopener" style="background:#2563EB;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">🔗 Join Meeting</a>';
+      html+='</div>';
+    }
     if(mt.agenda)html+='<div style="margin-top:10px;font-size:13px;color:#374151;line-height:1.6"><strong>Agenda:</strong> '+esc(mt.agenda)+'</div>';
     if(mt.motions)html+='<div style="margin-top:6px;font-size:13px;color:#374151;line-height:1.6"><strong>Motions Passed:</strong> '+esc(mt.motions)+'</div>';
     if(mt.nextDate)html+='<div style="margin-top:8px"><span class="badge badge-blue">Next Meeting: '+esc(fd(mt.nextDate))+'</span></div>';
@@ -2694,31 +2711,17 @@ function delDonation(id){if(!confirm('Delete this donation?'))return;fbDel('dona
 function delExpense(id){if(!confirm('Delete this expense?'))return;fbDel('expenses',id);toast('Deleted','🗑️');renderFinance();}
 
 // ── QR ──
-function safePrint(){
-  var isPWA=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-  if(isPWA){toast('To print, open in browser','📄');return;}
-  window.print();
-}
 function generateQR(){
+  var c=document.getElementById('qr-canvas');
   var ql=document.getElementById('qr-link-box');
-  if(ql)ql.innerHTML='Join link: <a href="'+JOIN_URL+'" style="color:#FF6B00;word-break:break-all">'+JOIN_URL+'</a>';
-  var wrap=document.getElementById('qr-wrap-div');
-  if(!wrap){
-    wrap=document.createElement('div');
-    wrap.id='qr-wrap-div';
-    var c=document.getElementById('qr-canvas');
-    c.style.display='none';
-    c.parentNode.insertBefore(wrap,c);
+  if(ql)ql.innerHTML='Join link: <a href="'+JOIN_URL+'" style="color:#FF6B00;word-break:break-all;">'+JOIN_URL+'</a>';
+  if(typeof QRCode!=='undefined'){
+    QRCode.toCanvas(c,JOIN_URL,{width:200,margin:2,color:{dark:'#0D1B3E',light:'#ffffff'}},function(err){
+      if(err)drawFallbackQR(c);
+    });
+  } else {
+    drawFallbackQR(c);
   }
-  wrap.innerHTML='';
-  wrap.style.display='inline-block';
-  new QRCode(wrap,{
-    text:JOIN_URL,
-    width:200,height:200,
-    colorDark:'#0D1B3E',
-    colorLight:'#ffffff',
-    correctLevel:QRCode.CorrectLevel.H
-  });
 }
 function drawFallbackQR(c){
   var ctx=c.getContext('2d');
@@ -2820,28 +2823,20 @@ function savePwds(){
 lsLoad();
 
 // Handle ?join=1 self-registration via QR
-function validateJoinToken(token){
-  var secret='ABVP_GKP_2024';
-  var today=new Date().toISOString().slice(0,10).replace(/-/g,'');
-  try{var decoded=atob(token);return decoded===today+':'+secret;}
-  catch(e){return false;}
-}
-var urlParams=new URLSearchParams(window.location.search);
-var joinToken=urlParams.get('join');
-if(joinToken&&validateJoinToken(joinToken)){
+if(window.location.search.indexOf('join=1')>-1){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').classList.add('vis');
   currentRole='viewer';
-  document.getElementById('role-lbl').textContent='Fill form to join';
-  document.querySelector('.hdr-title h2').textContent='ABVP — Join Request';
-  document.querySelector('.nav-bar').style.display='none';
-  document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});
-  var qrSec=document.getElementById('sec-qr');
-  qrSec.style.display='block';
-  var qrCard=qrSec.querySelector('.card');
-  if(qrCard)qrCard.style.display='none';
+  document.getElementById('role-lbl').textContent='Self-Registration';
+  applyRoles();
+  showSec('qr');
+  setActive(document.getElementById('tab-qr'));
   var jfc=document.getElementById('jf-card');
-  if(jfc){jfc.style.display='block';jfc.querySelector('.card-hdr').textContent='👤 Submit Join Request';}
+  if(jfc){
+    jfc.style.display='block';
+    var hdr=jfc.querySelector('.card-hdr');
+    if(hdr)hdr.textContent='👤 Submit Join Request';
+  }
   var pc=document.getElementById('pending-card');if(pc)pc.style.display='none';
   loadFB(function(){});
   showLoading(false);
@@ -2862,8 +2857,3 @@ setTimeout(generateQR,1500);
 </script>
 </body>
 </html>
-
-
-
-
-
