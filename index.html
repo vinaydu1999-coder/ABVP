@@ -2197,7 +2197,7 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc, c
     + (mb.year ? '<div class="info-row"><span class="info-label">Year:</span><span class="info-val">' + mb.year + '</span></div>' : '')
     + (mb.phone ? '<div class="info-row"><span class="info-label">Ph:</span><span class="info-val">' + (mb.phone || '') + '</span></div>' : '')
     + (mb.birthday ? '<div class="info-row"><span class="info-label">DoB:</span><span class="info-val">' + fd(mb.birthday) + '</span></div>' : '')
-    + '<div style="margin-top:1.5mm;font-size:4.5pt;font-weight:900;color:#FF6B00;letter-spacing:0.5px;">जय हिन्द • Jai Hind</div>'
+    + '<div style="margin-top:1.5mm;font-size:4pt;font-weight:700;color:#374151;letter-spacing:0.5px;">जय हिन्द • Jai Hind</div>'
     + '</div>'
     // Right — QR
     + '<div class="card-right">'
@@ -2205,19 +2205,27 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc, c
     + '<div class="qr-label">Scan for<br>member info</div>'
     + '</div>'
     + '</div>'
-    // Signature row
-    + '<div style="display:flex;justify-content:space-between;align-items:flex-end;padding:1mm 3.5mm 1.2mm;border-top:0.3mm solid #E5E7EB;">'
+    // Signature row — professional, monochrome
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-end;padding:1mm 3.5mm 1mm;border-top:0.3mm solid #D1D5DB;background:#FAFAFA;">'
+    // Secretary (left)
     + '<div style="text-align:center;">'
-    + '<div style="width:20mm;border-bottom:0.4mm solid #374151;margin-bottom:0.8mm;"></div>'
+    + '<div style="width:20mm;border-bottom:0.4mm solid #374151;margin-bottom:0.7mm;"></div>'
     + '<div class="sig-name">' + (_secretary ? _secretary.name : 'Unit Secretary') + '</div>'
-    + '<div style="font-size:3pt;color:#9CA3AF;letter-spacing:0.3px;">Secretary, ABVP Gorakhpur</div>'
-    + (cugVal ? '<div style="font-size:3pt;color:#FF6B00;font-weight:700;letter-spacing:0.3px;margin-top:0.4mm;">CUG: ' + cugVal + '</div>' : '')
+    + '<div style="font-size:2.8pt;color:#6B7280;letter-spacing:0.3px;">Secretary, ABVP Gorakhpur</div>'
+    + (_secretary && _secretary.phone ? '<div style="font-size:2.8pt;color:#374151;font-weight:700;letter-spacing:0.2px;margin-top:0.3mm;">' + (_secretary.phone || '') + '</div>' : '')
     + '</div>'
-    + '<div style="font-size:3.5pt;font-weight:900;color:#FF6B00;letter-spacing:0.3px;padding-bottom:1mm;">जय हिन्द</div>'
+    // Centre — CUG or Jai Hind
+    + '<div style="text-align:center;padding-bottom:1mm;">'
+    + (cugVal
+        ? '<div style="font-size:3pt;font-weight:700;color:#374151;letter-spacing:0.4px;text-transform:uppercase;">CUG</div>'
+          + '<div style="font-size:4pt;font-weight:900;color:#0D1B3E;letter-spacing:0.3px;">' + cugVal + '</div>'
+        : '<div style="font-size:3.5pt;font-weight:800;color:#374151;letter-spacing:0.5px;">जय हिन्द</div>')
+    + '</div>'
+    // President (right)
     + '<div style="text-align:center;">'
-    + '<div style="width:20mm;border-bottom:0.4mm solid #374151;margin-bottom:0.8mm;"></div>'
+    + '<div style="width:20mm;border-bottom:0.4mm solid #374151;margin-bottom:0.7mm;"></div>'
     + '<div class="sig-name">' + (_president ? _president.name : 'Unit President') + '</div>'
-    + '<div style="font-size:3pt;color:#9CA3AF;letter-spacing:0.3px;">President, ABVP Gorakhpur</div>'
+    + '<div style="font-size:2.8pt;color:#6B7280;letter-spacing:0.3px;">President, ABVP Gorakhpur</div>'
     + '</div>'
     + '</div>'
     // Bottom tricolour stripe
