@@ -579,6 +579,67 @@ to{opacity:1}}
   </div>
 </div>
 
+<!-- EDIT MEETING MODAL -->
+<div class="modal-overlay" id="edit-meeting-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>✏️ Edit Meeting</h3><button class="modal-close" onclick="document.getElementById('edit-meeting-modal').classList.remove('open')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="em-id">
+      <div class="form-grid">
+        <div class="fg"><label>Date</label><input type="date" id="em-date"></div>
+        <div class="fg"><label>Next Meeting Date</label><input type="date" id="em-ndate"></div>
+        <div class="fg full"><label>Presiding Officer</label><input id="em-presided" placeholder="Name of presiding officer"></div>
+        <div class="fg full"><label>Agenda</label><textarea id="em-agenda" placeholder="Meeting agenda..."></textarea></div>
+        <div class="fg full"><label>Motions / Decisions</label><textarea id="em-motions" placeholder="Motions passed..."></textarea></div>
+        <div class="fg full" style="flex-direction:row;align-items:center;gap:10px"><label style="font-size:13px;font-weight:600;color:#374151;text-transform:none;letter-spacing:0"><input type="checkbox" id="em-isonline" onchange="toggleEmLink()" style="margin-right:6px">Online Meeting</label></div>
+        <div class="fg full" id="em-link-row" style="display:none"><label>Meeting Link</label><input id="em-link" placeholder="https://meet.google.com/..."></div>
+        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="saveEditMeeting()">💾 Save Changes</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT EVENT MODAL -->
+<div class="modal-overlay" id="edit-event-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>✏️ Edit Event</h3><button class="modal-close" onclick="document.getElementById('edit-event-modal').classList.remove('open')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="ev-edit-id">
+      <div class="form-grid">
+        <div class="fg full"><label>Event Name *</label><input id="ev-edit-name" placeholder="Event name"></div>
+        <div class="fg"><label>Date</label><input type="date" id="ev-edit-date"></div>
+        <div class="fg"><label>Presided By</label><input id="ev-edit-presided" placeholder="Presiding officer"></div>
+        <div class="fg full"><label>Description</label><textarea id="ev-edit-desc" placeholder="Event details..."></textarea></div>
+        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="saveEditEvent()">💾 Save Changes</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT INVITATION MODAL -->
+<div class="modal-overlay" id="edit-inv-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hdr"><h3>✏️ Edit Invitation</h3><button class="modal-close" onclick="document.getElementById('edit-inv-modal').classList.remove('open')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="inv-edit-id">
+      <div class="form-grid">
+        <div class="fg full"><label>Title *</label><input id="inv-edit-title" placeholder="Invitation title"></div>
+        <div class="fg"><label>Type</label><select id="inv-edit-type"><option value="meeting">Meeting</option><option value="event">Event</option><option value="program">Programme</option><option value="seminar">Seminar</option><option value="conference">Conference</option></select></div>
+        <div class="fg"><label>Date</label><input type="date" id="inv-edit-date"></div>
+        <div class="fg"><label>Time</label><input id="inv-edit-time" placeholder="e.g. 10:00 AM"></div>
+        <div class="fg"><label>Venue</label><input id="inv-edit-venue" placeholder="Venue"></div>
+        <div class="fg"><label>Issued By</label><input id="inv-edit-by" placeholder="Name"></div>
+        <div class="fg"><label>Designation</label><input id="inv-edit-desig" placeholder="Designation"></div>
+        <div class="fg"><label>Unit</label><input id="inv-edit-unit" placeholder="Unit name"></div>
+        <div class="fg"><label>Contact</label><input id="inv-edit-contact" placeholder="Phone number"></div>
+        <div class="fg full"><label>Agenda</label><textarea id="inv-edit-agenda" placeholder="Agenda items (one per line)"></textarea></div>
+        <div class="fg full"><label>Note</label><input id="inv-edit-note" placeholder="Additional note"></div>
+        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="saveEditInv()">💾 Save Changes</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CHANGE PASSWORD MODAL -->
 <div class="modal-overlay" id="chpwd-modal">
   <div class="modal">
@@ -1189,9 +1250,9 @@ function renderMeetings(){
         html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div><div style="font-size:15px;font-weight:800;color:#0D1B3E">📋 '+esc(fd(mt.date))+'</div><div style="font-size:12px;color:#6B7280;margin-top:2px">Presiding: <strong>'+esc(mt.presided||'—')+'</strong></div></div>';
     html+='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+(mt.isOnline?'<span class="badge badge-blue">🌐 Online</span>':'');
     html+='<button class="btn btn-sm btn-navy" onclick="printMeeting(\''+mt.id+'\')">🖨️ Print</button>';
-    if(currentRole==='admin'){}
+    if(currentRole==='admin'){html+='<button class="btn btn-sm btn-orange" onclick="editMeeting(\''+mt.id+'\')">✏️ Edit</button><button class="btn btn-sm btn-red" onclick="delMeeting(\''+mt.id+'\')">🗑️</button>';}
     html+='</div></div>';
-    if(mt.isOnline&&mt.meetingLink)html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#1D4ED8">🌐 Online Meeting</span><a href="'+esc(mt.meetingLink)+'" target="_blank" rel="noopener" style="background:#2563EB;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">🔗 Join</a></div>';
+    if(mt.isOnline&&mt.meetingLink)html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#1D4ED8">🌐</span><a href="'+esc(mt.meetingLink)+'" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:#2563EB;word-break:break-all;text-decoration:none;font-weight:500">'+esc(mt.meetingLink)+'</a><a href="'+esc(mt.meetingLink)+'" target="_blank" rel="noopener" style="background:#2563EB;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0">Join →</a></div>';
     if(mt.agenda)html+='<div style="margin-top:10px;font-size:13px;color:#374151;line-height:1.6"><strong>Agenda:</strong> '+esc(mt.agenda)+'</div>';
     if(mt.motions)html+='<div style="margin-top:6px;font-size:13px;color:#374151;line-height:1.6"><strong>Motions:</strong> '+esc(mt.motions)+'</div>';
     if(mt.nextDate)html+='<div style="margin-top:8px"><span class="badge badge-blue">Next: '+esc(fd(mt.nextDate))+'</span></div>';
@@ -1217,7 +1278,7 @@ function renderEvents(){
     var mNames=[];(ev.memberIds||[]).forEach(function(id){var mb=getMemberById(id);if(mb)mNames.push(mb.name);});
         html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div><div style="font-size:15px;font-weight:800;color:#0D1B3E">🎯 '+esc(ev.name||'Event')+'</div><div style="font-size:12px;color:#6B7280;margin-top:2px">'+esc(fd(ev.date))+(ev.presided?' — Presided by <strong>'+esc(ev.presided)+'</strong>':'')+'</div></div>';
     html+='<div style="display:flex;gap:6px"><button class="btn btn-sm btn-navy" onclick="printEvent(\''+ev.id+'\')">🖨️ Print</button>';
-    if(currentRole==='admin'){}
+    if(currentRole==='admin'){html+='<button class="btn btn-sm btn-orange" onclick="editEvent(\''+ev.id+'\')">✏️ Edit</button><button class="btn btn-sm btn-red" onclick="delEvent(\''+ev.id+'\')">🗑️</button>';}
     html+='</div></div>';
     if(ev.description)html+='<div style="margin-top:8px;font-size:13px;color:#374151">'+esc(ev.description)+'</div>';
     if(mNames.length){html+='<div style="margin-top:10px;font-size:12px;color:#6B7280"><strong>Attended ('+mNames.length+'):</strong><div style="margin-top:4px">';mNames.forEach(function(n){html+='<span class="badge badge-gray" style="margin:2px">'+esc(n)+'</span>';});html+='</div></div>';}
@@ -1258,7 +1319,7 @@ function renderInvitations(){
   list.forEach(function(inv){
         html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:800;color:#0D1B3E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(inv.title||'Invitation')+'</div><div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap"><span class="badge '+(typeColors[inv.type]||'badge-gray')+'">'+esc(inv.type||'—')+'</span>'+(inv.date?'<span class="badge badge-gray">📅 '+esc(fd(inv.date))+'</span>':'')+'</div></div>';
     html+='<div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0" class="no-print"><button class="btn btn-sm btn-navy" onclick="viewInv(\''+inv.id+'\')">👁 View</button>';
-    if(currentRole==='admin'){}
+    if(currentRole==='admin'){html+='<button class="btn btn-sm btn-orange" onclick="editInv(\''+inv.id+'\')">✏️ Edit</button><button class="btn btn-sm btn-red" onclick="delInv(\''+inv.id+'\')">🗑️</button>';}
     html+='</div></div>';
         html+='</div>';
   });
@@ -2139,6 +2200,105 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc, c
   w.document.open();
   w.document.write(html);
   w.document.close();
+}
+
+
+// ── Edit Meeting ──
+function toggleEmLink(){var cb=document.getElementById('em-isonline');var row=document.getElementById('em-link-row');if(row)row.style.display=cb&&cb.checked?'flex':'none';}
+function editMeeting(id){
+  var mt=null;for(var i=0;i<(data.meetings||[]).length;i++){if(data.meetings[i].id===id){mt=data.meetings[i];break;}}
+  if(!mt)return;
+  document.getElementById('em-id').value=id;
+  document.getElementById('em-date').value=mt.date||'';
+  document.getElementById('em-ndate').value=mt.nextDate||'';
+  document.getElementById('em-presided').value=mt.presided||'';
+  document.getElementById('em-agenda').value=mt.agenda||'';
+  document.getElementById('em-motions').value=mt.motions||'';
+  document.getElementById('em-isonline').checked=!!mt.isOnline;
+  document.getElementById('em-link').value=mt.meetingLink||'';
+  document.getElementById('em-link-row').style.display=mt.isOnline?'flex':'none';
+  document.getElementById('edit-meeting-modal').classList.add('open');
+}
+function saveEditMeeting(){
+  var id=document.getElementById('em-id').value;
+  if(!id)return;
+  var mt=null;for(var i=0;i<(data.meetings||[]).length;i++){if(data.meetings[i].id===id){mt=data.meetings[i];break;}}
+  if(!mt)return;
+  var isOnline=document.getElementById('em-isonline').checked;
+  mt.date=document.getElementById('em-date').value;
+  mt.nextDate=document.getElementById('em-ndate').value;
+  mt.presided=document.getElementById('em-presided').value;
+  mt.agenda=document.getElementById('em-agenda').value;
+  mt.motions=document.getElementById('em-motions').value;
+  mt.isOnline=isOnline;
+  mt.meetingLink=isOnline?document.getElementById('em-link').value.trim():'';
+  fbSet('meetings',id,mt);
+  document.getElementById('edit-meeting-modal').classList.remove('open');
+  toast('Meeting updated ✓','📋');renderMeetings();
+}
+
+// ── Edit Event ──
+function editEvent(id){
+  var ev=null;for(var i=0;i<(data.events||[]).length;i++){if(data.events[i].id===id){ev=data.events[i];break;}}
+  if(!ev)return;
+  document.getElementById('ev-edit-id').value=id;
+  document.getElementById('ev-edit-name').value=ev.name||'';
+  document.getElementById('ev-edit-date').value=ev.date||'';
+  document.getElementById('ev-edit-presided').value=ev.presided||'';
+  document.getElementById('ev-edit-desc').value=ev.description||'';
+  document.getElementById('edit-event-modal').classList.add('open');
+}
+function saveEditEvent(){
+  var id=document.getElementById('ev-edit-id').value;
+  if(!id)return;
+  var ev=null;for(var i=0;i<(data.events||[]).length;i++){if(data.events[i].id===id){ev=data.events[i];break;}}
+  if(!ev)return;
+  ev.name=document.getElementById('ev-edit-name').value;
+  ev.date=document.getElementById('ev-edit-date').value;
+  ev.presided=document.getElementById('ev-edit-presided').value;
+  ev.description=document.getElementById('ev-edit-desc').value;
+  fbSet('events',id,ev);
+  document.getElementById('edit-event-modal').classList.remove('open');
+  toast('Event updated ✓','🎯');renderEvents();
+}
+
+// ── Edit Invitation ──
+function editInv(id){
+  var inv=null;for(var i=0;i<(data.invitations||[]).length;i++){if(data.invitations[i].id===id){inv=data.invitations[i];break;}}
+  if(!inv)return;
+  document.getElementById('inv-edit-id').value=id;
+  document.getElementById('inv-edit-title').value=inv.title||'';
+  document.getElementById('inv-edit-type').value=inv.type||'meeting';
+  document.getElementById('inv-edit-date').value=inv.date||'';
+  document.getElementById('inv-edit-time').value=inv.time||'';
+  document.getElementById('inv-edit-venue').value=inv.venue||'';
+  document.getElementById('inv-edit-by').value=inv.by||'';
+  document.getElementById('inv-edit-desig').value=inv.designation||'';
+  document.getElementById('inv-edit-unit').value=inv.unit||'';
+  document.getElementById('inv-edit-contact').value=inv.contact||'';
+  document.getElementById('inv-edit-agenda').value=inv.agenda||'';
+  document.getElementById('inv-edit-note').value=inv.note||'';
+  document.getElementById('edit-inv-modal').classList.add('open');
+}
+function saveEditInv(){
+  var id=document.getElementById('inv-edit-id').value;
+  if(!id)return;
+  var inv=null;for(var i=0;i<(data.invitations||[]).length;i++){if(data.invitations[i].id===id){inv=data.invitations[i];break;}}
+  if(!inv)return;
+  inv.title=document.getElementById('inv-edit-title').value;
+  inv.type=document.getElementById('inv-edit-type').value;
+  inv.date=document.getElementById('inv-edit-date').value;
+  inv.time=document.getElementById('inv-edit-time').value;
+  inv.venue=document.getElementById('inv-edit-venue').value;
+  inv.by=document.getElementById('inv-edit-by').value;
+  inv.designation=document.getElementById('inv-edit-desig').value;
+  inv.unit=document.getElementById('inv-edit-unit').value;
+  inv.contact=document.getElementById('inv-edit-contact').value;
+  inv.agenda=document.getElementById('inv-edit-agenda').value;
+  inv.note=document.getElementById('inv-edit-note').value;
+  fbSet('invitations',id,inv);
+  document.getElementById('edit-inv-modal').classList.remove('open');
+  toast('Invitation updated ✓','✉️');renderInvitations();
 }
 
 // ── Collapsible member form ──
