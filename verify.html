@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ABVP Member Verification</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0D1B3E;
+  --saffron:#FF6B00;
+  --gold:#FFB800;
+  --green:#16A34A;
+  --red:#DC2626;
+}
+body{
+  font-family:-apple-system,'Segoe UI',Arial,sans-serif;
+  background:linear-gradient(145deg,#0D1B3E 0%,#162444 60%,#1a2d5a 100%);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.card{
+  background:#fff;
+  border-radius:20px;
+  width:100%;
+  max-width:400px;
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,0.4);
+  animation:slideUp .35s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* Header */
+.card-hdr{
+  background:linear-gradient(135deg,#0D1B3E,#1E3A7E);
+  padding:20px 20px 18px;
+  text-align:center;
+  position:relative;
+}
+.card-hdr::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:3px;background:linear-gradient(90deg,#FF6B00,#FFB800,#FF6B00);
+}
+.logo{width:60px;height:60px;object-fit:contain;margin-bottom:8px;}
+.hdr-title{font-size:15px;font-weight:900;color:#fff;}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+/* Loading state */
+.loading{
+  padding:40px 20px;
+  text-align:center;
+}
+.spinner{
+  width:48px;height:48px;
+  border:4px solid rgba(255,107,0,.2);
+  border-top-color:#FF6B00;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:#6B7280;font-size:14px;}
+
+/* Verified state */
+.verified{display:none;padding:0 0 24px;}
+.verified-banner{
+  background:linear-gradient(135deg,#16A34A,#15803d);
+  padding:24px 20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.verified-banner::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.03) 0,
+    rgba(255,255,255,0.03) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+}
+.tick-circle{
+  width:72px;height:72px;
+  background:rgba(255,255,255,0.15);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;
+  border:3px solid rgba(255,255,255,0.4);
+  font-size:36px;
+  position:relative;z-index:1;
+}
+.verified-title{
+  font-size:18px;font-weight:900;color:#fff;
+  letter-spacing:.5px;position:relative;z-index:1;
+}
+.verified-subtitle{
+  font-size:11px;color:rgba(255,255,255,.7);
+  margin-top:4px;letter-spacing:1px;text-transform:uppercase;
+  position:relative;z-index:1;
+}
+.verified-org{
+  font-size:13px;font-weight:700;color:#FFB800;
+  margin-top:8px;position:relative;z-index:1;
+}
+
+/* Member info */
+.member-info{padding:20px 20px 0;}
+.member-photo-row{
+  display:flex;align-items:center;gap:14px;
+  padding-bottom:16px;border-bottom:1.5px solid #F3F4F6;
+  margin-bottom:16px;
+}
+.member-photo{
+  width:68px;height:68px;border-radius:50%;
+  object-fit:cover;
+  border:3px solid #FF6B00;
+  flex-shrink:0;
+}
+.photo-placeholder{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,#0D1B3E,#1E3A7E);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:24px;font-weight:800;flex-shrink:0;
+  border:3px solid #FF6B00;
+}
+.member-name-block .name{
+  font-size:18px;font-weight:900;color:#0D1B3E;line-height:1.2;
+}
+.member-name-block .duty{
+  display:inline-block;margin-top:4px;
+  background:#FF6B00;color:#fff;
+  font-size:11px;font-weight:700;
+  padding:2px 10px;border-radius:20px;
+}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.info-item{
+  background:#F9FAFB;
+  border-radius:10px;
+  padding:10px 12px;
+}
+.info-item.full{grid-column:span 2;}
+.info-label{
+  font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;
+  color:#9CA3AF;margin-bottom:3px;
+}
+.info-val{
+  font-size:13px;font-weight:700;color:#1C1C2E;
+}
+.id-badge{
+  background:#0D1B3E;color:#FFB800;
+  font-size:11px;font-weight:800;
+  padding:6px 16px;border-radius:20px;
+  display:inline-block;margin-top:14px;
+  letter-spacing:1px;
+}
+.tricolor-bar{
+  height:4px;
+  background:linear-gradient(90deg,#FF6B00 33%,#fff 33%,#fff 66%,#138808 66%);
+  margin-top:16px;
+}
+.jai-hind{
+  text-align:center;
+  font-size:12px;font-weight:700;
+  color:#FF6B00;
+  padding:10px 20px 0;
+}
+
+/* Error state */
+.error{display:none;padding:32px 20px;text-align:center;}
+.error-icon{font-size:52px;margin-bottom:12px;}
+.error-title{font-size:16px;font-weight:800;color:#DC2626;margin-bottom:6px;}
+.error-msg{font-size:13px;color:#6B7280;line-height:1.6;}
+.retry-btn{
+  margin-top:16px;
+  padding:10px 24px;
+  background:linear-gradient(135deg,#FF6B00,#FF8C00);
+  color:#fff;border:none;border-radius:10px;
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+
+/* No ID state */
+.no-id{padding:32px 20px;text-align:center;}
+.no-id-icon{font-size:52px;margin-bottom:12px;}
+.no-id-title{font-size:16px;font-weight:800;color:#0D1B3E;margin-bottom:6px;}
+.no-id-msg{font-size:13px;color:#6B7280;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="card">
+  <!-- Header -->
+  <div class="card-hdr">
+    <img class="logo" id="logo" src="" alt="ABVP">
+    <div class="hdr-title">ABVP Gorakhpur</div>
+    <div class="hdr-sub">Member Verification Portal</div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="state-loading">
+    <div class="spinner"></div>
+    <p>Verifying member identity…</p>
+  </div>
+
+  <!-- Verified -->
+  <div class="verified" id="state-verified">
+    <div class="verified-banner">
+      <div class="tick-circle">✓</div>
+      <div class="verified-title">Karyakarta Verified</div>
+      <div class="verified-subtitle">Identity Confirmed</div>
+      <div class="verified-org">Akhil Bharatiya Vidyarthi Parishad</div>
+    </div>
+    <div class="member-info">
+      <div class="member-photo-row">
+        <div id="photo-slot"></div>
+        <div class="member-name-block">
+          <div class="name" id="v-name"></div>
+          <div class="duty" id="v-duty"></div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-item" id="course-item" style="display:none">
+          <div class="info-label">Course</div>
+          <div class="info-val" id="v-course"></div>
+        </div>
+        <div class="info-item" id="year-item" style="display:none">
+          <div class="info-label">Year of Joining</div>
+          <div class="info-val" id="v-year"></div>
+        </div>
+        <div class="info-item full" id="addr-item" style="display:none">
+          <div class="info-label">Address</div>
+          <div class="info-val" id="v-addr"></div>
+        </div>
+        <div class="info-item" id="dob-item" style="display:none">
+          <div class="info-label">Date of Birth</div>
+          <div class="info-val" id="v-dob"></div>
+        </div>
+        <div class="info-item" id="unit-item">
+          <div class="info-label">Unit</div>
+          <div class="info-val">Gorakhpur</div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div class="id-badge" id="v-id-badge"></div>
+      </div>
+      <div class="tricolor-bar"></div>
+      <div class="jai-hind">🇮🇳 जय हिन्द • Jai Hind • वन्दे मातरम्</div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error" id="state-error">
+    <div class="error-icon">❌</div>
+    <div class="error-title">Verification Failed</div>
+    <div class="error-msg" id="error-msg">Member not found or ID is invalid.</div>
+    <button class="retry-btn" onclick="window.location.reload()">Try Again</button>
+  </div>
+
+  <!-- No ID passed -->
+  <div class="no-id" id="state-noid">
+    <div class="no-id-icon">🔍</div>
+    <div class="no-id-title">No Member ID</div>
+    <div class="no-id-msg">Scan a valid ABVP member ID card QR code to verify.</div>
+  </div>
+</div>
+
+<script>
+var PROJ = 'abvp-gkp';
+var AKEY = 'AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w';
+var FSB  = 'https://firestore.googleapis.com/v1/projects/' + PROJ + '/databases/(default)/documents/';
+
+// Set logo inline
+document.getElementById('logo').src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+  + '<circle cx="50" cy="50" r="48" fill="#0D1B3E" stroke="#FF6B00" stroke-width="3"/>'
+  + '<text x="50" y="37" text-anchor="middle" font-family="Arial,sans-serif" font-size="19" font-weight="900" fill="#FFB800">ABVP</text>'
+  + '<text x="50" y="52" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" fill="rgba(255,255,255,0.85)" letter-spacing="0.5">AKHIL BHARATIYA</text>'
+  + '<text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" fill="rgba(255,255,255,0.85)" letter-spacing="0.5">VIDYARTHI PARISHAD</text>'
+  + '<text x="50" y="79" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" fill="#FF6B00">ज्ञान • शील • एकता</text>'
+  + '</svg>'
+)));
+
+function showState(id) {
+  ['state-loading','state-verified','state-error','state-noid'].forEach(function(s) {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+  if (id === 'state-verified') {
+    document.getElementById('state-verified').style.display = 'block';
+  }
+}
+
+function fsv(v) {
+  if (!v) return null;
+  if (v.stringValue  !== undefined) return v.stringValue;
+  if (v.integerValue !== undefined) return parseInt(v.integerValue);
+  if (v.doubleValue  !== undefined) return parseFloat(v.doubleValue);
+  if (v.booleanValue !== undefined) return v.booleanValue;
+  return null;
+}
+function fsf(fields) {
+  var o = {};
+  for (var k in fields) {
+    if (fields.hasOwnProperty(k)) o[k] = fsv(fields[k]);
+  }
+  return o;
+}
+
+function fd(d) {
+  if (!d) return '';
+  var p = d.split('-');
+  if (p.length < 3) return d;
+  var m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return p[2] + ' ' + m[parseInt(p[1]) - 1] + ' ' + p[0];
+}
+
+function setEl(id, val, itemId) {
+  var el = document.getElementById(id);
+  var item = itemId ? document.getElementById(itemId) : null;
+  if (val) {
+    if (el) el.textContent = val;
+    if (item) item.style.display = 'block';
+  } else {
+    if (item) item.style.display = 'none';
+  }
+}
+
+function verify(memberId) {
+  showState('state-loading');
+  fetch(FSB + 'members/' + memberId + '?key=' + AKEY)
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(doc) {
+      if (!doc.fields) {
+        throw new Error('Member not found in database.');
+      }
+      var mb = fsf(doc.fields);
+
+      // Build ID badge
+      var yr  = mb.year  ? String(mb.year).slice(-2)                              : new Date().getFullYear().toString().slice(-2);
+      var ph4 = mb.phone ? mb.phone.replace(/\D/g, '').slice(-4)                  : '0000';
+      var badgeId = 'GKP' + yr + ph4;
+
+      // Populate fields
+      document.getElementById('v-name').textContent  = mb.name  || '—';
+      document.getElementById('v-duty').textContent  = mb.duty  || 'Member';
+      document.getElementById('v-id-badge').textContent = 'ID: ' + badgeId;
+
+      setEl('v-course', mb.course,   'course-item');
+      setEl('v-year',   mb.year,     'year-item');
+      setEl('v-addr',   mb.address,  'addr-item');
+      setEl('v-dob',    fd(mb.birthday), 'dob-item');
+
+      // Photo
+      var photoSlot = document.getElementById('photo-slot');
+      if (mb.photoUrl) {
+        var img = document.createElement('img');
+        img.className = 'member-photo';
+        img.src = mb.photoUrl;
+        img.alt = mb.name || '';
+        photoSlot.appendChild(img);
+      } else {
+        var ph = document.createElement('div');
+        ph.className = 'photo-placeholder';
+        ph.textContent = (mb.name || '?').charAt(0).toUpperCase();
+        photoSlot.appendChild(ph);
+      }
+
+      // Show verified
+      showState('state-verified');
+    })
+    .catch(function(err) {
+      document.getElementById('error-msg').textContent =
+        err.message === 'HTTP 404'
+          ? 'Member not found. This ID card may be invalid or revoked.'
+          : 'Could not connect to ABVP database. Please check your internet connection and try again.';
+      showState('state-error');
+    });
+}
+
+// Read ?id= from URL
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id');
+  if (!id) {
+    showState('state-noid');
+  } else {
+    verify(id);
+  }
+})();
+</script>
+</body>
+</html>
