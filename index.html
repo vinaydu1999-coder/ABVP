@@ -651,7 +651,7 @@ tr:hover td{background:#FFF8F5}
 //  Changes: Photo in pending, media download, dual fund finance
 // ════════════════════════════════════════════
 
-var LOGO_B64='data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAyADIDASIAAhEBAxEB/8QAGwABAAIDAQAAAAAAAAAAAAAAAAYHBAUBAwL/xAAvEAABAwMCBAUDBQEAAAAAAAABAAIDBAUREiExBhNBUWEicYGRobHBFDJCUv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCyIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiD/2Q==';
+var LOGO_SVG='data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#0D1B3E" stroke="#FF6B00" stroke-width="3"/><text x="50" y="38" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="900" fill="#FFB800">ABVP</text><text x="50" y="54" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" fill="#fff" letter-spacing="0.5">AKHIL BHARATIYA</text><text x="50" y="64" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" fill="#fff" letter-spacing="0.5">VIDYARTHI PARISHAD</text><text x="50" y="80" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" fill="#FF6B00">🇮🇳</text></svg>');
 
 var IMGBB='030d136fc61019c46734903688bc8403';
 var PROJ='abvp-gkp',AKEY='AIzaSyDvqxqKLfqJWFSUnrbPzlcKgWOl0gznK4w';
@@ -669,8 +669,8 @@ var lbCurrentUrl='';
 var _debounceTimers={};
 
 // Set logos
-document.getElementById('login-logo').src=LOGO_B64;
-document.getElementById('hdr-logo-img').src=LOGO_B64;
+document.getElementById('login-logo').src=LOGO_SVG;
+document.getElementById('hdr-logo-img').src=LOGO_SVG;
 
 function debounce(key,fn,delay){clearTimeout(_debounceTimers[key]);_debounceTimers[key]=setTimeout(fn,delay||300);}
 function renderMembersDebounced(){debounce('members',renderMembers,200);}
@@ -837,7 +837,7 @@ function renderHome(){
   var photoUrls=allMedia.slice().sort(function(){return Math.random()-.5;}).slice(0,6);
   html+='<div class="home-hero">';
   if(!photoUrls.length){html+='<div class="collage-no-photo"><div class="big-icon">📸</div><p>Photos will appear here once uploaded</p></div>';}
-  else{var n=photoUrls.length;var cls=n===1?'c1':n===2?'c2':n===3?'c3':'c4';html+='<div class="collage-grid '+cls+'">';photoUrls.forEach(function(m,i){var sc=(n===3&&i===0)||(n===5&&i===0)?' span2':'';html+='<div class="collage-cell'+sc+'" onclick="openLB(\''+esc(m.url)+'\',\''+esc(m.caption)+'\',\''+esc(m.categoryLabel)+'\')"><img src="'+esc(m.thumb||m.url)+'" loading="lazy" alt=""></div>';});html+='</div>';}
+  else{var n=photoUrls.length;var cls=n===1?'c1':n===2?'c2':n===3?'c3':'c4';html+='<div class="collage-grid '+cls+'">';photoUrls.forEach(function(m,i){var sc=(n===3&&i===0)||(n===5&&i===0)?' span2':'';html+='<div class="collage-cell'+sc+'" onclick="openLB(\''+esc(m.url)+'\',\''+esc(m.caption)+'\',\''+esc(m.categoryLabel)+'\')" ><img src="'+esc(m.thumb||m.url)+'" loading="eager" decoding="async" alt=""></div>';});html+='</div>';}
   html+='<div class="home-overlay"></div><div class="home-overlay-text"><h2>ABVP Gorakhpur</h2><p>Akhil Bharatiya Vidyarthi Parishad</p></div></div>';
   html+='<div class="home-stats-row"><div class="h-stat"><div class="h-stat-num">'+mbs.length+'</div><div class="h-stat-lbl">Members</div></div><div class="h-stat"><div class="h-stat-num">'+mts.length+'</div><div class="h-stat-lbl">Meetings</div></div><div class="h-stat"><div class="h-stat-num">'+evts.length+'</div><div class="h-stat-lbl">Events</div></div><div class="h-stat"><div class="h-stat-num">'+allMedia.length+'</div><div class="h-stat-lbl">Photos</div></div></div>';
   if(currentRole==='viewer')html+='<div class="viewer-banner"><div style="font-size:28px;flex-shrink:0">👁️</div><div><h3 style="font-size:14px;font-weight:800;color:#FFB800">Viewer Mode</h3><p style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">You can view all activities and download media.</p></div></div>';
@@ -1054,7 +1054,7 @@ function _printBase(){
 function _printHeader(title,subtitle){
   var now=new Date();
   var dateStr=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
-  return '<div class="ph"><img src="'+LOGO_B64+'" alt="ABVP"><div class="ph-txt"><h1>ABVP Gorakhpur</h1><p>Akhil Bharatiya Vidyarthi Parishad</p></div><div class="ph-right"><div style="font-weight:700;color:#0D1B3E">'+title+'</div><div>'+dateStr+'</div>'+(subtitle?'<div>'+subtitle+'</div>':'')+'</div></div>';
+  return '<div class="ph"><img src="'+LOGO_SVG+'" alt="ABVP"><div class="ph-txt"><h1>ABVP Gorakhpur</h1><p>Akhil Bharatiya Vidyarthi Parishad</p></div><div class="ph-right"><div style="font-weight:700;color:#0D1B3E">'+title+'</div><div>'+dateStr+'</div>'+(subtitle?'<div>'+subtitle+'</div>':'')+'</div></div>';
 }
 
 function printMembers(){
@@ -1867,7 +1867,6 @@ function printMemberID(mb) {
   if (!mb) return;
   if (currentRole !== 'admin') { toast('Admin only', '⚠️'); return; }
 
-  // Build plain-text member info for QR code
   var mtgC = (data.meetings || []).filter(function(m) { return (m.memberIds || []).indexOf(mb.id) > -1; }).length;
   var evtC = (data.events || []).filter(function(e) { return (e.memberIds || []).indexOf(mb.id) > -1; }).length;
   var score = mtgC * 3 + evtC * 5;
@@ -1882,15 +1881,40 @@ function printMemberID(mb) {
     + 'ID: ' + mb.id + '\n'
     + 'Jai Hind | Vande Mataram';
 
-  // Get logo base64 from page
-  var logoSrc = document.querySelector('.hdr-logo img') ? document.querySelector('.hdr-logo img').src : '';
-  var photoSrc = mb.photoUrl || '';
+  // Use LOGO_SVG directly — already in memory, no network request needed
+  var logoSrc = typeof LOGO_SVG !== 'undefined' ? LOGO_SVG : '';
 
-  // Generate QR as data URL using QRCode library canvas approach
-  // We'll generate it inline in the print window using qrcodejs
-  var w = window.open('', '_blank', 'width=900,height=700');
-  if (!w) { toast('Allow popups to print', '⚠️'); return; }
+  // Convert member photo to base64 via canvas to avoid CORS/network delay in print window
+  function doOpen(photoB64) {
+    var w = window.open('', '_blank', 'width=900,height=700');
+    if (!w) { toast('Allow popups to print', '⚠️'); return; }
+    _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoB64);
+  }
 
+  if (mb.photoUrl) {
+    toast('Preparing ID card...', '🪪');
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        doOpen(canvas.toDataURL('image/jpeg', 0.85));
+      } catch(e) {
+        // CORS blocked — use URL directly (will still display in print window)
+        doOpen(mb.photoUrl);
+      }
+    };
+    img.onerror = function() { doOpen(mb.photoUrl); };
+    // Add cache-bust to force fresh load with CORS header attempt
+    img.src = mb.photoUrl + (mb.photoUrl.indexOf('?') > -1 ? '&' : '?') + 't=' + Date.now();
+  } else {
+    doOpen('');
+  }
+}
+
+function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc) {
   var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
     + '<title>ID Card — ' + (mb.name || 'Member') + '</title>'
     + '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>'
@@ -2085,7 +2109,7 @@ function printMemberID(mb) {
     // Left — photo
     + '<div class="card-left">'
     + (photoSrc
-        ? '<img class="member-photo" src="' + photoSrc + '" alt="' + (mb.name || '') + '" crossorigin="anonymous">'
+        ? '<img class="member-photo" src="' + photoSrc + '" alt="' + (mb.name || '') + '">'
         : '<div class="photo-placeholder">👤</div>')
     + '<div class="member-id-badge">ID: ' + (mb.id || '').slice(-6).toUpperCase() + '</div>'
     + '</div>'
