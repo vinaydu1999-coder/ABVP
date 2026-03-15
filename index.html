@@ -389,8 +389,13 @@ tr:hover td{background:#FFF8F5}
   <div class="section active" id="sec-home"></div>
   <div class="section" id="sec-members">
     <div class="card admin-only" style="display:none">
-      <div class="card-hdr">👤 Add New Member</div>
-      <div class="form-grid">
+      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleMemberForm()">
+        <div class="card-hdr" style="margin-bottom:0;border-bottom:none;padding-bottom:0">👤 Add New Member</div>
+        <span id="m-form-arrow" style="font-size:18px;color:#9CA3AF;transition:transform .25s;padding:4px 8px">▼</span>
+      </div>
+      <div id="m-form-body" style="overflow:hidden;max-height:0;transition:max-height .3s ease,margin-top .2s ease;margin-top:0">
+        <div style="padding-top:14px;border-top:1.5px solid #F3F4F6;margin-top:12px">
+        <div class="form-grid">
         <div class="fg full"><label>Full Name *</label><input id="m-name" placeholder="Member name" autocomplete="off"></div>
         <div class="fg"><label>Phone</label><input id="m-phone" type="tel" placeholder="Mobile"></div>
         <div class="fg"><label>Address</label><input id="m-address" placeholder="City / Area"></div>
@@ -408,6 +413,15 @@ tr:hover td{background:#FFF8F5}
           </div>
         </div>
         <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="addMember()">+ Add Member</button></div>
+      </div>
+      </div><!-- /padding wrapper -->
+      </div><!-- /m-form-body -->
+    </div>
+    <div class="card admin-only" style="display:none;padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9CA3AF;white-space:nowrap">📞 CUG Number</label>
+        <input id="cug-input" type="tel" placeholder="e.g. 9005123456" style="flex:1;min-width:140px;border:1.5px solid #E5E7EB;border-radius:10px;padding:9px 13px;font-size:13px;outline:none;background:#FAFAFA;font-family:inherit">
+        <button class="btn btn-sm btn-primary" onclick="saveCUG()">Save</button>
       </div>
     </div>
     <div class="card">
@@ -1932,12 +1946,14 @@ function printMemberID(mb) {
 
   // Use LOGO_SVG directly — already in memory, no network request needed
   var logoSrc = typeof LOGO_SVG !== 'undefined' ? LOGO_SVG : '';
+  // Read CUG here in parent window context (popup window won't have localStorage)
+  var cugVal = localStorage.getItem('abvp_cug') || '';
 
   // Convert member photo to base64 via canvas to avoid CORS/network delay in print window
   function doOpen(photoB64) {
     var w = window.open('', '_blank', 'width=900,height=700');
     if (!w) { toast('Allow popups to print', '⚠️'); return; }
-    _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoB64);
+    _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoB64, cugVal);
   }
 
   if (mb.photoUrl) {
@@ -1963,9 +1979,18 @@ function printMemberID(mb) {
   }
 }
 
-function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc) {
+function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc, cugVal) {
+  // Find president and secretary from member list
+  var _president = null, _secretary = null;
+  (data.members || []).forEach(function(m) {
+    var d = (m.duty || '').toLowerCase();
+    if (!_president && (d === 'president' || d === 'unit president')) _president = m;
+    if (!_secretary && (d === 'secretary' || d === 'unit secretary')) _secretary = m;
+  });
+
   var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
     + '<title>ID Card — ' + (mb.name || 'Member') + '</title>'
+    + '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap">'
     + '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>'
     + '<style>'
     + '* { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }'
@@ -2132,6 +2157,7 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc) {
     + '  font-size:11px; color:#6B7280; text-align:center; margin-bottom:6px;'
     + '  font-family:-apple-system,Arial,sans-serif; letter-spacing:1px; text-transform:uppercase;'
     + '}'
+    + '.sig-name { font-family:"Dancing Script",cursive; font-weight:700; font-size:5.5pt; color:#0D1B3E; }'
     + '</style>'
     + '</head><body>'
     + '<div class="preview-label no-print">MEMBER ID CARD PREVIEW — PRINT READY (CR80 Standard)</div>'
@@ -2179,6 +2205,21 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc) {
     + '<div class="qr-label">Scan for<br>member info</div>'
     + '</div>'
     + '</div>'
+    // Signature row
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-end;padding:1mm 3.5mm 1.2mm;border-top:0.3mm solid #E5E7EB;">'
+    + '<div style="text-align:center;">'
+    + '<div style="width:20mm;border-bottom:0.4mm solid #374151;margin-bottom:0.8mm;"></div>'
+    + '<div class="sig-name">' + (_secretary ? _secretary.name : 'Unit Secretary') + '</div>'
+    + '<div style="font-size:3pt;color:#9CA3AF;letter-spacing:0.3px;">Secretary, ABVP Gorakhpur</div>'
+    + (cugVal ? '<div style="font-size:3pt;color:#FF6B00;font-weight:700;letter-spacing:0.3px;margin-top:0.4mm;">CUG: ' + cugVal + '</div>' : '')
+    + '</div>'
+    + '<div style="font-size:3.5pt;font-weight:900;color:#FF6B00;letter-spacing:0.3px;padding-bottom:1mm;">जय हिन्द</div>'
+    + '<div style="text-align:center;">'
+    + '<div style="width:20mm;border-bottom:0.4mm solid #374151;margin-bottom:0.8mm;"></div>'
+    + '<div class="sig-name">' + (_president ? _president.name : 'Unit President') + '</div>'
+    + '<div style="font-size:3pt;color:#9CA3AF;letter-spacing:0.3px;">President, ABVP Gorakhpur</div>'
+    + '</div>'
+    + '</div>'
     // Bottom tricolour stripe
     + '<div class="stripe-bottom"></div>'
     + '</div>'
@@ -2208,6 +2249,39 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc) {
   w.document.write(html);
   w.document.close();
 }
+
+// ── Collapsible member form ──
+function toggleMemberForm(){
+  var body=document.getElementById('m-form-body');
+  var arrow=document.getElementById('m-form-arrow');
+  if(!body)return;
+  if(body.style.maxHeight==='0px'||body.style.maxHeight===''){
+    body.style.maxHeight=body.scrollHeight+'px';
+    body.style.marginTop='12px';
+    if(arrow)arrow.style.transform='rotate(180deg)';
+  } else {
+    body.style.maxHeight='0px';
+    body.style.marginTop='0';
+    if(arrow)arrow.style.transform='rotate(0deg)';
+  }
+}
+
+// ── CUG ──
+function saveCUG(){
+  var val=((document.getElementById('cug-input')||{}).value||'').trim();
+  localStorage.setItem('abvp_cug',val);
+  fwt(FSB+'system/metadata?key='+AKEY,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(toFD({cug:val}))},9000).catch(function(){});
+  toast('CUG saved ✓','📞');
+}
+function loadCUG(){
+  var val=localStorage.getItem('abvp_cug')||'';
+  var el=document.getElementById('cug-input');
+  if(el&&val)el.value=val;
+}
+
+// Hook loadCUG into showApp
+var _sa=showApp;
+showApp=function(){_sa();loadCUG();};
 </script>
 </body>
 </html>
