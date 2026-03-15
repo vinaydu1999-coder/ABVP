@@ -397,6 +397,7 @@ tr:hover td{background:#FFF8F5}
         <div class="fg"><label>Duty / Role</label><input id="m-duty" placeholder="e.g. Karyavah"></div>
         <div class="fg"><label>Year of Joining</label><input id="m-year" placeholder="e.g. 2023"></div>
         <div class="fg"><label>🎂 Birthday</label><input type="date" id="m-bday"></div>
+        <div class="fg full"><label>Course / Qualification</label><input id="m-course" placeholder="e.g. B.A. 2nd Year, M.Sc. Physics"></div>
         <div class="fg full">
           <label>Profile Photo</label>
           <div class="photo-drop" onclick="document.getElementById('m-photo-inp').click()">
@@ -419,7 +420,7 @@ tr:hover td{background:#FFF8F5}
         <table>
           <thead><tr>
             <th>#</th><th>Photo</th><th>Name</th><th>Duty</th>
-            <th class="hide-mob">Phone</th><th>🎂</th>
+            <th class="hide-mob">Course</th><th class="hide-mob">Phone</th><th>🎂</th>
             <th class="hide-mob">Mtg</th><th class="hide-mob">Evt</th>
             <th>Score</th><th>WA</th><th class="admin-only" id="act-th" style="display:none">Act</th>
           </tr></thead>
@@ -584,6 +585,28 @@ tr:hover td{background:#FFF8F5}
         <div id="qr-link-box" style="margin-top:10px;font-size:11px;color:#9CA3AF;word-break:break-all"></div>
       </div>
     </div>
+    <div class="card admin-only" id="jf-card" style="display:none">
+      <div class="card-hdr">👤 Join Request Form</div>
+      <div class="form-grid">
+        <div class="fg full"><label>Full Name *</label><input id="jf-name" placeholder="Your full name"></div>
+        <div class="fg"><label>Phone</label><input id="jf-phone" type="tel"></div>
+        <div class="fg"><label>Address</label><input id="jf-addr" placeholder="City / Area"></div>
+        <div class="fg"><label>Duty / Role</label><input id="jf-duty"></div>
+        <div class="fg"><label>Year of Joining</label><input id="jf-year"></div>
+        <div class="fg"><label>🎂 Birthday</label><input type="date" id="jf-bday"></div>
+        <div class="fg full"><label>Course / Qualification</label><input id="jf-course" placeholder="e.g. B.A. 2nd Year, M.Sc. Physics"></div>
+        <div class="fg full">
+          <label>Profile Photo (optional)</label>
+          <div class="photo-drop" onclick="document.getElementById('jf-photo-inp').click()">
+            <div id="jf-photo-prev" style="font-size:32px;margin-bottom:6px">📷</div>
+            <div style="font-size:12px;color:#888">Tap to upload your photo</div>
+            <input type="file" id="jf-photo-inp" accept="image/*" onchange="handleJoinPhoto()">
+            <div class="upbar" id="jf-upbar"><div class="upbar-fill" id="jf-upfill"></div></div>
+          </div>
+        </div>
+        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" id="jf-sbtn" onclick="submitJoinReq()">📨 Submit Request</button></div>
+      </div>
+    </div>
     <div class="card admin-only" id="pending-card" style="display:none">
       <div class="card-hdr" style="justify-content:space-between">
         <span>⏳ Pending Approvals</span>
@@ -607,6 +630,7 @@ tr:hover td{background:#FFF8F5}
         <div class="fg"><label>Duty</label><input id="edit-duty"></div>
         <div class="fg"><label>Year</label><input id="edit-year"></div>
         <div class="fg"><label>🎂 Birthday</label><input type="date" id="edit-bday"></div>
+        <div class="fg full"><label>Course / Qualification</label><input id="edit-course" placeholder="e.g. B.A. 2nd Year, M.Sc. Physics"></div>
         <div class="fg full">
           <label>Profile Photo</label>
           <div class="photo-drop" onclick="document.getElementById('edit-photo-inp').click()">
@@ -1073,13 +1097,13 @@ function printMembers(){
   html+='<div class="sec-title">📋 Member Directory</div>';
   if(!list.length){html+='<p style="color:#9CA3AF;text-align:center;padding:24pt">No members found.</p>';}
   else{
-    html+='<table><thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Phone</th><th>Address</th><th>Birthday</th><th>Mtg</th><th>Evt</th><th>Score</th></tr></thead><tbody>';
+    html+='<table><thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Course</th><th>Phone</th><th>Address</th><th>Birthday</th><th>Mtg</th><th>Evt</th><th>Score</th></tr></thead><tbody>';
     list.forEach(function(mb,i){
       var mtgC=(data.meetings||[]).filter(function(m){return(m.memberIds||[]).indexOf(mb.id)>-1;}).length;
       var evtC=(data.events||[]).filter(function(e){return(e.memberIds||[]).indexOf(mb.id)>-1;}).length;
       var score=mtgC*3+evtC*5;
       var sCls=score>=30?'b-green':score>=15?'b-orange':'b-gray';
-      html+='<tr><td style="color:#9CA3AF">'+(i+1)+'</td><td style="font-weight:700;color:#0D1B3E">'+esc(mb.name||'—')+'</td><td><span class="badge b-navy">'+esc(mb.duty||'—')+'</span></td><td>'+esc(mb.phone||'—')+'</td><td style="font-size:9pt">'+esc(mb.address||'—')+'</td><td>'+(mb.birthday?fd(mb.birthday):'—')+'</td><td style="text-align:center">'+mtgC+'</td><td style="text-align:center">'+evtC+'</td><td><span class="badge '+sCls+'">'+score+'</span></td></tr>';
+      html+='<tr><td style="color:#9CA3AF">'+(i+1)+'</td><td style="font-weight:700;color:#0D1B3E">'+esc(mb.name||'—')+'</td><td><span class="badge b-navy">'+esc(mb.duty||'—')+'</span></td><td style="font-size:9pt">'+esc(mb.course||'—')+'</td><td>'+esc(mb.phone||'—')+'</td><td style="font-size:9pt">'+esc(mb.address||'—')+'</td><td>'+(mb.birthday?fd(mb.birthday):'—')+'</td><td style="text-align:center">'+mtgC+'</td><td style="text-align:center">'+evtC+'</td><td><span class="badge '+sCls+'">'+score+'</span></td></tr>';
     });
     html+='</tbody></table>';
   }
@@ -1189,15 +1213,15 @@ function addMember(){
   var exists=(data.members||[]).some(function(m){return m.name.trim().toLowerCase()===name.trim().toLowerCase();});
   if(exists&&!confirm('"'+name+'" already exists. Add anyway?'))return;
   var id=uid();
-  fbSet('members',id,{name:name.trim(),phone:v('m-phone'),address:v('m-address'),duty:v('m-duty'),year:v('m-year'),birthday:v('m-bday'),photoUrl:tempPhotoUrl,createdAt:Date.now()});
+  fbSet('members',id,{name:name.trim(),phone:v('m-phone'),address:v('m-address'),duty:v('m-duty'),year:v('m-year'),birthday:v('m-bday'),course:v('m-course'),photoUrl:tempPhotoUrl,createdAt:Date.now()});
   tempPhotoUrl='';
-  ['m-name','m-phone','m-address','m-duty','m-year','m-bday'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  ['m-name','m-phone','m-address','m-duty','m-year','m-bday','m-course'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
   var pp=document.getElementById('m-photo-prev');if(pp)pp.innerHTML='📷';
   toast('Member added ✓','👤');renderMembers();
 }
 function renderMembers(){
   var q=(v('m-srch')||'').toLowerCase(),isA=currentRole==='admin';
-  var list=(data.members||[]).filter(function(m){return!q||(m.name||'').toLowerCase().indexOf(q)>-1||(m.duty||'').toLowerCase().indexOf(q)>-1||(m.phone||'').indexOf(q)>-1;});
+  var list=(data.members||[]).filter(function(m){return!q||(m.name||'').toLowerCase().indexOf(q)>-1||(m.duty||'').toLowerCase().indexOf(q)>-1||(m.phone||'').indexOf(q)>-1||(m.course||'').toLowerCase().indexOf(q)>-1;});
   if(!list.length){document.getElementById('m-tbody').innerHTML='<tr><td colspan="11" style="text-align:center;padding:30px;color:#9CA3AF">No members found</td></tr>';document.getElementById('m-stats').textContent='';return;}
   var html='';
   list.forEach(function(mb,i){
@@ -1215,13 +1239,13 @@ function renderMembers(){
 function getMemberById(id){for(var i=0;i<(data.members||[]).length;i++){if(data.members[i].id===id)return data.members[i];}return null;}
 function editMember(id){
   var mb=getMemberById(id);if(!mb)return;
-  document.getElementById('edit-id').value=id;document.getElementById('edit-name').value=mb.name||'';document.getElementById('edit-phone').value=mb.phone||'';document.getElementById('edit-addr').value=mb.address||'';document.getElementById('edit-duty').value=mb.duty||'';document.getElementById('edit-year').value=mb.year||'';document.getElementById('edit-bday').value=mb.birthday||'';
+  document.getElementById('edit-id').value=id;document.getElementById('edit-name').value=mb.name||'';document.getElementById('edit-phone').value=mb.phone||'';document.getElementById('edit-addr').value=mb.address||'';document.getElementById('edit-duty').value=mb.duty||'';document.getElementById('edit-year').value=mb.year||'';document.getElementById('edit-bday').value=mb.birthday||'';document.getElementById('edit-course').value=mb.course||'';
   var pp=document.getElementById('edit-photo-prev');if(mb.photoUrl)pp.innerHTML='<img src="'+esc(mb.photoUrl)+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #FF6B00;display:inline-block;">';else pp.innerHTML='📷';
   tempPhotoUrl=mb.photoUrl||'';document.getElementById('edit-modal').classList.add('open');
 }
 function saveEditMember(){
   var id=v('edit-id');if(!id)return;var mb=getMemberById(id);if(!mb)return;
-  mb.name=v('edit-name');mb.phone=v('edit-phone');mb.address=v('edit-addr');mb.duty=v('edit-duty');mb.year=v('edit-year');mb.birthday=v('edit-bday');if(tempPhotoUrl)mb.photoUrl=tempPhotoUrl;
+  mb.name=v('edit-name');mb.phone=v('edit-phone');mb.address=v('edit-addr');mb.duty=v('edit-duty');mb.year=v('edit-year');mb.birthday=v('edit-bday');mb.course=v('edit-course');if(tempPhotoUrl)mb.photoUrl=tempPhotoUrl;
   fbSet('members',id,mb);tempPhotoUrl='';document.getElementById('edit-modal').classList.remove('open');toast('Member updated ✓','✏️');renderMembers();
 }
 function delMember(id){var mb=getMemberById(id);if(!confirm('Delete member'+(mb?' "'+mb.name+'"':'')+' permanently?'))return;fbDel('members',id);toast('Member deleted','🗑️');renderMembers();}
@@ -1795,6 +1819,23 @@ function shareQR(){
 }
 
 // ── PENDING (with photo) ──
+var joinPhotoUrl='';
+function handleJoinPhoto(){
+  var inp=document.getElementById('jf-photo-inp');if(!inp||!inp.files||!inp.files[0])return;
+  var file=inp.files[0],prev=document.getElementById('jf-photo-prev'),bar=document.getElementById('jf-upbar'),fill=document.getElementById('jf-upfill');
+  var reader=new FileReader();reader.onload=function(e){if(prev)prev.innerHTML='<img src="'+e.target.result+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #FF6B00;display:inline-block;">';};reader.readAsDataURL(file);
+  if(bar)bar.style.display='block';if(fill)fill.style.width='0%';joinPhotoUrl='';toast('Uploading photo...','📤');
+  imgbbUp(file,function(p){if(fill)fill.style.width=Math.round(p*100)+'%';},function(url){joinPhotoUrl=url;if(bar)bar.style.display='none';toast('Photo ready ✓','📸');},function(){if(bar)bar.style.display='none';toast('Photo upload failed — submit without it','⚠️');joinPhotoUrl='';});
+}
+function submitJoinReq(){
+  var name=v('jf-name');if(!name.trim()){toast('Enter your name','⚠️');return;}
+  var btn=document.getElementById('jf-sbtn');if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner-sm"></span> Submitting...';}
+  fbSet('pending',uid(),{name:name.trim(),phone:v('jf-phone'),address:v('jf-addr'),duty:v('jf-duty'),year:v('jf-year'),birthday:v('jf-bday'),course:v('jf-course'),photoUrl:joinPhotoUrl||'',status:'pending',createdAt:Date.now()});
+  ['jf-name','jf-phone','jf-addr','jf-duty','jf-year','jf-bday','jf-course'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  var pp=document.getElementById('jf-photo-prev');if(pp)pp.innerHTML='📷';joinPhotoUrl='';
+  setTimeout(function(){if(btn){btn.disabled=false;btn.textContent='📨 Submit Request';}},1500);
+  toast('Request submitted! Admin will review.','📨');
+}
 function renderPending(){
   var list=(data.pending||[]).filter(function(p){return p.status==='pending';});
   var pc=document.getElementById('pending-card');if(pc)pc.style.display=currentRole==='admin'?'':'none';
@@ -1811,7 +1852,7 @@ function renderPending(){
     }
     html+='<div style="flex:1;min-width:0">';
     html+='<div style="font-weight:800;font-size:14px;color:#0D1B3E">'+esc(p.name)+'</div>';
-    html+='<div style="font-size:11px;color:#9CA3AF;margin-top:2px">'+esc(p.phone||'—')+' · '+esc(p.address||'—')+(p.duty?' · <span style="color:#FF6B00;font-weight:600">'+esc(p.duty)+'</span>':'')+(p.birthday?' · 🎂 '+esc(fd(p.birthday)):'')+'</div>';
+    html+='<div style="font-size:11px;color:#9CA3AF;margin-top:2px">'+esc(p.phone||'—')+' · '+esc(p.address||'—')+(p.duty?' · <span style="color:#FF6B00;font-weight:600">'+esc(p.duty)+'</span>':'')+(p.birthday?' · 🎂 '+esc(fd(p.birthday)):'')+(p.course?' · 📚 <span style="color:#2563EB;font-weight:600">'+esc(p.course)+'</span>':'')+'</div>';
     if(p.photoUrl)html+='<div style="margin-top:4px"><span class="badge badge-green">📷 Photo attached</span></div>';
     html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-sm btn-navy" onclick="togglePendingEdit(\''+p.id+'\')">✏️ Edit</button><button class="btn btn-sm btn-green" onclick="approvePending(\''+p.id+'\')">✓ Approve</button><button class="btn btn-sm btn-red" onclick="rejectPending(\''+p.id+'\')">✗ Reject</button></div>';
     html+='</div></div>';
@@ -1822,7 +1863,7 @@ function renderPending(){
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Phone</label><input id="pe-phone-'+p.id+'" value="'+esc(p.phone||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Address</label><input id="pe-addr-'+p.id+'" value="'+esc(p.address||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Designation</label><input id="pe-duty-'+p.id+'" value="'+esc(p.duty||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
-    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Year</label><input id="pe-year-'+p.id+'" value="'+esc(p.year||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Year</label><input id="pe-year-'+p.id+'" value="'+esc(p.year||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>'; html+='<div style="grid-column:span 2"><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Course</label><input id="pe-course-'+p.id+'" value="'+esc(p.course||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Birthday</label><input type="date" id="pe-bday-'+p.id+'" value="'+esc(p.birthday||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
     html+='</div><button class="btn btn-sm btn-primary" onclick="savePendingEdit(\''+p.id+'\')">💾 Save Changes</button>';
     html+='</div></div>';
@@ -1833,13 +1874,13 @@ function togglePendingEdit(id){var el=document.getElementById('pedit-'+id);if(el
 function savePendingEdit(id){
   var p=null;for(var i=0;i<data.pending.length;i++){if(data.pending[i].id===id){p=data.pending[i];break;}}if(!p)return;
   var name=document.getElementById('pe-name-'+id).value.trim();if(!name){toast('Name is required','⚠️');return;}
-  p.name=name;p.phone=document.getElementById('pe-phone-'+id).value.trim();p.address=document.getElementById('pe-addr-'+id).value.trim();p.duty=document.getElementById('pe-duty-'+id).value.trim();p.year=document.getElementById('pe-year-'+id).value.trim();p.birthday=document.getElementById('pe-bday-'+id).value;
+  p.name=name;p.phone=document.getElementById('pe-phone-'+id).value.trim();p.address=document.getElementById('pe-addr-'+id).value.trim();p.duty=document.getElementById('pe-duty-'+id).value.trim();p.year=document.getElementById('pe-year-'+id).value.trim();p.birthday=document.getElementById('pe-bday-'+id).value;var pcEl=document.getElementById('pe-course-'+id);if(pcEl)p.course=pcEl.value.trim();
   fbSet('pending',id,p);toast('Request updated ✓','✏️');renderPending();
 }
 function approvePending(id){
   var p=null;for(var i=0;i<data.pending.length;i++){if(data.pending[i].id===id){p=data.pending[i];break;}}if(!p)return;
   // photoUrl from pending request → member DP
-  fbSet('members',uid(),{name:p.name,phone:p.phone||'',address:p.address||'',duty:p.duty||'',year:p.year||'',birthday:p.birthday||'',photoUrl:p.photoUrl||'',createdAt:Date.now()});
+  fbSet('members',uid(),{name:p.name,phone:p.phone||'',address:p.address||'',duty:p.duty||'',year:p.year||'',birthday:p.birthday||'',course:p.course||'',photoUrl:p.photoUrl||'',createdAt:Date.now()});
   fbDel('pending',id);toast(p.name+' approved and added as member ✓','✓');refreshPending();renderMembers();
 }
 function rejectPending(id){if(!confirm('Reject this request?'))return;fbDel('pending',id);toast('Request rejected','🗑️');refreshPending();}
@@ -1885,16 +1926,9 @@ function printMemberID(mb) {
   var mtgC = (data.meetings || []).filter(function(m) { return (m.memberIds || []).indexOf(mb.id) > -1; }).length;
   var evtC = (data.events || []).filter(function(e) { return (e.memberIds || []).indexOf(mb.id) > -1; }).length;
   var score = mtgC * 3 + evtC * 5;
-  var qrText = 'ABVP GORAKHPUR UNIT\n'
-    + 'Name: ' + (mb.name || '') + '\n'
-    + 'Designation: ' + (mb.duty || 'Member') + '\n'
-    + 'Phone: ' + (mb.phone || 'N/A') + '\n'
-    + 'Address: ' + (mb.address || 'N/A') + '\n'
-    + (mb.birthday ? 'Birthday: ' + fd(mb.birthday) + '\n' : '')
-    + 'Year: ' + (mb.year || 'N/A') + '\n'
-    + 'Meetings: ' + mtgC + ' | Events: ' + evtC + ' | Score: ' + score + '\n'
-    + 'ID: ' + mb.id + '\n'
-    + 'Jai Hind | Vande Mataram';
+  // Build verification URL — QR encodes this so scanning opens verify.html
+  var VERIFY_URL = window.location.href.split('?')[0].replace('index.html','') + 'verify.html?id=' + encodeURIComponent(mb.id);
+  var qrText = VERIFY_URL;
 
   // Use LOGO_SVG directly — already in memory, no network request needed
   var logoSrc = typeof LOGO_SVG !== 'undefined' ? LOGO_SVG : '';
@@ -2126,21 +2160,18 @@ function _buildAndPrintID(w, mb, mtgC, evtC, score, qrText, logoSrc, photoSrc) {
     + (photoSrc
         ? '<img class="member-photo" src="' + photoSrc + '" alt="' + (mb.name || '') + '">'
         : '<div class="photo-placeholder">👤</div>')
-    + '<div class="member-id-badge">ID: ' + (mb.id || '').slice(-6).toUpperCase() + '</div>'
+    + '<div class="member-id-badge">ID: GKP' + (mb.year ? String(mb.year).slice(-2) : new Date().getFullYear().toString().slice(-2)) + (mb.phone ? mb.phone.replace(/\D/g,'').slice(-4) : '0000') + '</div>'
     + '</div>'
     // Middle — info
     + '<div class="card-info">'
     + '<div class="member-name">' + (mb.name || '—') + '</div>'
     + '<div class="member-designation">' + (mb.duty || 'Member') + '</div>'
-    + (mb.phone ? '<div class="info-row"><span class="info-label">Ph:</span><span class="info-val">' + (mb.phone || '') + '</span></div>' : '')
+    + (mb.course ? '<div class="info-row"><span class="info-label">Course:</span><span class="info-val">' + (mb.course || '') + '</span></div>' : '')
     + (mb.address ? '<div class="info-row"><span class="info-label">Addr:</span><span class="info-val">' + (mb.address || '') + '</span></div>' : '')
-    + (mb.year ? '<div class="info-row"><span class="info-label">Since:</span><span class="info-val">' + mb.year + '</span></div>' : '')
+    + (mb.year ? '<div class="info-row"><span class="info-label">Year:</span><span class="info-val">' + mb.year + '</span></div>' : '')
+    + (mb.phone ? '<div class="info-row"><span class="info-label">Ph:</span><span class="info-val">' + (mb.phone || '') + '</span></div>' : '')
     + (mb.birthday ? '<div class="info-row"><span class="info-label">DoB:</span><span class="info-val">' + fd(mb.birthday) + '</span></div>' : '')
-    + '<div class="score-row">'
-    + '<span class="score-pill">MTG: ' + mtgC + '</span>'
-    + '<span class="score-pill">EVT: ' + evtC + '</span>'
-    + '<span class="score-pill">⭐ ' + score + '</span>'
-    + '</div>'
+    + '<div style="margin-top:1.5mm;font-size:4.5pt;font-weight:900;color:#FF6B00;letter-spacing:0.5px;">जय हिन्द • Jai Hind</div>'
     + '</div>'
     // Right — QR
     + '<div class="card-right">'
