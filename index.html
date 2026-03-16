@@ -332,6 +332,7 @@ to{opacity:1}}
     <button class="nav-tab" id="tab-inv" onclick="showSec('invitations');setActive(this)">✉️ Invitations</button>
     <button class="nav-tab" id="tab-fin" onclick="showSec('finance');setActive(this)" style="display:none">💰 Finance</button>
     <button class="nav-tab" id="tab-qr" onclick="showSec('qr');setActive(this)">🔗 QR Join</button>
+    <button class="nav-tab" id="tab-letter" onclick="showSec('letter');setActive(this)">📄 Letterhead</button>
   </div>
 
   <div class="section active" id="sec-home"></div>
@@ -548,9 +549,51 @@ to{opacity:1}}
       <div id="pending-list"></div>
     </div>
   </div>
+
+  <!-- LETTERHEAD SECTION -->
+  <div class="section" id="sec-letter">
+    <!-- Admin: compose form -->
+    <div class="card admin-only" style="display:none">
+    <div class="card-hdr">📄 New Letter</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Letter Subject / Title</label><input id="lt-subject" placeholder="e.g. Invitation to Annual Programme"></div>
+      <div class="fg full"><label>Addressed To</label><input id="lt-to" placeholder="e.g. The Principal, DDU Gorakhpur University"></div>
+      <div class="fg full" style="align-items:flex-start"><label>Body</label><textarea id="lt-body" placeholder="Type the letter body here..." style="min-height:180px"></textarea></div>
+      <div class="fg"><label>Letter Date</label><input type="date" id="lt-date"></div>
+      <div class="fg"><label>Reference No. (optional)</label><input id="lt-ref" placeholder="e.g. ABVP/GKP/2025/001"></div>
+      <div class="fg full" style="align-items:flex-start;gap:8px;flex-direction:row;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveLetter()">💾 Save Letter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved letters list -->
+  <div class="card">
+    <div class="card-hdr">📂 Saved Letters</div>
+    <div id="letter-list"><div class="empty-state"><div class="es-icon">📄</div><div class="es-title">No letters yet</div></div></div>
+  </div>
+</div><!-- end sec-letter -->
+
+</div><!-- end app -->
+
+<!-- EDIT LETTER MODAL -->
+<div class="modal-overlay" id="edit-letter-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hdr"><h3>✏️ Edit Letter</h3><button class="modal-close" onclick="document.getElementById('edit-letter-modal').classList.remove('open')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="el-id">
+      <div class="form-grid">
+        <div class="fg full"><label>Subject / Title</label><input id="el-subject"></div>
+        <div class="fg full"><label>Addressed To</label><input id="el-to"></div>
+        <div class="fg full" style="align-items:flex-start"><label>Body</label><textarea id="el-body" style="min-height:180px"></textarea></div>
+        <div class="fg"><label>Letter Date</label><input type="date" id="el-date"></div>
+        <div class="fg"><label>Reference No.</label><input id="el-ref"></div>
+        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="saveEditLetter()">💾 Save Changes</button></div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- EDIT MEMBER MODAL -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-hdr"><h3>✏️ Edit Member</h3><button class="modal-close" onclick="document.getElementById('edit-modal').classList.remove('open')">×</button></div>
@@ -676,7 +719,7 @@ var FSB='https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(defaul
 var JOIN_URL=window.location.href.split('?')[0].replace('index.html','')+'join.html';
 var LS_KEY='abvp_v4',LS_PWD='abvp_pwds4';
 var PASSWORDS={admin:'abvp@admin2024',member:'abvp@member2024'};
-var data={members:[],meetings:[],events:[],invitations:[],pending:[],donations:[],expenses:[],objectives:[],transfers:[]};
+var data={members:[],meetings:[],events:[],invitations:[],pending:[],donations:[],expenses:[],objectives:[],transfers:[],letters:[]};
 var currentRole=null;
 var mtSelIds=[],evSelIds=[],invSelIds=[],mtOthers=[];
 var tempPhotoUrl='';
@@ -759,7 +802,7 @@ function lsSave(){try{localStorage.setItem(LS_KEY,JSON.stringify(data));}catch(e
 function lsLoad(){
   try{
     var r=localStorage.getItem(LS_KEY);
-    if(r){var p=JSON.parse(r);['members','meetings','events','invitations','pending','donations','expenses','objectives','transfers'].forEach(function(k){data[k]=p[k]||[];});}
+    if(r){var p=JSON.parse(r);['members','meetings','events','invitations','pending','donations','expenses','objectives','transfers','letters'].forEach(function(k){data[k]=p[k]||[];});}
     var pw=localStorage.getItem(LS_PWD);if(pw)PASSWORDS=JSON.parse(pw);
   }catch(e){}
 }
@@ -786,6 +829,7 @@ function showSec(id){
   var s=document.getElementById('sec-'+id);if(s)s.classList.add('active');
   if(id==='home')renderHome();
   if(id==='finance')renderFinance();
+  if(id==='letter')renderLetters();
   if(id==='qr'){generateQR();if(currentRole==='admin'){fbGetCol('pending').then(function(docs){data.pending=docs;lsSave();renderPending();}).catch(function(){renderPending();});}}
 }
 function togglePwdField(){var role=v('role-sel');var pf=document.getElementById('pwd-field');if(pf)pf.style.display=role==='viewer'?'none':'block';}
@@ -1159,16 +1203,16 @@ function applyRoles(){
   var isA=currentRole==='admin',isM=currentRole==='member';
   document.querySelectorAll('.admin-only').forEach(function(el){el.style.display=isA?'':'none';});
   var at=document.getElementById('act-th');if(at)at.style.display=isA?'table-cell':'none';
-  document.getElementById('tab-fin').style.display=isA?'':'none';
+  document.getElementById('tab-fin').style.display=(isA||isM)?'':'none';
   document.getElementById('chpwd-btn').style.display=isA?'flex':'none';
   var pc=document.getElementById('pending-card');if(pc)pc.style.display=isA?'':'none';
 }
 function loadFB(cb){
-  var cols=['members','meetings','events','invitations','donations','expenses','objectives','transfers'];
+  var cols=['members','meetings','events','invitations','donations','expenses','objectives','transfers','letters'];
   var loaded=0,ok=true;
   cols.forEach(function(col){fbGetCol(col).then(function(docs){data[col]=docs;loaded++;if(loaded===cols.length){lsSave();if(cb)cb(ok);}}).catch(function(){ok=false;loaded++;if(loaded===cols.length){if(cb)cb(false);}});});
 }
-function render(){renderMembers();renderMeetings();renderEvents();renderInvitations();}
+function render(){renderMembers();renderMeetings();renderEvents();renderInvitations();renderLetters();}
 
 // ── MEMBERS ──
 function addMember(){
@@ -1252,7 +1296,7 @@ function renderMeetings(){
     html+='<button class="btn btn-sm btn-navy" onclick="printMeeting(\''+mt.id+'\')">🖨️ Print</button>';
     if(currentRole==='admin'){html+='<button class="btn btn-sm btn-orange" onclick="editMeeting(\''+mt.id+'\')">✏️ Edit</button><button class="btn btn-sm btn-red" onclick="delMeeting(\''+mt.id+'\')">🗑️</button>';}
     html+='</div></div>';
-    if(mt.isOnline&&mt.meetingLink)html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#1D4ED8">🌐</span><a href="'+esc(mt.meetingLink)+'" target="_blank" rel="noopener" style="flex:1;font-size:12px;color:#2563EB;word-break:break-all;text-decoration:none;font-weight:500">'+esc(mt.meetingLink)+'</a><a href="'+esc(mt.meetingLink)+'" target="_blank" rel="noopener" style="background:#2563EB;color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0">Join →</a></div>';
+    if(mt.isOnline&&mt.meetingLink){var rawLink=mt.meetingLink;html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#1D4ED8">🌐</span><span style="flex:1;font-size:12px;color:#2563EB;word-break:break-all;font-weight:500">'+esc(rawLink)+'</span><button class="btn btn-sm" style="background:#2563EB;color:#fff;flex-shrink:0" onclick="window.open(\''+rawLink.replace(/\'/g,"\\'")+'\',' + "'_blank'" + ')">Join →</button></div>';}
     if(mt.agenda)html+='<div style="margin-top:10px;font-size:13px;color:#374151;line-height:1.6"><strong>Agenda:</strong> '+esc(mt.agenda)+'</div>';
     if(mt.motions)html+='<div style="margin-top:6px;font-size:13px;color:#374151;line-height:1.6"><strong>Motions:</strong> '+esc(mt.motions)+'</div>';
     if(mt.nextDate)html+='<div style="margin-top:8px"><span class="badge badge-blue">Next: '+esc(fd(mt.nextDate))+'</span></div>';
@@ -1368,6 +1412,7 @@ function fmtAmt(n){return'₹'+(parseFloat(n)||0).toLocaleString('en-IN',{minimu
 
 function renderFinance(){
   var isA=currentRole==='admin';
+  var canEdit=currentRole!=='viewer';  // admin + member can add/edit/delete
   var gBal=calcGeneralBalance();
   var allObjBal=0;(data.objectives||[]).forEach(function(o){var b=calcObjectiveBalance(o.id);allObjBal+=b.balance;});
   var html='';
@@ -1383,10 +1428,10 @@ function renderFinance(){
   html+='</div>';
 
   if(finTab==='overview'){html+=renderFinOverview(gBal,allObjBal);}
-  else if(finTab==='objectives'){html+=renderFinObjectives(isA);}
-  else if(finTab==='donations'){html+=renderFinDonations(isA);}
-  else if(finTab==='expenses'){html+=renderFinExpenses(isA);}
-  else if(finTab==='transfers'){html+=renderFinTransfers(isA);}
+  else if(finTab==='objectives'){html+=renderFinObjectives(isA,canEdit);}
+  else if(finTab==='donations'){html+=renderFinDonations(isA,canEdit);}
+  else if(finTab==='expenses'){html+=renderFinExpenses(isA,canEdit);}
+  else if(finTab==='transfers'){html+=renderFinTransfers(isA,canEdit);}
   else if(finTab==='reports'){html+=renderFinReports();}
 
   document.getElementById('fin-content').innerHTML=html;
@@ -1423,9 +1468,9 @@ function renderFinOverview(gBal,allObjBal){
   return html;
 }
 
-function renderFinObjectives(isA){
+function renderFinObjectives(isA,canEdit){
   var html='';
-  if(isA){
+  if(canEdit){
     html+='<div class="card"><div class="card-hdr">🎯 Create Objective</div>';
     html+='<div class="form-grid">';
     html+='<div class="fg full"><label>Objective Name *</label><input id="obj-name" placeholder="e.g. Annual Camp 2025"></div>';
@@ -1463,13 +1508,12 @@ function saveObjective(){
 }
 function delObjective(id){if(!confirm('Delete this objective? All associated donation/expense records will remain but lose their objective link.'))return;fbDel('objectives',id);toast('Objective deleted','🗑️');renderFinance();}
 
-function renderFinDonations(isA){
+function renderFinDonations(isA,canEdit){
   var html='';
-  // Filter state
-  var filterType=window._finDonFilter||'all'; // all | general | objective
+  var filterType=window._finDonFilter||'all';
   var filterObjId=window._finDonObj||'';
 
-  if(isA){
+  if(canEdit){
     html+='<div class="card"><div class="card-hdr">💰 Add Donation</div>';
     html+='<div class="form-grid">';
     html+='<div class="fg"><label>Donor Name</label><input id="don-name" placeholder="Name"></div>';
@@ -1484,7 +1528,6 @@ function renderFinDonations(isA){
     html+='</div></div>';
   }
 
-  // Filter bar
   html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">';
   html+='<div style="font-weight:800;color:#0D1B3E">💰 Donation Ledger</div>';
   html+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
@@ -1502,12 +1545,12 @@ function renderFinDonations(isA){
   if(!donations.length){html+='<div style="text-align:center;padding:24px;color:#9CA3AF">No donations found.</div></div>';return html;}
 
   var total=donations.reduce(function(s,d){return s+(parseFloat(d.amount)||0);},0);
-  html+='<div class="table-wrap"><table><thead><tr><th>Date</th><th>Donor</th><th>Fund</th><th>Objective</th><th style="text-align:right">Amount</th>'+(isA?'<th>Del</th>':'')+'</tr></thead><tbody>';
+  html+='<div class="table-wrap"><table><thead><tr><th>Date</th><th>Donor</th><th>Fund</th><th>Objective</th><th style="text-align:right">Amount</th>'+(canEdit?'<th>Del</th>':'')+'</tr></thead><tbody>';
   donations.forEach(function(d){
     var isObj=d.type==='objective';var obj=isObj?getObjById(d.objective_id):null;
-    html+='<tr><td>'+fd(d.date||'')+'</td><td style="font-weight:600">'+esc(d.name||'—')+(d.note?'<div style="font-size:10px;color:#9CA3AF">'+esc(d.note)+'</div>':'')+'</td><td><span class="badge '+(isObj?'badge-blue':'badge-green')+'">'+(isObj?'Objective':'General')+'</span></td><td>'+(obj?'<span class="badge badge-navy">'+esc(obj.name)+'</span>':'—')+'</td><td style="text-align:right;color:#16A34A;font-weight:700">'+fmtAmt(d.amount)+'</td>'+(isA?'<td><button class="btn btn-sm btn-red" onclick="delDonation(\''+d.id+'\')">🗑️</button></td>':'')+'</tr>';
+    html+='<tr><td>'+fd(d.date||'')+'</td><td style="font-weight:600">'+esc(d.name||'—')+(d.note?'<div style="font-size:10px;color:#9CA3AF">'+esc(d.note)+'</div>':'')+'</td><td><span class="badge '+(isObj?'badge-blue':'badge-green')+'">'+(isObj?'Objective':'General')+'</span></td><td>'+(obj?'<span class="badge badge-navy">'+esc(obj.name)+'</span>':'—')+'</td><td style="text-align:right;color:#16A34A;font-weight:700">'+fmtAmt(d.amount)+'</td>'+(canEdit?'<td><button class="btn btn-sm btn-red" onclick="delDonation(\''+d.id+'\')">🗑️</button></td>':'')+'</tr>';
   });
-  html+='<tr style="background:#F0FDF4"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12px">Total</td><td style="text-align:right;font-weight:900;color:#16A34A;font-size:14px">'+fmtAmt(total)+'</td>'+(isA?'<td></td>':'')+'</tr>';
+  html+='<tr style="background:#F0FDF4"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12px">Total</td><td style="text-align:right;font-weight:900;color:#16A34A;font-size:14px">'+fmtAmt(total)+'</td>'+(canEdit?'<td></td>':'')+'</tr>';
   html+='</tbody></table></div></div>';
   return html;
 }
@@ -1523,12 +1566,12 @@ function addDonation(){
 }
 function delDonation(id){if(!confirm('Delete this donation?'))return;fbDel('donations',id);toast('Deleted','🗑️');renderFinance();}
 
-function renderFinExpenses(isA){
+function renderFinExpenses(isA,canEdit){
   var html='';
   var filterType=window._finExpFilter||'all';
   var filterObjId=window._finExpObj||'';
 
-  if(isA){
+  if(canEdit){
     html+='<div class="card"><div class="card-hdr">💸 Add Expense</div>';
     html+='<div class="form-grid">';
     html+='<div class="fg full"><label>Purpose / Description *</label><input id="exp-desc" placeholder="What was the expense for?"></div>';
@@ -1560,12 +1603,12 @@ function renderFinExpenses(isA){
   if(!expenses.length){html+='<div style="text-align:center;padding:24px;color:#9CA3AF">No expenses found.</div></div>';return html;}
 
   var total=expenses.reduce(function(s,e){return s+(parseFloat(e.amount)||0);},0);
-  html+='<div class="table-wrap"><table><thead><tr><th>Date</th><th>Purpose</th><th>Fund</th><th>Objective</th><th style="text-align:right">Amount</th>'+(isA?'<th>Del</th>':'')+'</tr></thead><tbody>';
+  html+='<div class="table-wrap"><table><thead><tr><th>Date</th><th>Purpose</th><th>Fund</th><th>Objective</th><th style="text-align:right">Amount</th>'+(canEdit?'<th>Del</th>':'')+'</tr></thead><tbody>';
   expenses.forEach(function(e){
     var isObj=e.type==='objective';var obj=isObj?getObjById(e.objective_id):null;
-    html+='<tr><td>'+fd(e.date||'')+'</td><td style="font-weight:600">'+esc(e.description||e.purpose||'—')+(e.note?'<div style="font-size:10px;color:#9CA3AF">'+esc(e.note)+'</div>':'')+'</td><td><span class="badge '+(isObj?'badge-blue':'badge-red')+'">'+(isObj?'Objective':'General')+'</span></td><td>'+(obj?'<span class="badge badge-navy">'+esc(obj.name)+'</span>':'—')+'</td><td style="text-align:right;color:#DC2626;font-weight:700">'+fmtAmt(e.amount)+'</td>'+(isA?'<td><button class="btn btn-sm btn-red" onclick="delExpense(\''+e.id+'\')">🗑️</button></td>':'')+'</tr>';
+    html+='<tr><td>'+fd(e.date||'')+'</td><td style="font-weight:600">'+esc(e.description||e.purpose||'—')+(e.note?'<div style="font-size:10px;color:#9CA3AF">'+esc(e.note)+'</div>':'')+'</td><td><span class="badge '+(isObj?'badge-blue':'badge-red')+'">'+(isObj?'Objective':'General')+'</span></td><td>'+(obj?'<span class="badge badge-navy">'+esc(obj.name)+'</span>':'—')+'</td><td style="text-align:right;color:#DC2626;font-weight:700">'+fmtAmt(e.amount)+'</td>'+(canEdit?'<td><button class="btn btn-sm btn-red" onclick="delExpense(\''+e.id+'\')">🗑️</button></td>':'')+'</tr>';
   });
-  html+='<tr style="background:#FEF2F2"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12px">Total</td><td style="text-align:right;font-weight:900;color:#DC2626;font-size:14px">'+fmtAmt(total)+'</td>'+(isA?'<td></td>':'')+'</tr>';
+  html+='<tr style="background:#FEF2F2"><td colspan="4" style="font-weight:800;text-align:right;padding-right:12px">Total</td><td style="text-align:right;font-weight:900;color:#DC2626;font-size:14px">'+fmtAmt(total)+'</td>'+(canEdit?'<td></td>':'')+'</tr>';
   html+='</tbody></table></div></div>';
   return html;
 }
@@ -1581,9 +1624,9 @@ function addExpense(){
 }
 function delExpense(id){if(!confirm('Delete this expense?'))return;fbDel('expenses',id);toast('Deleted','🗑️');renderFinance();}
 
-function renderFinTransfers(isA){
+function renderFinTransfers(isA,canEdit){
   var html='';
-  if(isA){
+  if(canEdit){
     html+='<div class="card"><div class="card-hdr">🔄 Record Transfer</div>';
     html+='<div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;padding:8px 10px;background:#FFF7ED;border-radius:8px;border-left:3px solid #FF6B00">Transfers adjust fund balances without counting as income or expense. Use for surplus/shortfall transfers between General and Objective funds.</div>';
     html+='<div class="form-grid">';
@@ -1602,10 +1645,10 @@ function renderFinTransfers(isA){
   var transfers=(data.transfers||[]).slice().sort(function(a,b){return(b.date||'').localeCompare(a.date||'');});
   html+='<div class="card"><div class="card-hdr">🔄 Transfer History</div>';
   if(!transfers.length){html+='<div style="text-align:center;padding:24px;color:#9CA3AF">No transfers recorded.</div></div>';return html;}
-  html+='<div class="table-wrap"><table><thead><tr><th>Date</th><th>From</th><th>To</th><th>Objective</th><th>Remarks</th><th style="text-align:right">Amount</th>'+(isA?'<th>Del</th>':'')+'</tr></thead><tbody>';
+  html+='<div class="table-wrap"><table><thead><tr><th>Date</th><th>From</th><th>To</th><th>Objective</th><th>Remarks</th><th style="text-align:right">Amount</th>'+(canEdit?'<th>Del</th>':'')+'</tr></thead><tbody>';
   transfers.forEach(function(t){
     var obj=t.objective_id?getObjById(t.objective_id):null;
-    html+='<tr><td>'+fd(t.date||'')+'</td><td><span class="badge badge-orange">'+esc(t.from_fund||'')+'</span></td><td><span class="badge badge-blue">'+esc(t.to_fund||'')+'</span></td><td>'+(obj?'<span class="badge badge-navy">'+esc(obj.name)+'</span>':'—')+'</td><td style="font-size:11px;color:#6B7280">'+esc(t.remarks||'—')+'</td><td style="text-align:right;font-weight:700;color:#7C3AED">'+fmtAmt(t.amount)+'</td>'+(isA?'<td><button class="btn btn-sm btn-red" onclick="delTransfer(\''+t.id+'\')">🗑️</button></td>':'')+'</tr>';
+    html+='<tr><td>'+fd(t.date||'')+'</td><td><span class="badge badge-orange">'+esc(t.from_fund||'')+'</span></td><td><span class="badge badge-blue">'+esc(t.to_fund||'')+'</span></td><td>'+(obj?'<span class="badge badge-navy">'+esc(obj.name)+'</span>':'—')+'</td><td style="font-size:11px;color:#6B7280">'+esc(t.remarks||'—')+'</td><td style="text-align:right;font-weight:700;color:#7C3AED">'+fmtAmt(t.amount)+'</td>'+(canEdit?'<td><button class="btn btn-sm btn-red" onclick="delTransfer(\''+t.id+'\')">🗑️</button></td>':'')+'</tr>';
   });
   html+='</tbody></table></div></div>';
   return html;
@@ -2346,6 +2389,234 @@ function loadCUG(){
 }
 
 // Hook loadCUG into showApp
+
+// ══════════════════════════════════════════
+//  LETTERHEAD
+// ══════════════════════════════════════════
+
+function renderLetters(){
+  var list=(data.letters||[]).slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
+  var isA=currentRole==='admin';
+  if(!list.length){
+    document.getElementById('letter-list').innerHTML='<div class="empty-state"><div class="es-icon">📄</div><div class="es-title">No letters yet</div></div>';
+    return;
+  }
+  var html='';
+  list.forEach(function(lt){
+    html+='<div class="card" style="margin-bottom:10px">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
+    html+='<div style="flex:1;min-width:0">';
+    html+='<div style="font-size:15px;font-weight:800;color:#0D1B3E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(lt.subject||'Untitled')+'</div>';
+    html+='<div style="font-size:12px;color:#6B7280;margin-top:3px">To: '+esc(lt.to||'—')+(lt.ref?' &nbsp;|&nbsp; Ref: '+esc(lt.ref):'')+(lt.date?' &nbsp;|&nbsp; '+esc(fd(lt.date)):'')+'</div>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:6px;flex-shrink:0">';
+    html+='<button class="btn btn-sm btn-navy" onclick="printLetter(\''+lt.id+'\')">🖨️ Print</button>';
+    if(isA){
+      html+='<button class="btn btn-sm btn-orange" onclick="editLetter(\''+lt.id+'\')">✏️ Edit</button>';
+      html+='<button class="btn btn-sm btn-red" onclick="delLetter(\''+lt.id+'\')">🗑️</button>';
+    }
+    html+='</div></div>';
+    if(lt.body){html+='<div style="margin-top:10px;font-size:13px;color:#374151;line-height:1.7;white-space:pre-wrap;max-height:80px;overflow:hidden;mask-image:linear-gradient(to bottom,#000 60%,transparent)">'+esc(lt.body)+'</div>';}
+    html+='</div>';
+  });
+  document.getElementById('letter-list').innerHTML=html;
+}
+
+function saveLetter(){
+  var subject=v('lt-subject');
+  if(!subject.trim()){toast('Enter a subject/title','⚠️');return;}
+  var id=uid();
+  var lt={subject:subject.trim(),to:v('lt-to'),body:v('lt-body'),date:v('lt-date'),ref:v('lt-ref'),createdAt:Date.now()};
+  fbSet('letters',id,lt);
+  ['lt-subject','lt-to','lt-body','lt-date','lt-ref'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  toast('Letter saved ✓','📄');
+  renderLetters();
+}
+
+function editLetter(id){
+  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
+  if(!lt)return;
+  document.getElementById('el-id').value=id;
+  document.getElementById('el-subject').value=lt.subject||'';
+  document.getElementById('el-to').value=lt.to||'';
+  document.getElementById('el-body').value=lt.body||'';
+  document.getElementById('el-date').value=lt.date||'';
+  document.getElementById('el-ref').value=lt.ref||'';
+  document.getElementById('edit-letter-modal').classList.add('open');
+}
+
+function saveEditLetter(){
+  var id=document.getElementById('el-id').value;
+  if(!id)return;
+  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
+  if(!lt)return;
+  lt.subject=document.getElementById('el-subject').value;
+  lt.to=document.getElementById('el-to').value;
+  lt.body=document.getElementById('el-body').value;
+  lt.date=document.getElementById('el-date').value;
+  lt.ref=document.getElementById('el-ref').value;
+  fbSet('letters',id,lt);
+  document.getElementById('edit-letter-modal').classList.remove('open');
+  toast('Letter updated ✓','📄');
+  renderLetters();
+}
+
+function delLetter(id){
+  if(!confirm('Delete this letter permanently?'))return;
+  fbDel('letters',id);
+  toast('Letter deleted','🗑️');
+  renderLetters();
+}
+
+function printLetter(id){
+  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
+  if(!lt)return;
+
+  var president=null,secretary=null;
+  (data.members||[]).forEach(function(m){
+    var d=(m.duty||'').toLowerCase();
+    if(!president&&(d==='president'||d==='unit president'))president=m;
+    if(!secretary&&(d==='secretary'||d==='unit secretary'))secretary=m;
+  });
+
+  var cug=localStorage.getItem('abvp_cug')||'';
+  var letterDate=lt.date?fd(lt.date):(new Date()).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+
+  var w=window.open('','_blank','width=900,height=800');
+  if(!w){toast('Allow popups to print','⚠️');return;}
+
+  var css='*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'@page{size:A4;margin:0}'
+    +'body{font-family:"Times New Roman",Georgia,serif;font-size:11pt;color:#1a1a1a;background:#e0e0e0}'
+    +'.page-wrap{display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:20px}'
+    +'@media print{body{background:#fff}.page-wrap{padding:0;gap:0}.no-print{display:none!important}}'
+    +'.page{width:210mm;background:#fff;padding:14mm 16mm 16mm;box-shadow:0 2px 20px rgba(0,0,0,.18)}'
+
+    /* ── Header band ── */
+    +'.lh-head{background:linear-gradient(135deg,#0D1B3E 0%,#162955 100%);padding:8mm 10mm;display:flex;align-items:center;gap:5mm;margin:-14mm -16mm 0;margin-bottom:5mm}'
+    +'.lh-logo{width:22mm;height:22mm;object-fit:contain;flex-shrink:0;background:#fff;border-radius:50%;padding:1.5mm}'
+    +'.lh-names{flex:1}'
+    +'.lh-hi{font-size:10.5pt;font-weight:700;color:#FFB800;letter-spacing:.4px;margin-bottom:1mm}'
+    +'.lh-en{font-size:18pt;font-weight:900;color:#fff;letter-spacing:.2px;line-height:1.1}'
+    +'.lh-motto{font-size:7.5pt;color:rgba(255,255,255,.6);letter-spacing:.8px;margin-top:1.5mm;text-transform:uppercase}'
+    +'.lh-unit{text-align:right;color:rgba(255,255,255,.8);font-size:8.5pt;line-height:1.7;flex-shrink:0}'
+    +'.lh-unit strong{color:#FFB800;font-size:10pt;display:block}'
+
+    /* ── Tricolour bar ── */
+    +'.tri{height:3px;display:flex;margin:0 -16mm 5mm}'
+    +'.tri span:nth-child(1){background:#FF9933;flex:1}'
+    +'.tri span:nth-child(2){background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd;flex:1}'
+    +'.tri span:nth-child(3){background:#138808;flex:1}'
+
+    /* ── Meta row ── */
+    +'.meta{display:flex;justify-content:space-between;font-size:9pt;margin-bottom:5mm;padding-bottom:2mm;border-bottom:1px dashed #D1D5DB}'
+    +'.meta-ref{color:#6B7280}'
+    +'.meta-date{color:#0D1B3E;font-weight:700}'
+
+    /* ── To & Subject ── */
+    +'.to-blk{margin-bottom:4mm;font-size:10.5pt;line-height:1.65}'
+    +'.to-lbl{font-weight:700}'
+    +'.subj{font-size:11pt;font-weight:700;text-decoration:underline;color:#0D1B3E;margin-bottom:4mm}'
+    +'.salute{font-size:11pt;margin-bottom:4mm}'
+
+    /* ── Body ── */
+    +'.body{font-size:11pt;line-height:1.85;white-space:pre-wrap;margin-bottom:8mm}'
+
+    /* ── Signature ── */
+    +'.sig-wrap{border-top:1.5px solid #D1D5DB;padding-top:5mm;display:flex;justify-content:space-between;align-items:flex-end}'
+    +'.sig-box{text-align:center;min-width:52mm}'
+    +'.sig-line{width:50mm;border-bottom:.4mm solid #374151;margin:0 auto 1.5mm}'
+    +'.sig-name{font-family:"Dancing Script",cursive;font-weight:700;font-size:14pt;color:#0D1B3E}'
+    +'.sig-title{font-size:8pt;color:#6B7280;letter-spacing:.3px;margin-top:.5mm}'
+    +'.sig-ph{font-size:8pt;color:#374151;font-weight:700;margin-top:.3mm}'
+    +'.date-box{text-align:center;font-size:9.5pt}'
+    +'.date-lbl{font-size:7.5pt;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1mm}'
+    +'.date-val{font-weight:800;color:#0D1B3E}'
+    +'.date-place{font-size:7.5pt;color:#9CA3AF;margin-top:1mm}'
+
+    /* ── Footer ── */
+    +'.foot{margin-top:6mm;padding-top:3mm;border-top:1px solid #E5E7EB;font-size:7.5pt;color:#9CA3AF;text-align:center;letter-spacing:.4px}'
+
+    /* ── Controls ── */
+    +'.no-print{text-align:center;padding:16px;display:flex;gap:10px;justify-content:center;font-family:Arial,sans-serif}'
+    +'.btn-p{padding:11px 28px;background:#0D1B3E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}'
+    +'.btn-c{padding:11px 28px;background:#6B7280;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}';
+
+  var h='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(lt.subject||'Letter')+'</title>'
+    +'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap">'
+    +'<style>'+css+'</style></head><body>';
+
+  h+='<div class="no-print">'
+    +'<button class="btn-p" onclick="window.print()">🖨️ Print</button>'
+    +'<button class="btn-c" onclick="window.close()">✕ Close</button>'
+    +'</div>';
+
+  h+='<div class="page-wrap"><div class="page">';
+
+  // ── Header ──
+  h+='<div class="lh-head">'
+    +'<img class="lh-logo" src="'+LOGO_SVG+'" alt="ABVP">'
+    +'<div class="lh-names">'
+    +'<div class="lh-hi">अखिल भारतीय विद्यार्थी परिषद्</div>'
+    +'<div class="lh-en">Akhil Bharatiya Vidyarthi Parishad</div>'
+    +'<div class="lh-motto">ज्ञान &bull; शील &bull; एकता &nbsp;|&nbsp; Knowledge &bull; Character &bull; Unity</div>'
+    +'</div>'
+    +'<div class="lh-unit"><strong>Gorakhpur Unit</strong>Gorakhpur, Uttar Pradesh'+(cug?'<br>CUG: '+esc(cug):'')+'</div>'
+    +'</div>';
+
+  // ── Tricolour bar ──
+  h+='<div class="tri"><span></span><span></span><span></span></div>';
+
+  // ── Ref / Date ──
+  h+='<div class="meta">'
+    +'<div class="meta-ref">'+(lt.ref?'<strong>Ref.:</strong> '+esc(lt.ref):'&nbsp;')+'</div>'
+    +'<div class="meta-date"><strong>Date:</strong> '+esc(letterDate)+'</div>'
+    +'</div>';
+
+  // ── To ──
+  if(lt.to){
+    h+='<div class="to-blk"><div class="to-lbl">To,</div>'+esc(lt.to).replace(/\n/g,'<br>')+'</div>';
+  }
+
+  // ── Subject ──
+  h+='<div class="subj">Sub: '+esc(lt.subject||'—')+'</div>';
+
+  // ── Salutation + Body ──
+  h+='<div class="salute">Respected Sir/Madam,</div>';
+  h+='<div class="body">'+esc(lt.body||'')+'</div>';
+
+  // ── Signature row ──
+  h+='<div class="sig-wrap">';
+  // Secretary
+  h+='<div class="sig-box">'
+    +'<div class="sig-line"></div>'
+    +'<div class="sig-name">'+(secretary?esc(secretary.name):'Unit Secretary')+'</div>'
+    +'<div class="sig-title">Secretary, ABVP Gorakhpur</div>'
+    +(secretary&&secretary.phone?'<div class="sig-ph">'+esc(secretary.phone)+'</div>':'')
+    +'</div>';
+  // Date box (centre)
+  h+='<div class="date-box">'
+    +'<div class="date-lbl">Date &amp; Place</div>'
+    +'<div class="date-val">'+esc(letterDate)+'</div>'
+    +'<div class="date-place">Gorakhpur, U.P.</div>'
+    +'</div>';
+  // President
+  h+='<div class="sig-box">'
+    +'<div class="sig-line"></div>'
+    +'<div class="sig-name">'+(president?esc(president.name):'Unit President')+'</div>'
+    +'<div class="sig-title">President, ABVP Gorakhpur</div>'
+    +(president&&president.phone?'<div class="sig-ph">'+esc(president.phone)+'</div>':'')
+    +'</div>';
+  h+='</div>';
+
+  // ── Footer ──
+  h+='<div class="foot">अखिल भारतीय विद्यार्थी परिषद् — Gorakhpur Unit &nbsp;&bull;&nbsp; वन्दे मातरम् &bull; जय हिन्द</div>';
+
+  h+='</div></div></body></html>';
+
+  w.document.open();w.document.write(h);w.document.close();
+}
+
 var _sa=showApp;
 showApp=function(){_sa();loadCUG();};
 </script>
