@@ -72,6 +72,8 @@ img{display:block;}
 .nav-tab{flex-shrink:0;padding:12px 14px;font-size:11px;font-weight:700;color:rgba(255,255,255,.45);background:none;border:none;border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;text-transform:uppercase;letter-spacing:.8px;}
 .nav-tab.active{color:#FF6B00;border-bottom-color:#FF6B00;background:rgba(255,107,0,.06)}
 .nav-tab:active{background:rgba(255,255,255,.05);}
+.nav-tab.pinned::after{content:'📌';font-size:8px;vertical-align:super;margin-left:3px;opacity:.8;}
+.nav-tab.pinned{border-bottom-color:#FFB800 !important;}
 
 .section{display:none;padding:16px;max-width:960px;margin:0 auto;width:100%;padding-bottom:80px;min-height:calc(100vh - 116px);}
 .section.active{display:block}
@@ -325,14 +327,14 @@ to{opacity:1}}
     </div>
   </div>
   <div class="nav-bar" id="main-nav">
-    <button class="nav-tab active" id="tab-home" onclick="showSec('home');setActive(this)">🏠 Home</button>
-    <button class="nav-tab" id="tab-members" onclick="showSec('members');setActive(this)">👥 Members</button>
-    <button class="nav-tab" id="tab-meetings" onclick="showSec('meetings');setActive(this)">📋 Meetings</button>
-    <button class="nav-tab" id="tab-events" onclick="showSec('events');setActive(this)">🎯 Events</button>
-    <button class="nav-tab" id="tab-inv" onclick="showSec('invitations');setActive(this)">✉️ Invitations</button>
-    <button class="nav-tab" id="tab-fin" onclick="showSec('finance');setActive(this)" style="display:none">💰 Finance</button>
-    <button class="nav-tab" id="tab-qr" onclick="showSec('qr');setActive(this)">🔗 QR Join</button>
-    <button class="nav-tab" id="tab-letter" onclick="showSec('letter');setActive(this)">📄 Letterhead</button>
+    <button class="nav-tab active" id="tab-home" onclick="showSec('home');setActive(this)" oncontextmenu="pinTab('home');return false" ontouchstart="_tabPressStart('home',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🏠 Home</button>
+    <button class="nav-tab" id="tab-members" onclick="showSec('members');setActive(this)" oncontextmenu="pinTab('members');return false" ontouchstart="_tabPressStart('members',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">👥 Members</button>
+    <button class="nav-tab" id="tab-meetings" onclick="showSec('meetings');setActive(this)" oncontextmenu="pinTab('meetings');return false" ontouchstart="_tabPressStart('meetings',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">📋 Meetings</button>
+    <button class="nav-tab" id="tab-events" onclick="showSec('events');setActive(this)" oncontextmenu="pinTab('events');return false" ontouchstart="_tabPressStart('events',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🎯 Events</button>
+    <button class="nav-tab" id="tab-inv" onclick="showSec('invitations');setActive(this)" oncontextmenu="pinTab('invitations');return false" ontouchstart="_tabPressStart('invitations',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">✉️ Invitations</button>
+    <button class="nav-tab" id="tab-fin" onclick="showSec('finance');setActive(this)" oncontextmenu="pinTab('finance');return false" ontouchstart="_tabPressStart('finance',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()" style="display:none">💰 Finance</button>
+    <button class="nav-tab" id="tab-qr" onclick="showSec('qr');setActive(this)" oncontextmenu="pinTab('qr');return false" ontouchstart="_tabPressStart('qr',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🔗 QR Join</button>
+    <button class="nav-tab" id="tab-letter" onclick="showSec('letter');setActive(this)" oncontextmenu="pinTab('letter');return false" ontouchstart="_tabPressStart('letter',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">📄 Letterhead</button>
   </div>
 
   <div class="section active" id="sec-home"></div>
@@ -819,6 +821,69 @@ function toast(msg,icon){
   toast._timer=setTimeout(function(){t.classList.remove('show');},2800);
 }
 function setActive(el){document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');}
+
+// ── Tab pinning ──
+var _pinTimer=null;
+var _PINNED_KEY='abvp_pinned_tab';
+function _pinKey(){return _PINNED_KEY+'_'+(currentRole||'guest');}
+
+function pinTab(secId){
+  if(currentRole!=='admin'&&currentRole!=='member')return;
+  var key=_pinKey();
+  var current=localStorage.getItem(key);
+  if(current===secId){
+    localStorage.removeItem(key);
+    _applyPinUI(null);
+    toast('Tab unpinned','📌');
+  } else {
+    localStorage.setItem(key,secId);
+    _applyPinUI(secId);
+    toast('Tab pinned — opens here on next login','📌');
+  }
+}
+
+function _applyPinUI(secId){
+  // Map secId → tab element id
+  var map={home:'tab-home',members:'tab-members',meetings:'tab-meetings',events:'tab-events',
+           invitations:'tab-inv',finance:'tab-fin',qr:'tab-qr',letter:'tab-letter'};
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('pinned');});
+  if(secId&&map[secId]){
+    var el=document.getElementById(map[secId]);
+    if(el)el.classList.add('pinned');
+  }
+}
+
+function _loadPinnedTab(){
+  var secId=localStorage.getItem(_pinKey());
+  if(!secId)return;
+  var map={home:'tab-home',members:'tab-members',meetings:'tab-meetings',events:'tab-events',
+           invitations:'tab-inv',finance:'tab-fin',qr:'tab-qr',letter:'tab-letter'};
+  // Check the tab is visible before navigating to it
+  var tabId=map[secId];
+  if(tabId){
+    var el=document.getElementById(tabId);
+    if(el&&el.style.display!=='none'){
+      _applyPinUI(secId);
+      showSec(secId);
+      setActive(el);
+      return;
+    }
+  }
+  _applyPinUI(secId); // still mark it, even if not navigated
+}
+
+// Long-press on mobile (600ms)
+function _tabPressStart(secId,el){
+  _tabPressEnd();
+  _pinTimer=setTimeout(function(){
+    _pinTimer=null;
+    if(currentRole!=='admin'&&currentRole!=='member')return;
+    pinTab(secId);
+  },600);
+}
+function _tabPressEnd(){
+  if(_pinTimer){clearTimeout(_pinTimer);_pinTimer=null;}
+}
 function showLoading(show){
   var ol=document.getElementById('loading-overlay');
   if(show){ol.classList.remove('hide');ol.style.display='flex';}
@@ -1195,6 +1260,8 @@ function showApp(){
   applyRoles();
   // Render immediately from localStorage — no waiting, no spinner
   render();renderHome();showSec('home');setActive(document.getElementById('tab-home'));
+  // Navigate to pinned tab if set (after roles applied so Finance tab is visible)
+  _loadPinnedTab();
   // Sync Firebase silently in background — just update sync badge
   var sl=document.getElementById('s-lbl');if(sl)sl.innerHTML='<span class="spinner-sm"></span>';
   loadFB(function(ok){setSyncOK(ok);render();renderHome();});
