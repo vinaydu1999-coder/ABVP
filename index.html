@@ -1296,7 +1296,7 @@ function renderMeetings(){
     html+='<button class="btn btn-sm btn-navy" onclick="printMeeting(\''+mt.id+'\')">🖨️ Print</button>';
     if(currentRole==='admin'){html+='<button class="btn btn-sm btn-orange" onclick="editMeeting(\''+mt.id+'\')">✏️ Edit</button><button class="btn btn-sm btn-red" onclick="delMeeting(\''+mt.id+'\')">🗑️</button>';}
     html+='</div></div>';
-    if(mt.isOnline&&mt.meetingLink){var rawLink=mt.meetingLink;html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#1D4ED8">🌐</span><span style="flex:1;font-size:12px;color:#2563EB;word-break:break-all;font-weight:500">'+esc(rawLink)+'</span><button class="btn btn-sm" style="background:#2563EB;color:#fff;flex-shrink:0" onclick="window.open(\''+rawLink.replace(/\'/g,"\\'")+'\',' + "'_blank'" + ')">Join →</button></div>';}
+    if(mt.isOnline&&mt.meetingLink){html+='<div style="margin-top:10px;padding:10px 14px;background:#EFF6FF;border-radius:10px;border-left:3px solid #2563EB;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#1D4ED8">&#127760;</span><span style="flex:1;font-size:12px;color:#2563EB;word-break:break-all;font-weight:500">'+esc(mt.meetingLink)+'</span><button class="btn btn-sm" style="background:#2563EB;color:#fff;flex-shrink:0" onclick="openMeetLink(\''+ mt.id +'\')">Join &#8594;</button></div>';}
     if(mt.agenda)html+='<div style="margin-top:10px;font-size:13px;color:#374151;line-height:1.6"><strong>Agenda:</strong> '+esc(mt.agenda)+'</div>';
     if(mt.motions)html+='<div style="margin-top:6px;font-size:13px;color:#374151;line-height:1.6"><strong>Motions:</strong> '+esc(mt.motions)+'</div>';
     if(mt.nextDate)html+='<div style="margin-top:8px"><span class="badge badge-blue">Next: '+esc(fd(mt.nextDate))+'</span></div>';
@@ -1307,6 +1307,15 @@ function renderMeetings(){
   document.getElementById('mt-list').innerHTML=html;
 }
 function delMeeting(id){if(!confirm('Delete this meeting?'))return;fbDel('meetings',id);toast('Meeting deleted','🗑️');renderMeetings();}
+
+function openMeetLink(id){
+  var mt=null;
+  for(var i=0;i<(data.meetings||[]).length;i++){if(data.meetings[i].id===id){mt=data.meetings[i];break;}}
+  if(!mt||!mt.meetingLink){toast('No meeting link found','⚠️');return;}
+  var url=mt.meetingLink.trim();
+  if(!url.match(/^https?:\/\//)){url='https://'+url;}
+  window.open(url,'_blank','noopener,noreferrer');
+}
 
 // ── EVENTS ──
 function saveEvent(){
