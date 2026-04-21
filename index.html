@@ -334,6 +334,7 @@ to{opacity:1}}
     <button class="nav-tab" id="tab-inv" onclick="showSec('invitations');setActive(this)" oncontextmenu="pinTab('invitations');return false" ontouchstart="_tabPressStart('invitations',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">✉️ Invitations</button>
     <button class="nav-tab" id="tab-fin" onclick="showSec('finance');setActive(this)" oncontextmenu="pinTab('finance');return false" ontouchstart="_tabPressStart('finance',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()" style="display:none">💰 Finance</button>
     <button class="nav-tab" id="tab-qr" onclick="showSec('qr');setActive(this)" oncontextmenu="pinTab('qr');return false" ontouchstart="_tabPressStart('qr',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🔗 QR Join</button>
+    <button class="nav-tab" id="tab-institutions" onclick="showSec('institutions');setActive(this)" oncontextmenu="pinTab('institutions');return false" ontouchstart="_tabPressStart('institutions',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🏫 Institutions</button>
     <button class="nav-tab" id="tab-letter" onclick="showSec('letter');setActive(this)" oncontextmenu="pinTab('letter');return false" ontouchstart="_tabPressStart('letter',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">📄 Letterhead</button>
   </div>
 
@@ -354,6 +355,7 @@ to{opacity:1}}
         <div class="fg"><label>Year of Joining</label><input id="m-year" placeholder="e.g. 2023"></div>
         <div class="fg"><label>🎂 Birthday</label><input type="date" id="m-bday"></div>
         <div class="fg full"><label>Course / Qualification</label><input id="m-course" placeholder="e.g. B.A. 2nd Year, M.Sc. Physics"></div>
+        <div class="fg full"><label>Institution</label><select id="m-institution"><option value="">— Select Institution (optional) —</option></select></div>
         <div class="fg full">
           <label>Profile Photo</label>
           <div class="photo-drop" onclick="document.getElementById('m-photo-inp').click()">
@@ -385,7 +387,7 @@ to{opacity:1}}
         <table>
           <thead><tr>
             <th>#</th><th>Photo</th><th>Name</th><th>Duty</th>
-            <th class="hide-mob">Course</th><th class="hide-mob">Phone</th><th>🎂</th>
+            <th class="hide-mob">Institution</th><th class="hide-mob">Course</th><th class="hide-mob">Phone</th><th>🎂</th>
             <th class="hide-mob">Mtg</th><th class="hide-mob">Evt</th>
             <th>Score</th><th>WA</th><th class="admin-only" id="act-th" style="display:none">Act</th>
           </tr></thead>
@@ -552,29 +554,49 @@ to{opacity:1}}
     </div>
   </div>
 
+  <!-- INSTITUTIONS SECTION -->
+  <div class="section" id="sec-institutions">
+    <div class="card admin-only" style="display:none">
+      <div class="card-hdr">🏫 Add Institution</div>
+      <div class="form-grid">
+        <div class="fg full"><label>Institution Name *</label><input id="inst-name" placeholder="e.g. Deen Dayal Upadhyaya Gorakhpur University"></div>
+        <div class="fg"><label>Type</label>
+          <select id="inst-type">
+            <option value="university">University</option>
+            <option value="college">College</option>
+            <option value="school">School</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Location / Area</label><input id="inst-location" placeholder="e.g. Taramandal, Gorakhpur"></div>
+        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="addInstitution()">+ Add Institution</button></div>
+      </div>
+    </div>
+    <div id="inst-list-area"></div>
+  </div>
+
   <!-- LETTERHEAD SECTION -->
   <div class="section" id="sec-letter">
-    <!-- Admin: compose form -->
     <div class="card admin-only" style="display:none">
     <div class="card-hdr">📄 New Letter</div>
     <div class="form-grid">
-      <div class="fg full"><label>Letter Subject / Title</label><input id="lt-subject" placeholder="e.g. Invitation to Annual Programme"></div>
-      <div class="fg full"><label>Addressed To</label><input id="lt-to" placeholder="e.g. The Principal,Gorakhpur "></div>
-      <div class="fg full" style="align-items:flex-start"><label>Body</label><textarea id="lt-body" placeholder="Type the letter body here..." style="min-height:180px"></textarea></div>
-      <div class="fg"><label>Letter Date</label><input type="date" id="lt-date"></div>
+      <div class="fg full"><label>Subject / Title</label><input id="lt-subject" placeholder="e.g. Regarding Annual Programme"></div>
+      <div class="fg full"><label>Addressed To</label><textarea id="lt-to" placeholder="e.g. The Principal,&#10;DDU Gorakhpur University,&#10;Gorakhpur" style="min-height:70px"></textarea></div>
+      <div class="fg full" style="align-items:flex-start"><label>Letter Body — type freely as on A4</label><textarea id="lt-body" placeholder="Type your letter here freely..." style="min-height:280px;line-height:1.9;font-size:14px"></textarea></div>
+      <div class="fg"><label>Date</label><input type="date" id="lt-date"></div>
       <div class="fg"><label>Reference No. (optional)</label><input id="lt-ref" placeholder="e.g. ABVP/GKP/2025/001"></div>
+      <div class="fg full"><label>Signed by (Name)</label><input id="lt-signer" placeholder="e.g. Karyalay Mantri / Unit President name"></div>
+      <div class="fg full"><label>Designation of Signer</label><input id="lt-signer-desig" placeholder="e.g. Karyalay Mantri, ABVP Gorakhpur"></div>
       <div class="fg full" style="align-items:flex-start;gap:8px;flex-direction:row;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="saveLetter()">💾 Save Letter</button>
       </div>
     </div>
   </div>
-
-  <!-- Saved letters list -->
   <div class="card">
     <div class="card-hdr">📂 Saved Letters</div>
     <div id="letter-list"><div class="empty-state"><div class="es-icon">📄</div><div class="es-title">No letters yet</div></div></div>
   </div>
-</div><!-- end sec-letter -->
+</div>
 
 </div><!-- end app -->
 
@@ -586,10 +608,12 @@ to{opacity:1}}
       <input type="hidden" id="el-id">
       <div class="form-grid">
         <div class="fg full"><label>Subject / Title</label><input id="el-subject"></div>
-        <div class="fg full"><label>Addressed To</label><input id="el-to"></div>
-        <div class="fg full" style="align-items:flex-start"><label>Body</label><textarea id="el-body" style="min-height:180px"></textarea></div>
-        <div class="fg"><label>Letter Date</label><input type="date" id="el-date"></div>
+        <div class="fg full"><label>Addressed To</label><textarea id="el-to" style="min-height:70px"></textarea></div>
+        <div class="fg full" style="align-items:flex-start"><label>Letter Body</label><textarea id="el-body" style="min-height:260px;line-height:1.9;font-size:14px"></textarea></div>
+        <div class="fg"><label>Date</label><input type="date" id="el-date"></div>
         <div class="fg"><label>Reference No.</label><input id="el-ref"></div>
+        <div class="fg full"><label>Signed by (Name)</label><input id="el-signer" placeholder="e.g. Karyalay Mantri name"></div>
+        <div class="fg full"><label>Designation of Signer</label><input id="el-signer-desig" placeholder="e.g. Karyalay Mantri, ABVP Gorakhpur"></div>
         <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="saveEditLetter()">💾 Save Changes</button></div>
       </div>
     </div>
@@ -609,6 +633,7 @@ to{opacity:1}}
         <div class="fg"><label>Year</label><input id="edit-year"></div>
         <div class="fg"><label>🎂 Birthday</label><input type="date" id="edit-bday"></div>
         <div class="fg full"><label>Course / Qualification</label><input id="edit-course" placeholder="e.g. B.A. 2nd Year, M.Sc. Physics"></div>
+        <div class="fg full"><label>Institution</label><select id="edit-institution"><option value="">— Select Institution (optional) —</option></select></div>
         <div class="fg full">
           <label>Profile Photo</label>
           <div class="photo-drop" onclick="document.getElementById('edit-photo-inp').click()">
@@ -895,6 +920,7 @@ function showSec(id){
   if(id==='home')renderHome();
   if(id==='finance')renderFinance();
   if(id==='letter')renderLetters();
+  if(id==='institutions'){renderInstitutions();}
   if(id==='qr'){generateQR();if(currentRole==='admin'){fbGetCol('pending').then(function(docs){data.pending=docs;lsSave();renderPending();}).catch(function(){renderPending();});}}
 }
 function togglePwdField(){var role=v('role-sel');var pf=document.getElementById('pwd-field');if(pf)pf.style.display=role==='viewer'?'none':'block';}
@@ -1275,11 +1301,27 @@ function applyRoles(){
   var pc=document.getElementById('pending-card');if(pc)pc.style.display=isA?'':'none';
 }
 function loadFB(cb){
-  var cols=['members','meetings','events','invitations','donations','expenses','objectives','transfers','letters'];
+  var cols=['members','meetings','events','invitations','donations','expenses','objectives','transfers','letters','institutions'];
   var loaded=0,ok=true;
   cols.forEach(function(col){fbGetCol(col).then(function(docs){data[col]=docs;loaded++;if(loaded===cols.length){lsSave();if(cb)cb(ok);}}).catch(function(){ok=false;loaded++;if(loaded===cols.length){if(cb)cb(false);}});});
 }
 function render(){renderMembers();renderMeetings();renderEvents();renderInvitations();renderLetters();}
+
+// ── INSTITUTIONS DROPDOWN HELPER ──
+function _instOpts(selectedId){
+  var out='<option value="">— None —</option>';
+  (data.institutions||[]).slice().sort(function(a,b){return(a.name||'').localeCompare(b.name||'');}).forEach(function(inst){
+    var label=(inst.type?({university:'University',college:'College',school:'School',other:'Other'}[inst.type]||inst.type)+': ':'')+inst.name;
+    out+='<option value="'+inst.id+'"'+(selectedId&&selectedId===inst.id?' selected':'')+'>'+esc(label)+'</option>';
+  });
+  return out;
+}
+function _refreshInstDropdowns(){
+  ['m-institution','edit-institution'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    var cur=el.value;el.innerHTML=_instOpts(cur);
+  });
+}
 
 // ── MEMBERS ──
 function addMember(){
@@ -1287,16 +1329,18 @@ function addMember(){
   var exists=(data.members||[]).some(function(m){return m.name.trim().toLowerCase()===name.trim().toLowerCase();});
   if(exists&&!confirm('"'+name+'" already exists. Add anyway?'))return;
   var id=uid();
-  fbSet('members',id,{name:name.trim(),phone:v('m-phone'),address:v('m-address'),duty:v('m-duty'),year:v('m-year'),birthday:v('m-bday'),course:v('m-course'),photoUrl:tempPhotoUrl,createdAt:Date.now()});
+  var instEl=document.getElementById('m-institution');
+  fbSet('members',id,{name:name.trim(),phone:v('m-phone'),address:v('m-address'),duty:v('m-duty'),year:v('m-year'),birthday:v('m-bday'),course:v('m-course'),institutionId:instEl?instEl.value:'',photoUrl:tempPhotoUrl,createdAt:Date.now()});
   tempPhotoUrl='';
   ['m-name','m-phone','m-address','m-duty','m-year','m-bday','m-course'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  if(instEl)instEl.value='';
   var pp=document.getElementById('m-photo-prev');if(pp)pp.innerHTML='📷';
   toast('Member added ✓','👤');renderMembers();
 }
 function renderMembers(){
   var q=(v('m-srch')||'').toLowerCase(),isA=currentRole==='admin';
-  var list=(data.members||[]).filter(function(m){return!q||(m.name||'').toLowerCase().indexOf(q)>-1||(m.duty||'').toLowerCase().indexOf(q)>-1||(m.phone||'').indexOf(q)>-1||(m.course||'').toLowerCase().indexOf(q)>-1;});
-  if(!list.length){document.getElementById('m-tbody').innerHTML='<tr><td colspan="11" style="text-align:center;padding:30px;color:#9CA3AF">No members found</td></tr>';document.getElementById('m-stats').textContent='';return;}
+  var list=(data.members||[]).filter(function(m){return!q||(m.name||'').toLowerCase().indexOf(q)>-1||(m.duty||'').toLowerCase().indexOf(q)>-1||(m.phone||'').indexOf(q)>-1||(m.course||'').toLowerCase().indexOf(q)>-1||((getInstById(m.institutionId)||{}).name||'').toLowerCase().indexOf(q)>-1;});
+  if(!list.length){document.getElementById('m-tbody').innerHTML='<tr><td colspan="12" style="text-align:center;padding:30px;color:#9CA3AF">No members found</td></tr>';document.getElementById('m-stats').textContent='';return;}
   var html='';
   list.forEach(function(mb,i){
     var mtgC=(data.meetings||[]).filter(function(m){return(m.memberIds||[]).indexOf(mb.id)>-1;}).length;
@@ -1306,7 +1350,9 @@ function renderMembers(){
     var avHtml=mb.photoUrl?'<img src="'+esc(mb.photoUrl)+'" class="m-avatar" alt="'+esc(mb.name)+'">'
       :'<div class="av-ph">'+((mb.name||'?').charAt(0).toUpperCase())+'</div>';
     var waHtml=mb.phone?'<a href="https://wa.me/91'+mb.phone.replace(/\D/g,'')+'" target="_blank" rel="noopener" class="btn btn-sm btn-wa" style="padding:5px 9px;font-size:11px;text-decoration:none">📱</a>':'—';
-    html+='<tr><td>'+(i+1)+'</td><td>'+avHtml+'</td><td style="font-weight:700;color:#0D1B3E;min-width:100px">'+esc(mb.name)+'</td><td><span class="badge badge-navy">'+esc(mb.duty||'—')+'</span></td><td class="hide-mob">'+esc(mb.phone||'—')+'</td><td>'+(mb.birthday?bdayBadge+'<span class="badge badge-orange" style="font-size:9px">'+fd(mb.birthday)+'</span>':'—')+'</td><td class="hide-mob">'+mtgC+'</td><td class="hide-mob">'+evtC+'</td><td><span class="badge '+sBadge+'">'+score+'</span></td><td>'+waHtml+'</td>'+(isA?'<td style="white-space:nowrap;display:flex;gap:3px;align-items:center;flex-wrap:nowrap"><button class="btn btn-sm btn-navy" onclick="editMember(\''+mb.id+'\')" title="Edit">✏️</button><button class="btn btn-sm" style="background:#1a237e;color:#fff" onclick="printMemberID(getMemberById(\''+mb.id+'\'))" title="Print ID Card">🪪</button>'+(mb.birthday?'<button class="btn btn-sm btn-orange" onclick="printBirthday(getMemberById(\''+mb.id+'\'))" title="Birthday Letter">🎂</button>':'')+'<button class="btn btn-sm btn-red" onclick="delMember(\''+mb.id+'\')" title="Delete">🗑️</button></td>':'')+'</tr>';
+    var inst=mb.institutionId?getInstById(mb.institutionId):null;
+    var instHtml=inst?'<span class="badge badge-blue" style="font-size:9px;white-space:normal;line-height:1.4">'+esc(inst.name)+'</span>':'<span style="color:#ccc">—</span>';
+    html+='<tr><td>'+(i+1)+'</td><td>'+avHtml+'</td><td style="font-weight:700;color:#0D1B3E;min-width:100px">'+esc(mb.name)+'</td><td><span class="badge badge-navy">'+esc(mb.duty||'—')+'</span></td><td class="hide-mob">'+instHtml+'</td><td class="hide-mob">'+esc(mb.course||'—')+'</td><td class="hide-mob">'+esc(mb.phone||'—')+'</td><td>'+(mb.birthday?bdayBadge+'<span class="badge badge-orange" style="font-size:9px">'+fd(mb.birthday)+'</span>':'—')+'</td><td class="hide-mob">'+mtgC+'</td><td class="hide-mob">'+evtC+'</td><td><span class="badge '+sBadge+'">'+score+'</span></td><td>'+waHtml+'</td>'+(isA?'<td style="white-space:nowrap;display:flex;gap:3px;align-items:center;flex-wrap:nowrap"><button class="btn btn-sm btn-navy" onclick="editMember(\''+mb.id+'\')" title="Edit">✏️</button><button class="btn btn-sm" style="background:#1a237e;color:#fff" onclick="printMemberID(getMemberById(\''+mb.id+'\'))" title="Print ID Card">🪪</button>'+(mb.birthday?'<button class="btn btn-sm btn-orange" onclick="printBirthday(getMemberById(\''+mb.id+'\'))" title="Birthday Letter">🎂</button>':'')+'<button class="btn btn-sm btn-red" onclick="delMember(\''+mb.id+'\')" title="Delete">🗑️</button></td>':'')+'</tr>';
   });
   document.getElementById('m-tbody').innerHTML=html;document.getElementById('m-stats').textContent='Showing '+list.length+' of '+(data.members||[]).length+' members';
 }
@@ -1314,12 +1360,15 @@ function getMemberById(id){for(var i=0;i<(data.members||[]).length;i++){if(data.
 function editMember(id){
   var mb=getMemberById(id);if(!mb)return;
   document.getElementById('edit-id').value=id;document.getElementById('edit-name').value=mb.name||'';document.getElementById('edit-phone').value=mb.phone||'';document.getElementById('edit-addr').value=mb.address||'';document.getElementById('edit-duty').value=mb.duty||'';document.getElementById('edit-year').value=mb.year||'';document.getElementById('edit-bday').value=mb.birthday||'';document.getElementById('edit-course').value=mb.course||'';
+  var iEl=document.getElementById('edit-institution');if(iEl)iEl.innerHTML=_instOpts(mb.institutionId||'');
   var pp=document.getElementById('edit-photo-prev');if(mb.photoUrl)pp.innerHTML='<img src="'+esc(mb.photoUrl)+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #FF6B00;display:inline-block;">';else pp.innerHTML='📷';
   tempPhotoUrl=mb.photoUrl||'';document.getElementById('edit-modal').classList.add('open');
 }
 function saveEditMember(){
   var id=v('edit-id');if(!id)return;var mb=getMemberById(id);if(!mb)return;
-  mb.name=v('edit-name');mb.phone=v('edit-phone');mb.address=v('edit-addr');mb.duty=v('edit-duty');mb.year=v('edit-year');mb.birthday=v('edit-bday');mb.course=v('edit-course');if(tempPhotoUrl)mb.photoUrl=tempPhotoUrl;
+  mb.name=v('edit-name');mb.phone=v('edit-phone');mb.address=v('edit-addr');mb.duty=v('edit-duty');mb.year=v('edit-year');mb.birthday=v('edit-bday');mb.course=v('edit-course');
+  var iEl=document.getElementById('edit-institution');mb.institutionId=iEl?iEl.value:'';
+  if(tempPhotoUrl)mb.photoUrl=tempPhotoUrl;
   fbSet('members',id,mb);tempPhotoUrl='';document.getElementById('edit-modal').classList.remove('open');toast('Member updated ✓','✏️');renderMembers();
 }
 function delMember(id){var mb=getMemberById(id);if(!confirm('Delete member'+(mb?' "'+mb.name+'"':'')+' permanently?'))return;fbDel('members',id);toast('Member deleted','🗑️');renderMembers();}
@@ -1941,6 +1990,7 @@ function renderPending(){
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Designation</label><input id="pe-duty-'+p.id+'" value="'+esc(p.duty||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Year</label><input id="pe-year-'+p.id+'" value="'+esc(p.year||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>'; html+='<div style="grid-column:span 2"><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Course</label><input id="pe-course-'+p.id+'" value="'+esc(p.course||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
     html+='<div><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Birthday</label><input type="date" id="pe-bday-'+p.id+'" value="'+esc(p.birthday||'')+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E"></div>';
+    html+='<div style="grid-column:span 2"><label style="font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:3px">Institution</label><select id="pe-inst-'+p.id+'" style="width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;color:#1C1C2E">'+_instOpts(p.institutionId||'')+'</select></div>';
     html+='</div><button class="btn btn-sm btn-primary" onclick="savePendingEdit(\''+p.id+'\')">💾 Save Changes</button>';
     html+='</div></div>';
   });
@@ -1950,13 +2000,14 @@ function togglePendingEdit(id){var el=document.getElementById('pedit-'+id);if(el
 function savePendingEdit(id){
   var p=null;for(var i=0;i<data.pending.length;i++){if(data.pending[i].id===id){p=data.pending[i];break;}}if(!p)return;
   var name=document.getElementById('pe-name-'+id).value.trim();if(!name){toast('Name is required','⚠️');return;}
-  p.name=name;p.phone=document.getElementById('pe-phone-'+id).value.trim();p.address=document.getElementById('pe-addr-'+id).value.trim();p.duty=document.getElementById('pe-duty-'+id).value.trim();p.year=document.getElementById('pe-year-'+id).value.trim();p.birthday=document.getElementById('pe-bday-'+id).value;var pcEl=document.getElementById('pe-course-'+id);if(pcEl)p.course=pcEl.value.trim();
+  p.name=name;p.phone=document.getElementById('pe-phone-'+id).value.trim();p.address=document.getElementById('pe-addr-'+id).value.trim();p.duty=document.getElementById('pe-duty-'+id).value.trim();p.year=document.getElementById('pe-year-'+id).value.trim();p.birthday=document.getElementById('pe-bday-'+id).value;
+  var pcEl=document.getElementById('pe-course-'+id);if(pcEl)p.course=pcEl.value.trim();
+  var piEl=document.getElementById('pe-inst-'+id);if(piEl)p.institutionId=piEl.value;
   fbSet('pending',id,p);toast('Request updated ✓','✏️');renderPending();
 }
 function approvePending(id){
   var p=null;for(var i=0;i<data.pending.length;i++){if(data.pending[i].id===id){p=data.pending[i];break;}}if(!p)return;
-  // photoUrl from pending request → member DP
-  fbSet('members',uid(),{name:p.name,phone:p.phone||'',address:p.address||'',duty:p.duty||'',year:p.year||'',birthday:p.birthday||'',course:p.course||'',photoUrl:p.photoUrl||'',createdAt:Date.now()});
+  fbSet('members',uid(),{name:p.name,phone:p.phone||'',address:p.address||'',duty:p.duty||'',year:p.year||'',birthday:p.birthday||'',course:p.course||'',institutionId:p.institutionId||'',photoUrl:p.photoUrl||'',createdAt:Date.now()});
   fbDel('pending',id);toast(p.name+' approved and added as member ✓','✓');refreshPending();renderMembers();
 }
 function rejectPending(id){if(!confirm('Reject this request?'))return;fbDel('pending',id);toast('Request rejected','🗑️');refreshPending();}
@@ -2467,8 +2518,285 @@ function loadCUG(){
 // Hook loadCUG into showApp
 
 // ══════════════════════════════════════════
+//  INSTITUTIONS
+// ══════════════════════════════════════════
+function addInstitution(){
+  var name=v('inst-name');if(!name.trim()){toast('Enter institution name','⚠️');return;}
+  var id=uid();
+  var inst={name:name.trim(),type:v('inst-type')||'college',location:v('inst-location'),createdAt:Date.now()};
+  fbSet('institutions',id,inst);
+  ['inst-name','inst-location'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  toast('Institution added ✓','🏫');renderInstitutions();_refreshInstDropdowns();
+}
+function delInstitution(id){
+  var inst=getInstById(id);
+  if(!confirm('Delete "'+(inst?inst.name:'this institution')+'"?'))return;
+  fbDel('institutions',id);toast('Deleted','🗑️');renderInstitutions();_refreshInstDropdowns();
+}
+function getInstById(id){for(var i=0;i<(data.institutions||[]).length;i++){if(data.institutions[i].id===id)return data.institutions[i];}return null;}
+
+function renderInstitutions(){
+  var insts=(data.institutions||[]).slice().sort(function(a,b){
+    var tOrder={university:0,college:1,school:2,other:3};
+    var tA=tOrder[a.type]||3,tB=tOrder[b.type]||3;
+    if(tA!==tB)return tA-tB;
+    return(a.name||'').localeCompare(b.name||'');
+  });
+  var members=data.members||[];
+  var area=document.getElementById('inst-list-area');if(!area)return;
+  var html='';
+
+  // ── Combined list ──
+  html+='<div class="card"><div class="card-hdr" style="justify-content:space-between">';
+  html+='<span>👥 All Members (Combined) <span style="background:#FF6B00;color:#fff;border-radius:20px;padding:2px 10px;font-size:11px;margin-left:6px">'+members.length+'</span></span>';
+  html+='<button class="btn btn-sm btn-dl" onclick="downloadInstList(null)">⬇ Download</button>';
+  html+='</div>';
+  if(!members.length){html+='<div class="empty-state"><div class="es-icon">👥</div><div class="es-title">No members yet</div></div>';}
+  else{html+=_instMemberTable(members,true);}
+  html+='</div>';
+
+  if(!insts.length){
+    html+='<div class="empty-state"><div class="es-icon">🏫</div><div class="es-title">No institutions added yet</div><div class="es-sub">Add universities, colleges, schools above</div></div>';
+    area.innerHTML=html;return;
+  }
+
+  // ── Per-institution lists ──
+  var typeLabel={university:'University',college:'College',school:'School',other:'Other'};
+  insts.forEach(function(inst){
+    var instMembers=members.filter(function(m){return m.institutionId===inst.id;});
+    html+='<div class="card"><div class="card-hdr" style="justify-content:space-between">';
+    html+='<span>🏫 '+esc(inst.name)+'<span class="badge badge-gray" style="margin-left:8px;font-size:10px">'+esc(typeLabel[inst.type]||inst.type)+'</span>'+(inst.location?'<span style="font-size:10px;color:#9CA3AF;font-weight:400;margin-left:6px">'+esc(inst.location)+'</span>':'')+'</span>';
+    html+='<span style="display:flex;align-items:center;gap:6px">';
+    html+='<span style="background:#0D1B3E;color:#fff;border-radius:20px;padding:2px 10px;font-size:11px">'+instMembers.length+'</span>';
+    if(instMembers.length){html+='<button class="btn btn-sm btn-dl" onclick="downloadInstList(\''+inst.id+'\')">⬇ Download</button>';}
+    if(currentRole==='admin'){html+='<button class="btn btn-sm btn-red" onclick="delInstitution(\''+inst.id+'\')">🗑️</button>';}
+    html+='</span></div>';
+    if(!instMembers.length){html+='<div style="text-align:center;padding:16px;color:#9CA3AF;font-size:13px">No members assigned to this institution yet</div>';}
+    else{html+=_instMemberTable(instMembers,false);}
+    html+='</div>';
+  });
+
+  area.innerHTML=html;
+}
+
+function _instMemberTable(members,showInst){
+  var html='<div class="table-wrap"><table><thead><tr><th>#</th><th>Photo</th><th>Name</th><th>Duty</th><th class="hide-mob">Course</th>'+(showInst?'<th class="hide-mob">Institution</th>':'')+'<th class="hide-mob">Phone</th></tr></thead><tbody>';
+  members.forEach(function(mb,i){
+    var inst=mb.institutionId?getInstById(mb.institutionId):null;
+    var av=mb.photoUrl?'<img src="'+esc(mb.photoUrl)+'" class="m-avatar" alt="'+esc(mb.name)+'">'
+      :'<div class="av-ph">'+((mb.name||'?').charAt(0).toUpperCase())+'</div>';
+    html+='<tr><td>'+(i+1)+'</td><td>'+av+'</td><td style="font-weight:700;color:#0D1B3E">'+esc(mb.name)+'</td><td><span class="badge badge-navy">'+esc(mb.duty||'—')+'</span></td><td class="hide-mob">'+esc(mb.course||'—')+'</td>';
+    if(showInst)html+='<td class="hide-mob">'+(inst?'<span class="badge badge-blue" style="font-size:9px">'+esc(inst.name)+'</span>':'—')+'</td>';
+    html+='<td class="hide-mob">'+(mb.phone?'<a href="tel:'+esc(mb.phone)+'" style="color:#0D1B3E;text-decoration:none">'+esc(mb.phone)+'</a>':'—')+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  return html;
+}
+
+// Download institution member list as HTML (opens print-ready page)
+function downloadInstList(instId){
+  var members=data.members||[];
+  var inst=instId?getInstById(instId):null;
+  var title=inst?inst.name:'All Members — ABVP Gorakhpur';
+  var typeLabel={university:'University',college:'College',school:'School',other:'Other'};
+  var subtitle=inst?(typeLabel[inst.type]||inst.type)+(inst.location?' — '+inst.location:''):'Combined Member List';
+  var list=instId?members.filter(function(m){return m.institutionId===instId;}):members.slice();
+  list=list.slice().sort(function(a,b){return(a.name||'').localeCompare(b.name||'');});
+
+  var css='*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'@page{size:A4;margin:15mm 12mm}'
+    +'body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;background:#fff}'
+    +'.no-print{text-align:center;padding:12px;display:flex;gap:10px;justify-content:center;background:#f5f5f5}'
+    +'@media print{.no-print{display:none!important}}'
+    +'.btn-p{padding:9px 22px;background:#0D1B3E;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer}'
+    +'.btn-c{padding:9px 22px;background:#6B7280;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer}'
+    +'.hdr{background:linear-gradient(135deg,#0D1B3E,#162955);color:#fff;padding:6mm 8mm;display:flex;align-items:center;gap:5mm;margin-bottom:6mm}'
+    +'.hdr-text h1{font-size:14pt;font-weight:900;margin-bottom:1mm}'
+    +'.hdr-text p{font-size:8pt;color:rgba(255,255,255,.7)}'
+    +'.tri{height:3px;display:flex;margin-bottom:5mm}'
+    +'.tri span:nth-child(1){background:#FF9933;flex:1}.tri span:nth-child(2){background:#fff;border:1px solid #ddd;flex:1}.tri span:nth-child(3){background:#138808;flex:1}'
+    +'.inst-title{font-size:12pt;font-weight:900;color:#0D1B3E;margin-bottom:1mm}'
+    +'.inst-sub{font-size:9pt;color:#6B7280;margin-bottom:5mm}'
+    +'table{width:100%;border-collapse:collapse;font-size:9pt}'
+    +'th{background:#0D1B3E;color:#fff;padding:5pt 8pt;text-align:left;font-weight:700;font-size:8pt;letter-spacing:.5px}'
+    +'td{padding:5pt 8pt;border-bottom:1px solid #F3F4F6;vertical-align:middle}'
+    +'tr:nth-child(even) td{background:#FAFAFA}'
+    +'.foot{margin-top:8mm;font-size:7pt;color:#9CA3AF;text-align:center;border-top:1px solid #E5E7EB;padding-top:3mm}'
+    +'.badge{display:inline-block;padding:1pt 5pt;border-radius:10pt;font-size:7.5pt;font-weight:700}'
+    +'.b-navy{background:#EEF2FF;color:#3730A3}';
+
+  var h='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(title)+'</title><style>'+css+'</style></head><body>';
+  h+='<div class="no-print"><button class="btn-p" onclick="window.print()">🖨️ Print / Save PDF</button><button class="btn-c" onclick="window.close()">✕ Close</button></div>';
+  h+='<div class="hdr"><div class="hdr-text"><h1>Akhil Bharatiya Vidyarthi Parishad</h1><p>GKP Unit — Gorakhpur, Uttar Pradesh &nbsp;|&nbsp; ज्ञान • शील • एकता</p></div></div>';
+  h+='<div class="tri"><span></span><span></span><span></span></div>';
+  h+='<div class="inst-title">'+esc(title)+'</div>';
+  h+='<div class="inst-sub">'+esc(subtitle)+' &nbsp;|&nbsp; Total Members: '+list.length+' &nbsp;|&nbsp; Generated: '+(new Date()).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})+'</div>';
+
+  if(!list.length){
+    h+='<p style="color:#9CA3AF;padding:20pt;text-align:center">No members in this institution yet.</p>';
+  } else {
+    h+='<table><thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Course</th>'+(instId?'':'<th>Institution</th>')+'<th>Phone</th><th>Address</th></tr></thead><tbody>';
+    list.forEach(function(mb,i){
+      var mbInst=mb.institutionId?getInstById(mb.institutionId):null;
+      h+='<tr>';
+      h+='<td>'+(i+1)+'</td>';
+      h+='<td style="font-weight:700;color:#0D1B3E">'+esc(mb.name||'—')+'</td>';
+      h+='<td><span class="badge b-navy">'+esc(mb.duty||'—')+'</span></td>';
+      h+='<td>'+esc(mb.course||'—')+'</td>';
+      if(!instId)h+='<td>'+esc(mbInst?mbInst.name:'—')+'</td>';
+      h+='<td>'+esc(mb.phone||'—')+'</td>';
+      h+='<td>'+esc(mb.address||'—')+'</td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table>';
+  }
+  h+='<div class="foot">अखिल भारतीय विद्यार्थी परिषद् — GKP Unit &nbsp;|&nbsp; वन्दे मातरम् &bull; जय हिन्द</div>';
+  h+='</body></html>';
+
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){toast('Allow popups to download','⚠️');return;}
+  w.document.open();w.document.write(h);w.document.close();
+}
+
+// ══════════════════════════════════════════
 //  LETTERHEAD
 // ══════════════════════════════════════════
+
+function saveLetter(){
+  var subject=v('lt-subject');
+  if(!subject.trim()){toast('Enter a subject/title','⚠️');return;}
+  var id=uid();
+  var lt={subject:subject.trim(),to:v('lt-to'),body:v('lt-body'),date:v('lt-date'),ref:v('lt-ref'),signer:v('lt-signer'),signerDesig:v('lt-signer-desig'),createdAt:Date.now()};
+  fbSet('letters',id,lt);
+  ['lt-subject','lt-to','lt-body','lt-date','lt-ref','lt-signer','lt-signer-desig'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
+  toast('Letter saved ✓','📄');renderLetters();
+}
+
+function editLetter(id){
+  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
+  if(!lt)return;
+  document.getElementById('el-id').value=id;
+  document.getElementById('el-subject').value=lt.subject||'';
+  document.getElementById('el-to').value=lt.to||'';
+  document.getElementById('el-body').value=lt.body||'';
+  document.getElementById('el-date').value=lt.date||'';
+  document.getElementById('el-ref').value=lt.ref||'';
+  document.getElementById('el-signer').value=lt.signer||'';
+  document.getElementById('el-signer-desig').value=lt.signerDesig||'';
+  document.getElementById('edit-letter-modal').classList.add('open');
+}
+
+function saveEditLetter(){
+  var id=document.getElementById('el-id').value;if(!id)return;
+  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
+  if(!lt)return;
+  lt.subject=document.getElementById('el-subject').value;
+  lt.to=document.getElementById('el-to').value;
+  lt.body=document.getElementById('el-body').value;
+  lt.date=document.getElementById('el-date').value;
+  lt.ref=document.getElementById('el-ref').value;
+  lt.signer=document.getElementById('el-signer').value;
+  lt.signerDesig=document.getElementById('el-signer-desig').value;
+  fbSet('letters',id,lt);
+  document.getElementById('edit-letter-modal').classList.remove('open');
+  toast('Letter updated ✓','📄');renderLetters();
+}
+
+function delLetter(id){
+  if(!confirm('Delete this letter permanently?'))return;
+  fbDel('letters',id);toast('Letter deleted','🗑️');renderLetters();
+}
+
+function printLetter(id){
+  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
+  if(!lt)return;
+  var cug=localStorage.getItem('abvp_cug')||'';
+  var letterDate=lt.date?fd(lt.date):(new Date()).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  var w=window.open('','_blank','width=900,height=800');
+  if(!w){toast('Allow popups to print','⚠️');return;}
+
+  var css=''
+    +'*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'@page{size:A4;margin:0}'
+    +'body{font-family:"Times New Roman",Georgia,serif;font-size:11pt;color:#1a1a1a;background:#e0e0e0}'
+    +'.page-wrap{display:flex;flex-direction:column;align-items:center;padding:20px 0}'
+    +'@media print{body{background:#fff}.page-wrap{padding:0}.no-print{display:none!important}}'
+    +'.page{width:210mm;min-height:297mm;background:#fff;padding:0;box-shadow:0 2px 20px rgba(0,0,0,.18);display:flex;flex-direction:column}'
+    +'.lh-head{background:linear-gradient(135deg,#0D1B3E 0%,#162955 100%);padding:8mm 12mm;display:flex;align-items:center;gap:6mm}'
+    +'.lh-logo{width:22mm;height:22mm;object-fit:contain;flex-shrink:0;background:#fff;border-radius:50%;padding:2mm}'
+    +'.lh-names{flex:1}'
+    +'.lh-hi{font-size:10pt;font-weight:700;color:#FFB800;letter-spacing:.5px;margin-bottom:1mm}'
+    +'.lh-en{font-size:20pt;font-weight:900;color:#fff;line-height:1.1}'
+    +'.lh-motto{font-size:7pt;color:rgba(255,255,255,.6);letter-spacing:1px;margin-top:2mm;text-transform:uppercase}'
+    +'.lh-unit{text-align:right;color:rgba(255,255,255,.75);font-size:8.5pt;line-height:1.8;flex-shrink:0}'
+    +'.lh-unit strong{color:#FFB800;font-size:10pt;display:block}'
+    +'.tri{height:4px;display:flex}'
+    +'.tri span:nth-child(1){background:#FF9933;flex:1}'
+    +'.tri span:nth-child(2){background:#fff;flex:1}'
+    +'.tri span:nth-child(3){background:#138808;flex:1}'
+    +'.lh-body{flex:1;padding:10mm 16mm 8mm}'
+    +'.meta{display:flex;justify-content:space-between;font-size:9pt;margin-bottom:6mm;padding-bottom:3mm;border-bottom:1px dashed #D1D5DB}'
+    +'.meta-ref{color:#6B7280}'
+    +'.meta-date{color:#0D1B3E;font-weight:700}'
+    +'.to-blk{margin-bottom:5mm;font-size:10.5pt;line-height:1.7}'
+    +'.to-lbl{font-weight:700}'
+    +'.subj{font-size:11pt;font-weight:700;text-decoration:underline;color:#0D1B3E;margin-bottom:5mm}'
+    +'.salute{font-size:11pt;margin-bottom:5mm}'
+    +'.body-text{font-size:11pt;line-height:1.9;white-space:pre-wrap}'
+    +'.sig-wrap{margin-top:14mm;display:flex;justify-content:flex-end}'
+    +'.sig-box{text-align:center;min-width:60mm}'
+    +'.sig-line{width:58mm;border-bottom:.5mm solid #374151;margin:0 auto 2mm}'
+    +'.sig-name{font-size:12pt;font-weight:700;color:#0D1B3E}'
+    +'.sig-title{font-size:8.5pt;color:#6B7280;margin-top:1mm}'
+    +'.lh-foot{padding:4mm 16mm;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center}'
+    +'.lh-foot-txt{font-size:7pt;color:#9CA3AF;letter-spacing:.5px}'
+    +'.no-print{text-align:center;padding:16px;display:flex;gap:10px;justify-content:center;font-family:Arial,sans-serif}'
+    +'.btn-p{padding:11px 28px;background:#0D1B3E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}'
+    +'.btn-c{padding:11px 28px;background:#6B7280;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}';
+
+  var h='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(lt.subject||'Letter')+'</title><style>'+css+'</style></head><body>';
+  h+='<div class="no-print"><button class="btn-p" onclick="window.print()">🖨️ Print</button><button class="btn-c" onclick="window.close()">✕ Close</button></div>';
+  h+='<div class="page-wrap"><div class="page">';
+
+  h+='<div class="lh-head">'
+    +'<img class="lh-logo" src="'+LOGO_SVG+'" alt="ABVP">'
+    +'<div class="lh-names">'
+    +'<div class="lh-hi">अखिल भारतीय विद्यार्थी परिषद्</div>'
+    +'<div class="lh-en">Akhil Bharatiya Vidyarthi Parishad</div>'
+    +'<div class="lh-motto">ज्ञान &bull; शील &bull; एकता &nbsp;|&nbsp; Knowledge &bull; Character &bull; Unity</div>'
+    +'</div>'
+    +'<div class="lh-unit"><strong>GKP Unit</strong>Gorakhpur, U.P.'+(cug?'<br>CUG: '+esc(cug):'')+'</div>'
+    +'</div>';
+  h+='<div class="tri"><span></span><span></span><span></span></div>';
+  h+='<div class="lh-body">';
+  h+='<div class="meta">'
+    +'<div class="meta-ref">'+(lt.ref?'<strong>Ref.:</strong> '+esc(lt.ref):'&nbsp;')+'</div>'
+    +'<div class="meta-date"><strong>Date:</strong> '+esc(letterDate)+'</div>'
+    +'</div>';
+  if((lt.to||'').trim()){
+    h+='<div class="to-blk"><span class="to-lbl">To,</span><br>'+esc(lt.to).replace(/\n/g,'<br>')+'</div>';
+  }
+  if((lt.subject||'').trim()){
+    h+='<div class="subj">Sub: '+esc(lt.subject)+'</div>';
+  }
+  h+='<div class="salute">Respected Sir/Madam,</div>';
+  h+='<div class="body-text">'+esc(lt.body||'')+'</div>';
+
+  var signerName=lt.signer||'Authorised Signatory';
+  var signerDesig=lt.signerDesig||'ABVP, Gorakhpur Unit';
+  h+='<div class="sig-wrap"><div class="sig-box">'
+    +'<div class="sig-line"></div>'
+    +'<div class="sig-name">'+esc(signerName)+'</div>'
+    +'<div class="sig-title">'+esc(signerDesig)+'</div>'
+    +'</div></div>';
+  h+='</div>'; // lh-body
+  h+='<div class="lh-foot">'
+    +'<div class="lh-foot-txt">अखिल भारतीय विद्यार्थी परिषद् &mdash; GKP Unit</div>'
+    +'<div class="lh-foot-txt">वन्दे मातरम् &bull; जय हिन्द</div>'
+    +'</div>';
+  h+='</div></div></body></html>';
+  w.document.open();w.document.write(h);w.document.close();
+}
 
 function renderLetters(){
   var list=(data.letters||[]).slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
@@ -2483,7 +2811,7 @@ function renderLetters(){
     html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">';
     html+='<div style="flex:1;min-width:0">';
     html+='<div style="font-size:15px;font-weight:800;color:#0D1B3E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(lt.subject||'Untitled')+'</div>';
-    html+='<div style="font-size:12px;color:#6B7280;margin-top:3px">To: '+esc(lt.to||'—')+(lt.ref?' &nbsp;|&nbsp; Ref: '+esc(lt.ref):'')+(lt.date?' &nbsp;|&nbsp; '+esc(fd(lt.date)):'')+'</div>';
+    html+='<div style="font-size:12px;color:#6B7280;margin-top:3px">To: '+esc((lt.to||'—').replace(/\n/g,' '))+(lt.ref?' &nbsp;|&nbsp; Ref: '+esc(lt.ref):'')+(lt.date?' &nbsp;|&nbsp; '+esc(fd(lt.date)):'')+(lt.signer?' &nbsp;|&nbsp; Signed: '+esc(lt.signer):'')+'</div>';
     html+='</div>';
     html+='<div style="display:flex;gap:6px;flex-shrink:0">';
     html+='<button class="btn btn-sm btn-navy" onclick="printLetter(\''+lt.id+'\')">🖨️ Print</button>';
@@ -2498,203 +2826,8 @@ function renderLetters(){
   document.getElementById('letter-list').innerHTML=html;
 }
 
-function saveLetter(){
-  var subject=v('lt-subject');
-  if(!subject.trim()){toast('Enter a subject/title','⚠️');return;}
-  var id=uid();
-  var lt={subject:subject.trim(),to:v('lt-to'),body:v('lt-body'),date:v('lt-date'),ref:v('lt-ref'),createdAt:Date.now()};
-  fbSet('letters',id,lt);
-  ['lt-subject','lt-to','lt-body','lt-date','lt-ref'].forEach(function(i){var e=document.getElementById(i);if(e)e.value='';});
-  toast('Letter saved ✓','📄');
-  renderLetters();
-}
-
-function editLetter(id){
-  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
-  if(!lt)return;
-  document.getElementById('el-id').value=id;
-  document.getElementById('el-subject').value=lt.subject||'';
-  document.getElementById('el-to').value=lt.to||'';
-  document.getElementById('el-body').value=lt.body||'';
-  document.getElementById('el-date').value=lt.date||'';
-  document.getElementById('el-ref').value=lt.ref||'';
-  document.getElementById('edit-letter-modal').classList.add('open');
-}
-
-function saveEditLetter(){
-  var id=document.getElementById('el-id').value;
-  if(!id)return;
-  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
-  if(!lt)return;
-  lt.subject=document.getElementById('el-subject').value;
-  lt.to=document.getElementById('el-to').value;
-  lt.body=document.getElementById('el-body').value;
-  lt.date=document.getElementById('el-date').value;
-  lt.ref=document.getElementById('el-ref').value;
-  fbSet('letters',id,lt);
-  document.getElementById('edit-letter-modal').classList.remove('open');
-  toast('Letter updated ✓','📄');
-  renderLetters();
-}
-
-function delLetter(id){
-  if(!confirm('Delete this letter permanently?'))return;
-  fbDel('letters',id);
-  toast('Letter deleted','🗑️');
-  renderLetters();
-}
-
-function printLetter(id){
-  var lt=null;for(var i=0;i<(data.letters||[]).length;i++){if(data.letters[i].id===id){lt=data.letters[i];break;}}
-  if(!lt)return;
-
-  var president=null,secretary=null;
-  (data.members||[]).forEach(function(m){
-    var d=(m.duty||'').toLowerCase();
-    if(!president&&(d==='president'||d==='unit president'))president=m;
-    if(!secretary&&(d==='secretary'||d==='unit secretary'))secretary=m;
-  });
-
-  var cug=localStorage.getItem('abvp_cug')||'';
-  var letterDate=lt.date?fd(lt.date):(new Date()).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
-
-  var w=window.open('','_blank','width=900,height=800');
-  if(!w){toast('Allow popups to print','⚠️');return;}
-
-  var css='*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
-    +'@page{size:A4;margin:0}'
-    +'body{font-family:"Times New Roman",Georgia,serif;font-size:11pt;color:#1a1a1a;background:#e0e0e0}'
-    +'.page-wrap{display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:20px}'
-    +'@media print{body{background:#fff}.page-wrap{padding:0;gap:0}.no-print{display:none!important}}'
-    +'.page{width:210mm;background:#fff;padding:14mm 16mm 16mm;box-shadow:0 2px 20px rgba(0,0,0,.18)}'
-
-    /* ── Header band ── */
-    +'.lh-head{background:linear-gradient(135deg,#0D1B3E 0%,#162955 100%);padding:8mm 10mm;display:flex;align-items:center;gap:5mm;margin:-14mm -16mm 0;margin-bottom:5mm}'
-    +'.lh-logo{width:22mm;height:22mm;object-fit:contain;flex-shrink:0;background:#fff;border-radius:50%;padding:1.5mm}'
-    +'.lh-names{flex:1}'
-    +'.lh-hi{font-size:10.5pt;font-weight:700;color:#FFB800;letter-spacing:.4px;margin-bottom:1mm}'
-    +'.lh-en{font-size:18pt;font-weight:900;color:#fff;letter-spacing:.2px;line-height:1.1}'
-    +'.lh-motto{font-size:7.5pt;color:rgba(255,255,255,.6);letter-spacing:.8px;margin-top:1.5mm;text-transform:uppercase}'
-    +'.lh-unit{text-align:right;color:rgba(255,255,255,.8);font-size:8.5pt;line-height:1.7;flex-shrink:0}'
-    +'.lh-unit strong{color:#FFB800;font-size:10pt;display:block}'
-
-    /* ── Tricolour bar ── */
-    +'.tri{height:3px;display:flex;margin:0 -16mm 5mm}'
-    +'.tri span:nth-child(1){background:#FF9933;flex:1}'
-    +'.tri span:nth-child(2){background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd;flex:1}'
-    +'.tri span:nth-child(3){background:#138808;flex:1}'
-
-    /* ── Meta row ── */
-    +'.meta{display:flex;justify-content:space-between;font-size:9pt;margin-bottom:5mm;padding-bottom:2mm;border-bottom:1px dashed #D1D5DB}'
-    +'.meta-ref{color:#6B7280}'
-    +'.meta-date{color:#0D1B3E;font-weight:700}'
-
-    /* ── To & Subject ── */
-    +'.to-blk{margin-bottom:4mm;font-size:10.5pt;line-height:1.65}'
-    +'.to-lbl{font-weight:700}'
-    +'.subj{font-size:11pt;font-weight:700;text-decoration:underline;color:#0D1B3E;margin-bottom:4mm}'
-    +'.salute{font-size:11pt;margin-bottom:4mm}'
-
-    /* ── Body ── */
-    +'.body{font-size:11pt;line-height:1.85;white-space:pre-wrap;margin-bottom:8mm}'
-
-    /* ── Signature ── */
-    +'.sig-wrap{border-top:1.5px solid #D1D5DB;padding-top:5mm;display:flex;justify-content:space-between;align-items:flex-end}'
-    +'.sig-box{text-align:center;min-width:52mm}'
-    +'.sig-line{width:50mm;border-bottom:.4mm solid #374151;margin:0 auto 1.5mm}'
-    +'.sig-name{font-family:"Dancing Script",cursive;font-weight:700;font-size:14pt;color:#0D1B3E}'
-    +'.sig-title{font-size:8pt;color:#6B7280;letter-spacing:.3px;margin-top:.5mm}'
-    +'.sig-ph{font-size:8pt;color:#374151;font-weight:700;margin-top:.3mm}'
-    +'.date-box{text-align:center;font-size:9.5pt}'
-    +'.date-lbl{font-size:7.5pt;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1mm}'
-    +'.date-val{font-weight:800;color:#0D1B3E}'
-    +'.date-place{font-size:7.5pt;color:#9CA3AF;margin-top:1mm}'
-
-    /* ── Footer ── */
-    +'.foot{margin-top:6mm;padding-top:3mm;border-top:1px solid #E5E7EB;font-size:7.5pt;color:#9CA3AF;text-align:center;letter-spacing:.4px}'
-
-    /* ── Controls ── */
-    +'.no-print{text-align:center;padding:16px;display:flex;gap:10px;justify-content:center;font-family:Arial,sans-serif}'
-    +'.btn-p{padding:11px 28px;background:#0D1B3E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}'
-    +'.btn-c{padding:11px 28px;background:#6B7280;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}';
-
-  var h='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+esc(lt.subject||'Letter')+'</title>'
-    +'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap">'
-    +'<style>'+css+'</style></head><body>';
-
-  h+='<div class="no-print">'
-    +'<button class="btn-p" onclick="window.print()">🖨️ Print</button>'
-    +'<button class="btn-c" onclick="window.close()">✕ Close</button>'
-    +'</div>';
-
-  h+='<div class="page-wrap"><div class="page">';
-
-  // ── Header ──
-  h+='<div class="lh-head">'
-    +'<img class="lh-logo" src="'+LOGO_SVG+'" alt="ABVP">'
-    +'<div class="lh-names">'
-    +'<div class="lh-hi">अखिल भारतीय विद्यार्थी परिषद्</div>'
-    +'<div class="lh-en">Akhil Bharatiya Vidyarthi Parishad</div>'
-    +'<div class="lh-motto">ज्ञान &bull; शील &bull; एकता &nbsp;|&nbsp; Knowledge &bull; Character &bull; Unity</div>'
-    +'</div>'
-    +'<div class="lh-unit"><strong>GKP Unit</strong> Gorakhpur , U.P.'+(cug?'<br>CUG: '+esc(cug):'')+'</div>'
-    +'</div>';
-
-  // ── Tricolour bar ──
-  h+='<div class="tri"><span></span><span></span><span></span></div>';
-
-  // ── Ref / Date ──
-  h+='<div class="meta">'
-    +'<div class="meta-ref">'+(lt.ref?'<strong>Ref.:</strong> '+esc(lt.ref):'&nbsp;')+'</div>'
-    +'<div class="meta-date"><strong>Date:</strong> '+esc(letterDate)+'</div>'
-    +'</div>';
-
-  // ── To ──
-  if(lt.to){
-    h+='<div class="to-blk"><div class="to-lbl">To,</div>'+esc(lt.to).replace(/\n/g,'<br>')+'</div>';
-  }
-
-  // ── Subject ──
-  h+='<div class="subj">Sub: '+esc(lt.subject||'—')+'</div>';
-
-  // ── Salutation + Body ──
-  h+='<div class="salute">Respected Sir/Madam,</div>';
-  h+='<div class="body">'+esc(lt.body||'')+'</div>';
-
-  // ── Signature row ──
-  h+='<div class="sig-wrap">';
-  // Secretary
-  h+='<div class="sig-box">'
-    +'<div class="sig-line"></div>'
-    +'<div class="sig-name">'+(secretary?esc(secretary.name):'Unit Secretary')+'</div>'
-    +'<div class="sig-title">Secretary, ABVP GKP Unit</div>'
-    +(secretary&&secretary.phone?'<div class="sig-ph">'+esc(secretary.phone)+'</div>':'')
-    +'</div>';
-  // Date box (centre)
-  h+='<div class="date-box">'
-    +'<div class="date-lbl">Date &amp; Place</div>'
-    +'<div class="date-val">'+esc(letterDate)+'</div>'
-    +'<div class="date-place"> Gorakhpur, U.P.</div>'
-    +'</div>';
-  // President
-  h+='<div class="sig-box">'
-    +'<div class="sig-line"></div>'
-    +'<div class="sig-name">'+(president?esc(president.name):'Unit President')+'</div>'
-    +'<div class="sig-title">President, ABVP GKP Unit</div>'
-    +(president&&president.phone?'<div class="sig-ph">'+esc(president.phone)+'</div>':'')
-    +'</div>';
-  h+='</div>';
-
-  // ── Footer ──
-  h+='<div class="foot">अखिल भारतीय विद्यार्थी परिषद् — GKP Unit &nbsp;&bull;&nbsp; वन्दे मातरम् &bull; जय हिन्द</div>';
-
-  h+='</div></div></body></html>';
-
-  w.document.open();w.document.write(h);w.document.close();
-}
-
 var _sa=showApp;
-showApp=function(){_sa();loadCUG();};
+showApp=function(){_sa();loadCUG();_refreshInstDropdowns();};
 </script>
 </body>
 </html>
