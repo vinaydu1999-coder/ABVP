@@ -2769,7 +2769,7 @@ function printLetter(id){
   if((lt.subject||'').trim()){
     h+='<div class="subj">Sub: '+esc(lt.subject)+'</div>';
   }
-  h+='<div class="salute">Respected Sir/Madam,</div>';
+  h+='<div class="salute">,</div>';
   h+='<div class="body-text">'+esc(lt.body||'')+'</div>';
 
   var signerName=lt.signer||'Authorised Signatory';
