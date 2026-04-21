@@ -72,6 +72,12 @@ input:focus,select:focus{border-color:#FF6B00;background:#fff;}
       <input id="jf-course" placeholder="e.g. B.A. 2nd Year, M.Sc. Physics">
     </div>
     <div class="fg">
+      <label>Institution <span style="color:#888;font-size:11px">(optional)</span></label>
+      <select id="jf-institution">
+        <option value="">Loading institutions...</option>
+      </select>
+    </div>
+    <div class="fg">
       <label>Profile Photo <span style="color:#888;font-size:11px">(optional)</span></label>
       <div id="photo-box" onclick="document.getElementById('jf-photo').click()" style="border:2px dashed #FF6B00;border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:#fff8f3;transition:background .2s">
         <div id="photo-preview" style="display:none;margin-bottom:8px"><img id="photo-img" src="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #FF6B00"></div>
@@ -124,6 +130,42 @@ function toFields(obj){
   var f={};Object.keys(obj).forEach(function(k){f[k]=fval(obj[k]);});return f;
 }
 
+// Load institutions from Firestore and populate dropdown
+function loadInstitutions(){
+  var sel=document.getElementById('jf-institution');
+  fetch(FSB+'institutions?key='+AKEY)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var docs=(d.documents||[]);
+      var typeLabel={university:'University',college:'College',school:'School',other:'Other'};
+      // Sort: university first, then college, school, other; then alphabetical
+      var tOrder={university:0,college:1,school:2,other:3};
+      docs.sort(function(a,b){
+        var fa=a.fields||{},fb=b.fields||{};
+        var ta=tOrder[(fa.type&&fa.type.stringValue)||'other']||3;
+        var tb=tOrder[(fb.type&&fb.type.stringValue)||'other']||3;
+        if(ta!==tb)return ta-tb;
+        return((fa.name&&fa.name.stringValue)||'').localeCompare((fb.name&&fb.name.stringValue)||'');
+      });
+      sel.innerHTML='<option value="">— Select your institution (optional) —</option>';
+      docs.forEach(function(doc){
+        var f=doc.fields||{};
+        var name=(f.name&&f.name.stringValue)||'';
+        var type=(f.type&&f.type.stringValue)||'';
+        var id=doc.name.split('/').pop();
+        if(!name)return;
+        var opt=document.createElement('option');
+        opt.value=id;
+        opt.textContent=(typeLabel[type]?typeLabel[type]+': ':'')+name;
+        sel.appendChild(opt);
+      });
+    })
+    .catch(function(){
+      sel.innerHTML='<option value="">— Institution (unavailable offline) —</option>';
+    });
+}
+loadInstitutions();
+
 function handlePhotoSelect(input){
   var file=input.files[0];if(!file)return;
   var reader=new FileReader();
@@ -161,6 +203,7 @@ function submitJoin(){
     name:name,phone:v('jf-phone'),address:v('jf-addr'),
     duty:v('jf-duty'),year:v('jf-year'),birthday:v('jf-bday'),
     course:v('jf-course'),
+    institutionId:v('jf-institution'),
     photoUrl:uploadedPhotoUrl,status:'pending',createdAt:Date.now()
   };
   fetch(FSB+'pending/'+id+'?key='+AKEY,{
