@@ -338,12 +338,12 @@ to{opacity:1}}
   <div class="nav-bar" id="main-nav">
     <button class="nav-tab active" id="tab-home" onclick="showSec('home');setActive(this)" oncontextmenu="pinTab('home');return false" ontouchstart="_tabPressStart('home',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🏠 Home</button>
     <button class="nav-tab" id="tab-members" onclick="showSec('members');setActive(this)" oncontextmenu="pinTab('members');return false" ontouchstart="_tabPressStart('members',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">👥 Members</button>
+    <button class="nav-tab" id="tab-institutions" onclick="showSec('institutions');setActive(this)" oncontextmenu="pinTab('institutions');return false" ontouchstart="_tabPressStart('institutions',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🏫 Institutions</button>
     <button class="nav-tab" id="tab-meetings" onclick="showSec('meetings');setActive(this)" oncontextmenu="pinTab('meetings');return false" ontouchstart="_tabPressStart('meetings',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">📋 Meetings</button>
     <button class="nav-tab" id="tab-events" onclick="showSec('events');setActive(this)" oncontextmenu="pinTab('events');return false" ontouchstart="_tabPressStart('events',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🎯 Events</button>
     <button class="nav-tab" id="tab-inv" onclick="showSec('invitations');setActive(this)" oncontextmenu="pinTab('invitations');return false" ontouchstart="_tabPressStart('invitations',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">✉️ Invitations</button>
     <button class="nav-tab" id="tab-fin" onclick="showSec('finance');setActive(this)" oncontextmenu="pinTab('finance');return false" ontouchstart="_tabPressStart('finance',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()" style="display:none">💰 Finance</button>
     <button class="nav-tab" id="tab-qr" onclick="showSec('qr');setActive(this)" oncontextmenu="pinTab('qr');return false" ontouchstart="_tabPressStart('qr',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🔗 QR Join</button>
-    <button class="nav-tab" id="tab-institutions" onclick="showSec('institutions');setActive(this)" oncontextmenu="pinTab('institutions');return false" ontouchstart="_tabPressStart('institutions',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">🏫 Institutions</button>
     <button class="nav-tab" id="tab-letter" onclick="showSec('letter');setActive(this)" oncontextmenu="pinTab('letter');return false" ontouchstart="_tabPressStart('letter',this)" ontouchend="_tabPressEnd()" ontouchmove="_tabPressEnd()">📄 Letterhead</button>
   </div>
 
@@ -565,22 +565,35 @@ to{opacity:1}}
 
   <!-- INSTITUTIONS SECTION -->
   <div class="section" id="sec-institutions">
+
+    <!-- Collapsible Add Institution (admin only) -->
     <div class="card admin-only" style="display:none">
-      <div class="card-hdr">🏫 Add Institution</div>
-      <div class="form-grid">
-        <div class="fg full"><label>Institution Name *</label><input id="inst-name" placeholder="e.g. Deen Dayal Upadhyaya Gorakhpur University"></div>
-        <div class="fg"><label>Type</label>
-          <select id="inst-type">
-            <option value="university">University</option>
-            <option value="college">College</option>
-            <option value="school">School</option>
-            <option value="other">Other</option>
-          </select>
+      <div class="card-hdr" onclick="toggleInstForm()" style="cursor:pointer;user-select:none;justify-content:space-between">
+        <span>🏫 Add Institution</span>
+        <span id="inst-form-arrow" style="font-size:18px;transition:transform .2s">▼</span>
+      </div>
+      <div id="inst-form-body" style="display:none;padding-top:12px">
+        <div class="form-grid">
+          <div class="fg full"><label>Institution Name *</label><input id="inst-name" placeholder="e.g. Deen Dayal Upadhyaya Gorakhpur University"></div>
+          <div class="fg"><label>Type</label>
+            <select id="inst-type">
+              <option value="university">University</option>
+              <option value="college">College</option>
+              <option value="school">School</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Location / Area</label><input id="inst-location" placeholder="e.g. Taramandal, Gorakhpur"></div>
+          <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="addInstitution()">+ Add Institution</button></div>
         </div>
-        <div class="fg"><label>Location / Area</label><input id="inst-location" placeholder="e.g. Taramandal, Gorakhpur"></div>
-        <div class="fg full" style="align-items:flex-start"><button class="btn btn-primary" onclick="addInstitution()">+ Add Institution</button></div>
       </div>
     </div>
+
+    <!-- Search bar -->
+    <div class="card" style="padding:10px 14px">
+      <div class="srch"><input id="inst-srch" placeholder="🔍 Search institutions..." oninput="renderInstitutions()"></div>
+    </div>
+
     <div id="inst-list-area"></div>
   </div>
 
@@ -2675,35 +2688,63 @@ function delInstitution(id){
 }
 function getInstById(id){for(var i=0;i<(data.institutions||[]).length;i++){if(data.institutions[i].id===id)return data.institutions[i];}return null;}
 
+function toggleInstForm(){
+  var body=document.getElementById('inst-form-body');
+  var arrow=document.getElementById('inst-form-arrow');
+  if(!body)return;
+  var open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  if(arrow)arrow.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+}
+
+function toggleInstCard(id){
+  var el=document.getElementById(id);
+  var instId=id.replace('ic-','');
+  var arr=document.getElementById('ic-arr-'+instId);
+  if(!el)return;
+  var open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  if(arr)arr.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+}
+
 function renderInstitutions(){
+  var q=((document.getElementById('inst-srch')||{}).value||'').toLowerCase().trim();
   var insts=(data.institutions||[]).slice().sort(function(a,b){
     var tOrder={university:0,college:1,school:2,other:3};
     var tA=tOrder[a.type]||3,tB=tOrder[b.type]||3;
     if(tA!==tB)return tA-tB;
     return(a.name||'').localeCompare(b.name||'');
   });
+  if(q){insts=insts.filter(function(i){return(i.name||'').toLowerCase().indexOf(q)>-1||(i.location||'').toLowerCase().indexOf(q)>-1||(i.type||'').toLowerCase().indexOf(q)>-1;});}
   var members=data.members||[];
   var area=document.getElementById('inst-list-area');if(!area)return;
   var html='';
 
   if(!insts.length){
-    html+='<div class="empty-state"><div class="es-icon">🏫</div><div class="es-title">No institutions added yet</div><div class="es-sub">Add universities, colleges, schools above</div></div>';
+    html+='<div class="empty-state"><div class="es-icon">🏫</div><div class="es-title">'+(q?'No results for "'+esc(q)+'"':'No institutions added yet')+'</div>'+(q?'':'<div class="es-sub">Click "Add Institution" above to get started</div>')+'</div>';
     area.innerHTML=html;return;
   }
 
-  // ── Per-institution lists ──
   var typeLabel={university:'University',college:'College',school:'School',other:'Other'};
   insts.forEach(function(inst){
     var instMembers=members.filter(function(m){return m.institutionId===inst.id;});
-    html+='<div class="card"><div class="card-hdr" style="justify-content:space-between">';
-    html+='<span>🏫 '+esc(inst.name)+'<span class="badge badge-gray" style="margin-left:8px;font-size:10px">'+esc(typeLabel[inst.type]||inst.type)+'</span>'+(inst.location?'<span style="font-size:10px;color:#9CA3AF;font-weight:400;margin-left:6px">'+esc(inst.location)+'</span>':'')+'</span>';
-    html+='<span style="display:flex;align-items:center;gap:6px">';
-    html+='<span style="background:#0D1B3E;color:#fff;border-radius:20px;padding:2px 10px;font-size:11px">'+instMembers.length+'</span>';
-    if(instMembers.length){html+='<button class="btn btn-sm btn-dl" onclick="downloadInstList(\''+inst.id+'\')">⬇ Download</button>';}
-    if(currentRole==='admin'){html+='<button class="btn btn-sm btn-red" onclick="delInstitution(\''+inst.id+'\')">🗑️</button>';}
+    html+='<div class="card" style="margin-bottom:8px">';
+    html+='<div class="card-hdr" style="justify-content:space-between;cursor:pointer" onclick="toggleInstCard(\'ic-'+inst.id+'\')">';
+    html+='<span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;min-width:0">';
+    html+='<span style="font-weight:800;color:#0D1B3E">🏫 '+esc(inst.name)+'</span>';
+    html+='<span class="badge badge-gray" style="font-size:10px;flex-shrink:0">'+esc(typeLabel[inst.type]||inst.type)+'</span>';
+    if(inst.location)html+='<span style="font-size:10px;color:#9CA3AF;font-weight:400;flex-shrink:0">📍'+esc(inst.location)+'</span>';
+    html+='</span>';
+    html+='<span style="display:flex;align-items:center;gap:5px;flex-shrink:0;margin-left:8px">';
+    html+='<span style="background:#0D1B3E;color:#fff;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700">'+instMembers.length+'</span>';
+    if(instMembers.length)html+='<button class="btn btn-sm btn-dl" onclick="event.stopPropagation();downloadInstList(\''+inst.id+'\')">⬇</button>';
+    if(currentRole==='admin')html+='<button class="btn btn-sm btn-red" onclick="event.stopPropagation();delInstitution(\''+inst.id+'\')">🗑️</button>';
+    html+='<span id="ic-arr-'+inst.id+'" style="font-size:14px;color:#9CA3AF;transition:transform .2s;display:inline-block">▼</span>';
     html+='</span></div>';
-    if(!instMembers.length){html+='<div style="text-align:center;padding:16px;color:#9CA3AF;font-size:13px">No members assigned to this institution yet</div>';}
-    else{html+=_instMemberTable(instMembers,false);}
+    html+='<div id="ic-'+inst.id+'" style="display:none">';
+    if(!instMembers.length)html+='<div style="text-align:center;padding:16px;color:#9CA3AF;font-size:13px">No members assigned yet</div>';
+    else html+=_instMemberTable(instMembers,false);
+    html+='</div>';
     html+='</div>';
   });
 
